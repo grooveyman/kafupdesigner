@@ -1,0 +1,123 @@
+.profile-dp {
+    position: relative;
+    display: inline-block;
+}
+
+.profile-dp img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.profile-edit-btn {
+    position: absolute;
+    top: 5px;
+    right: 20px;
+    z-index: 10;
+    background-color: rgb(146, 143, 143);
+    padding: 8px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.categories>span {
+    background-color: black;
+    padding: 10px;
+    margin: 5px 5px 5px 0;
+}
+
+.meta>button {
+    font-size: x-small;
+    color: white;
+    width: auto;
+    height: auto;
+    margin: 0px 5px 5px 0px;
+
+}
+
+.cat-img{
+    position: absolute;
+}
+.cat-trash-btn{
+    position: absolute;
+    top:10%
+}
+.feat-desc p {
+    margin: 0 !important;
+}
+.feat-desc p:nth-child(2){
+    font-weight: bold !important; 
+}
+.feat-desc p:nth-child(3){
+    text-decoration: line-through;
+    font-style: italic;
+    font-size: small;
+}
+.feat-desc > p>span{
+    font-style: italic;
+    text-decoration: line-through;
+    font-weight: normal;
+}
+
+.feat-desc .feat-cat {
+    font-size: x-small !important;
+    color: rgb(146, 143, 143);
+}
+
+input{
+    /* height: auto !important; */
+}
+
+.filter-category>select {
+    background-color: black !important;
+    color: white;
+    height: 100% !important;
+}
+
+.filter-collections>select {
+    background-color: black !important;
+    color: white;
+    height: 100% !important;
+}
+
+.filters {
+    gap: 10px;
+}
+
+.portfolio {
+    margin: 0px 0px 10px 0px !important;
+}
+
+.portfolio-item>img {
+    position: relative;
+    display: inline-block;
+    width: 100% !important;
+    margin: 0px 0px 10px 0px !important;
+    height: 70% !important;
+    border-radius: 10px;
+}
+
+.portfolio-desc>p {
+    margin: 0 !important;
+    background-color: none !important;
+}
+
+.portfolio-cat {
+    font-size: x-small !important;
+    color: rgb(146, 143, 143);
+}
+
+.featured-designs>img {
+    border-radius: 10px;
+}
+
+.profilenav {
+    position: sticky !important;
+    top: 0px;
+    z-index: 999;
+    background: white;
+    width: 100%;
+}
+.profile-banner{
+    position: relative;
+}
+

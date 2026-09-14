@@ -1,0 +1,73 @@
+.active-tab,
+.tab {
+    cursor: pointer;
+}
+
+.tab {
+    color: var(--nav-item-color) !important;
+}
+
+.active-tab {
+    color: white;
+    font-weight: 600;
+}
+
+.tab:hover {
+    color: var(--text-color);
+}
+
+.modal-content {
+    background-color: var(--card-background-color) !important;
+}
+
+.nav-item{
+    color: white !important;
+}
+.nav-link{
+    text-decoration: none;
+    color: white;
+}
+.nav-link:hover{
+    color: white;
+}
+.nav-active{
+    /* color: var(--card-background-color) !important; */
+    color: #000 !important;
+}
+
+input,
+select {
+    border-radius: 30px !important;
+    height: 60px !important;
+    background-color: var(--input-background-color) !important;
+    border: none !important;
+}
+
+textarea {
+    border-radius: 30px !important;
+    background-color: var(--input-background-color) !important;
+    border: none !important;
+    height: auto;
+}
+
+input::placeholder,
+input,
+textarea,
+select {
+    color: var(--label-color) !important;
+}
+
+.extra-image-placeholder {
+    color: var(--text-color) !important;
+}
+
+.extra-image-box,
+.addcube {
+    background-color: var(--input-background-color) !important;
+}
+
+.variation-tr > td, p{
+    color: var(--label-color) !important;
+    align-items: center;
+    background: none;
+}

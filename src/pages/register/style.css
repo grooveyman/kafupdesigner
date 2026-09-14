@@ -1,0 +1,8 @@
+.register-form{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+textarea::placeholder {
+    color: #cbc1c1 !important;
+    opacity: 1;
+}
