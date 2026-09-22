@@ -271,7 +271,6 @@ const Dashboard: React.FC = () => {
                                     <span className="text-secondary">●</span> <span className="text-white">Unsold</span>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
