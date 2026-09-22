@@ -264,11 +264,11 @@ const Dashboard: React.FC = () => {
 
                             <div className="d-flex justify-content-center gap-4">
                                 <div>
-                                    <span className="text-warning">●</span> Sold
+                                    <span className="text-white">●</span> <span className="text-white">Sold</span>
                                 </div>
 
                                 <div>
-                                    <span className="text-secondary">●</span> Unsold
+                                    <span className="text-secondary">●</span> <span className="text-white">Unsold</span>
                                 </div>
                             </div>
 
@@ -330,7 +330,7 @@ const Dashboard: React.FC = () => {
                 </div>
 
                 <div className="col-md-4">
-                    <div className="dashboard-table-card dashboard-orders-card card border-0">
+                    <div className="dashboard-table-card dashboard-orders-card card">
                         <div className="card-body p-4">
                             <div className="dashboard-table-header">
                                 <div>
