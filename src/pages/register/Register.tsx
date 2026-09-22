@@ -8,17 +8,17 @@ import { toast } from "react-toastify";
 const Register: React.FC = () => {
     const navigate = useNavigate();
     const [registerData, setRegisterData] = useState({
-        brandName: "",
-        emailAddress: "",
-        brandDescription: "",
-        phoneNumber: "",
-        businessLocation: "",
+        brand_name: "",
+        contact_email: "",
+        brand_description: "",
+        phone_number: "",
+        business_location: "",
         password: "",
-        contactPerson:"",
+        contact_name:"",
     });
 
     const mutation = useApiMutation<{ message: string }>(
-        "/designers/register",
+        "/designer/register",
         "POST",
         {
             onSuccess: (data) => {
@@ -40,13 +40,13 @@ const Register: React.FC = () => {
         e.preventDefault();
 
         const keyMap: Record<string, string> = {
-            brandName: "brand_name",
-            emailAddress: "contact_email",
-            brandDescription: "pitch",
-            phoneNumber: "contact_phone",
-            businessLocation: "business_location",
+            brand_name: "brand_name",
+            contact_email: "contact_email",
+            brand_description: "pitch",
+            phone_number: "contact_phone",
+            business_location: "business_location",
             password: "password",
-            contactPerson: "contact_name"
+            contact_name: "contact_name"
         }
         const payload: Record<string, string> = {};
         Object.entries(registerData).forEach(([key, value]) => {
@@ -70,20 +70,20 @@ const Register: React.FC = () => {
                                 <p>Creat a profile and a launch a brand, porfolio and increase your network.</p>
                                 <div className="row">
                                     <div className="col-md-6">
-                                        <input type="text" placeholder="Brand Name" className="form-control mb-3" name="brandName" value={registerData.brandName} onChange={handleInputChange} />
+                                        <input type="text" placeholder="Brand Name" className="form-control mb-3" name="brand_name" value={registerData.brand_name} onChange={handleInputChange} />
                                     </div>
                                      <div className="col-md-6">
-                                        <input type="text" placeholder="Contact Person Name" className="form-control mb-3" name="contactPerson" value={registerData.contactPerson} onChange={handleInputChange} />
+                                        <input type="text" placeholder="Contact Person Name" className="form-control mb-3" name="contact_name" value={registerData.contact_name} onChange={handleInputChange} />
                                     </div>
                                 </div>
                                 <div className="row">
                                     <div className="col-md-12">
-                                        <textarea placeholder="Tell us about your brand. NB: This your pitch" className="form-control mb-3" name="brandDescription" value={registerData.brandDescription} onChange={handleInputChange} rows={4}></textarea>
+                                        <textarea placeholder="Tell us about your brand. NB: This your pitch" className="form-control mb-3" name="brand_description" value={registerData.brand_description} onChange={handleInputChange} rows={4}></textarea>
                                     </div>
                                 </div>
                                 <div className="row">
                                     <div className="col-md-12">
-                                        <input type="text" placeholder="Email Address" className="form-control mb-3" name="emailAddress" value={registerData.emailAddress} onChange={handleInputChange} />
+                                        <input type="text" placeholder="Email Address" className="form-control mb-3" name="contact_email" value={registerData.contact_email} onChange={handleInputChange} />
                                         <p className="text-xs">You may receive notifications and updates about your account on this email.</p>
                                     </div>
                                    
@@ -92,10 +92,10 @@ const Register: React.FC = () => {
                                 
                                 <div className="row">
                                     <div className="col-md-6">
-                                        <input type="text" placeholder="Phone Number" className="form-control mb-3" name="phoneNumber" value={registerData.phoneNumber} onChange={handleInputChange} />
+                                        <input type="text" placeholder="Phone Number" className="form-control mb-3" name="phone_number" value={registerData.phone_number} onChange={handleInputChange} />
                                     </div>
                                     <div className="col-md-6">
-                                        <input type="text" placeholder="Business Location" className="form-control mb-3" name="businessLocation" value={registerData.businessLocation} onChange={handleInputChange} />
+                                        <input type="text" placeholder="Business Location" className="form-control mb-3" name="business_location" value={registerData.business_location} onChange={handleInputChange} />
                                     </div>
                                 </div>
                                 <div className="row">

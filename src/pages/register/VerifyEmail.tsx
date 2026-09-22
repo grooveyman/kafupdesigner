@@ -15,7 +15,7 @@ const VerifyEmail:React.FC = () => {
         const navigate = useNavigate();
 
         const mutation = useApiMutation<{ message: string }>(
-            "/users/auth/verifyemail",
+            "/designer/verify-email",
             "POST",
             {
                 onSuccess: (data) => {
@@ -30,7 +30,7 @@ const VerifyEmail:React.FC = () => {
         
         const handleSubmit = (e: React.FormEvent) => {
             e.preventDefault();
-            mutation.mutate({ token: code });
+            mutation.mutate({ code });
         }
 
     return (
@@ -43,7 +43,7 @@ const VerifyEmail:React.FC = () => {
                         <h4>Verify your email</h4>
                         <p>We emailed you the code to verify your email address. Enter the code below to confirm your email.</p>
                         <form onSubmit={handleSubmit}>
-                            <input type="text" placeholder="Enter code" className="form-control mb-3" name="verifyCode" onChange={handleCodeChange} />
+                            <input type="text" placeholder="Enter code" className="form-control mb-3" name="code" onChange={handleCodeChange} />
                             <button className="btn btn-secondary w-100 h-full p-3" type="submit">
                                 Verify Email
                             </button>

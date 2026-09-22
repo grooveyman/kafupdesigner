@@ -54,7 +54,7 @@ const Login: React.FC = () => {
 
     //mutation
     const loginMutation = useApiMutation <{ message: string, data: any, designercode: string; }>(
-        `/users/auth/login`,
+        `/auth/login`,
         "POST",
         {
             onSuccess: async (data) => {

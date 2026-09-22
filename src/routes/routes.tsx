@@ -26,7 +26,7 @@ import ShopWrapper from "../pages/profile/Shop/ShopWrapper";
 import Register from "../pages/register/Register";
 import VerifyEmail from "../pages/register/VerifyEmail";
 import SendReset from "../pages/forgotpassword/SendReset";
-import ChangePassword from "../pages/forgotpassword/ChangePAssword";
+import ChangePassword from "../pages/forgotpassword/ChangePassword";
 
 export const router = createBrowserRouter(
   [

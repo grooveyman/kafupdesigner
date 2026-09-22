@@ -1,0 +1,241 @@
+
+
+.dashboard-stats {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    margin-left: 10px;
+}
+
+.dashboard-stats p, h5{
+    margin: 0 !important;
+}
+.dashboard-stats h5 {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+.dashboard-stats p {
+    font-size: 0.7rem;
+    color: #6c757d;
+}
+
+.dashboard-chart {
+    padding: 1.5rem;
+    background: #ffffff;
+    /* border: 1px solid #eef0f2; */
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(25, 35, 45, 0.06);
+}
+
+.dashboard-chart-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.dashboard-chart-header h5,
+.dashboard-chart-header p {
+    margin: 0;
+}
+
+.dashboard-chart-header h5 {
+    color: #20252b;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.dashboard-chart-header p {
+    margin-top: 0.3rem;
+    color: #7b838c;
+    font-size: 0.8rem;
+}
+
+.dashboard-chart-header strong {
+    color: #20252b;
+    font-size: 1.1rem;
+    white-space: nowrap;
+}
+
+.dashboard-table-card {
+    margin-top: 1.5rem;
+    /* border: 1px solid #eef0f2 !important; */
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(25, 35, 45, 0.06);
+}
+
+.dashboard-orders-card{
+    padding: 20px;
+}
+
+.dashboard-table-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.dashboard-table-header h5 {
+    color: #20252b;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.dashboard-table-header p {
+    font-size: 0.8rem;
+}
+
+.dashboard-table-link {
+    padding: 0.45rem 0.75rem;
+    border: 1px solid #e7eaed;
+    border-radius: 8px;
+    background: #fffdf1;
+    color: #9a7900;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.dashboard-table {
+    width: 100%;
+    min-width: 620px;
+    border-collapse: collapse;
+    color: #4d555d;
+    font-size: 0.82rem;
+}
+
+.dashboard-table th {
+    padding: 0 1rem 0.8rem;
+    border-bottom: 1px solid #eef0f2;
+    color: #9aa1a8;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+.dashboard-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #f1f2f3;
+    white-space: nowrap;
+}
+
+.dashboard-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.dashboard-orders-table {
+    min-width: 510px;
+}
+
+.dashboard-orders-table th,
+.dashboard-orders-table td {
+    padding-right: 0.6rem;
+    padding-left: 0.6rem;
+}
+
+.dashboard-order-id {
+    color: #707981;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.dashboard-customer-name {
+    /* color: #282e34; */
+    font-weight: 600;
+}
+
+.dashboard-order-status {
+    display: inline-block;
+    padding: 0.35rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.67rem;
+    font-weight: 700;
+}
+
+.dashboard-order-status-processing {
+    background: #fff8d8;
+    color: #9a7900;
+}
+
+.dashboard-order-status-shipped {
+    background: #eaf3ff;
+    color: #3474b7;
+}
+
+.dashboard-order-status-delivered {
+    background: #e7f7ef;
+    color: #27855e;
+}
+
+.dashboard-product-cell,
+.dashboard-trend-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.dashboard-product-cell strong {
+    /* color: #282e34; */
+    font-weight: 600;
+}
+
+.dashboard-product-rank {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 8px;
+    background: #fff8d8;
+    color: #aa8500;
+    font-size: 0.68rem;
+    font-weight: 700;
+}
+
+.dashboard-category {
+    padding: 0.35rem 0.6rem;
+    border-radius: 999px;
+    background: #f5f6f7;
+    color: #737c85;
+    font-size: 0.7rem;
+}
+
+.dashboard-trend-cell {
+    min-width: 115px;
+    color: #28956a;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.dashboard-trend-bar {
+    width: 48px;
+    height: 5px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #edf1ef;
+}
+
+.dashboard-trend-bar span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #43b982;
+}
+
+@media (max-width: 576px) {
+    .dashboard-chart {
+        padding: 1rem 0.5rem;
+    }
+
+    .dashboard-chart-header strong {
+        font-size: 0.9rem;
+    }
+
+    .dashboard-table-card .card-body {
+        padding: 1rem !important;
+    }
+}
