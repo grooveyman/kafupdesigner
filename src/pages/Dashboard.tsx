@@ -60,7 +60,7 @@ const Dashboard: React.FC = () => {
             {/* Statistics */}
             <div className="row mt-5">
 
-                <div className="col-md-3">
+                <div className="col-md-6 col-lg-4 col-sm-12">
                     <div className="dashboard-card card">
                         <div className="card-body">
                             <div className="d-flex justify-content-start">
@@ -79,7 +79,7 @@ const Dashboard: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="col-md-3">
+                <div className="col-md-6 col-lg-4 col-sm-12">
                     <div className="dashboard-card card">
                         <div className="card-body">
                             <div className="d-flex justify-content-start">
@@ -98,7 +98,7 @@ const Dashboard: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="col-md-3">
+                <div className="col-md-6 col-lg-4 col-sm-12">
                     <div className="dashboard-card card">
                         <div className="card-body">
                             <div className="d-flex justify-content-start">
@@ -118,7 +118,7 @@ const Dashboard: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="col-md-3">
+                <div className="col-md-6 col-lg-4">
                     <div className="dashboard-card card">
                         <div className="card-body">
                             <div className="d-flex justify-content-start">
