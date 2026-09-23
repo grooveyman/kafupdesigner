@@ -86,18 +86,25 @@ const MainNavBar: React.FC<NavbarProps> = ({ items }) => {
               {productsOpen && (
                 <div className="absolute left-0 mt-2 w-48 rounded-md bg-white py-1 shadow-lg z-[9999]" role="menu">
                   <NavLink
-                    to="/products"
-                    className="block px-4 py-2 text-sm text-gray-700 no-underline hover:bg-gray-100"
+                    to="/designs"
+                    className="nv-link block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     role="menuitem"
                   >
-                    All products
+                    List
                   </NavLink>
                   <NavLink
-                    to="/addproducts"
-                    className="block px-4 py-2 text-sm text-gray-700 no-underline hover:bg-gray-100"
+                    to="/collections"
+                    className="nv-link block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     role="menuitem"
                   >
-                    Add product
+                    Collections
+                  </NavLink>
+                  <NavLink
+                    to="/categories"
+                    className="nv-link block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    role="menuitem"
+                  >
+                    Categories
                   </NavLink>
                 </div>
               )}
