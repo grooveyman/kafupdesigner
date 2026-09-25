@@ -1,14 +1,15 @@
-import React, { createContext, useEffect } from "react";
+import React, { createContext } from "react";
 import { tokenService } from "./tokenService";
 
 
 interface AuthContextType {
     isAuthenticated: boolean;
-    login: (token: string, designerCode: string) => void;
+    login: (token: string, designerCode: string, isAccountSetup?: boolean) => void;
     logout: () => void;
     setAccessToken?: (token: string) => void;
     getAccessToken?: () => string | null;
     clearAccessToken?: () => void;
+    isAccountSetup: boolean;
 }
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -20,28 +21,30 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const [authcredentials, setAuthcredentials] = React.useState({
         token: tokenService.get() || "",
         designerCode: tokenService.getDesignerCode() || "",
+        isAccountSetup:  tokenService.getAccountSetup() == "true" ? true:false
     });
 
 
-    const login = (token: string, designerCode: string) => {
-        setAuthcredentials({ token, designerCode });
+    const login = (token: string, designerCode: string, isAccountSetup = false) => {
+        setAuthcredentials({ token, designerCode, isAccountSetup });
         tokenService.set(token);
         tokenService.setDesignerCode(designerCode);
+        tokenService.setAccountSetup(isAccountSetup);
     };
 
     const logout = () => {
-        setAuthcredentials({ token: "", designerCode: "" });
+        setAuthcredentials({ token: "", designerCode: "", isAccountSetup: false });
         tokenService.clear();
         tokenService.clearDesignerCode();
     };
 
     const isAuthenticated = !!authcredentials.token;
-
+    const isAccountSetup = authcredentials.isAccountSetup;
     //restore token on mount
     
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout}}>
+        <AuthContext.Provider value={{ isAuthenticated, login, logout, isAccountSetup}}>
             {children}
         </AuthContext.Provider>
     );

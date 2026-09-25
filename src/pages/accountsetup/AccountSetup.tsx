@@ -1,9 +1,10 @@
 
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useApiMutation } from "../../hooks/useApi";
 import { toast } from "react-toastify";
+import { useAuth } from "../../context/AuthContext";
 
 const AccountSetup: React.FC = () => {
     const [showModal, setShowModal] = useState(true);
@@ -14,6 +15,9 @@ const AccountSetup: React.FC = () => {
         account_number: ""
     })
 
+    const { isAccountSetup } = useAuth();
+    console.log(isAccountSetup);
+
     const navigate = useNavigate();
 
     const mutation = useApiMutation<{ message: string }>(
@@ -22,6 +26,8 @@ const AccountSetup: React.FC = () => {
         {
             onSuccess: (data) => {
                 toast.success(data.message);
+                //update account setup
+                localStorage.setItem("is_account_setup", "true");
                 navigate("/");
             },
             onError: (data) => {
@@ -51,7 +57,10 @@ const AccountSetup: React.FC = () => {
         setAccountData((prev) => ({ ...prev, [name]: value }));
     }
 
-    return (
+    return isAccountSetup ? (
+         <Navigate to="/" />
+    ) : (
+
         <>
             {showSetup && (
                 <div className="container">
@@ -148,7 +157,10 @@ const AccountSetup: React.FC = () => {
             )}
 
         </>
+
     );
+
+
 };
 
 export default AccountSetup;
