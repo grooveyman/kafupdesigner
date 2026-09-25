@@ -244,6 +244,12 @@ h5 {
 .dashboard-card {
     padding: 15px;
     height: 100%;
+
+
+}
+
+.btn-close{
+    /* color: white !important; */
 }
 
 .nv-link {

@@ -1,59 +1,68 @@
 import { UseMutationOptions, UseQueryOptions, useMutation, useQuery } from "@tanstack/react-query";
 import { tokenService } from "../context/tokenService";
 
-const BASE_URL = import.meta.env.VITE_APP_BASE_URL || "localhost:5000/api/v1";
+const BASE_URL = import.meta.env.VITE_APP_BASE_URL || "http://localhost:5000/api/v1";
 console.log("Base URL:", BASE_URL);
 
 
-const refreshAccessToken = async () => {
+const refreshAccessToken = async (): Promise<boolean> => {
   console.log("Attempting to refresh access token");
   try {
-
-    const refreshRes = await fetch(`${BASE_URL}/auth/refresh-token`, {
+    const refreshRes = await fetch(`${BASE_URL}/auth/refresh`, {
       method: "POST",
       credentials: "include", // include cookies
     });
 
-    if (refreshRes.status === 401) {
-      tokenService.clear();
-      window.location.href = "/admin/login";
-      return;
+    if (!refreshRes.ok) {
+      return false;
     }
 
-    const data = await refreshRes.json();
-    tokenService.set(data.token);
+    const responseText = await refreshRes.text();
+    if (!responseText) {
+      return false;
+    }
 
+    const data: { access_token?: string } = JSON.parse(responseText);
+    if (!data.access_token) {
+      return false;
+    }
+
+    tokenService.set(data.access_token);
+    return true;
   } catch (error) {
-    tokenService.clear();
-    window.location.href = "/admin/login";
     console.error("Error refreshing access token:", error);
-
+    return false;
   }
-
 };
 
 //generic fetch function
 async function fetcher<T>(url: string, options?: RequestInit): Promise<T> {
   console.log(`${BASE_URL}${url}`);
-  const headers = {
-    Authorization: tokenService.get() ? `Bearer ${tokenService.get()}` : "",
-    ...(options?.headers || {}),
-  }
-  const res = await fetch(`${BASE_URL}${url}`, {
+  const request = () => fetch(`${BASE_URL}${url}`, {
     ...options,
-    headers,
-    credentials: "include", // include cookies for authentication
+    headers: {
+      Authorization: tokenService.get() ? `Bearer ${tokenService.get()}` : "",
+      ...(options?.headers || {}),
+    },
+    credentials: "include",
   });
 
-  if (res.status === 401) {
-    //call refresh token endpoint to get new access token
+  let res = await request();
 
-    await refreshAccessToken();
+  if (res.status === 401) {
+    const refreshed = await refreshAccessToken();
+    console.log(localStorage.getItem("token"));
+    if (!refreshed) {
+      tokenService.clear();
+      // window.location.href = "/admin/login";
+    } else {
+      res = await request();
+    }
   }
   if (!res.ok) {
-    console.log(res);
-    console.log("API request failed:", res.status, await res.text());
-    throw new Error((await res.text()) || "API request failed");
+    const errorText = await res.text();
+    console.log("API request failed:", res.status, errorText);
+    throw new Error(errorText || "API request failed");
   }
 
   return res.json();

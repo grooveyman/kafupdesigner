@@ -41,6 +41,7 @@ select {
     height: 60px !important;
     background-color: var(--input-background-color) !important;
     border: none !important;
+    padding: 20px;
 }
 
 textarea {
@@ -56,6 +57,8 @@ textarea,
 select {
     color: var(--label-color) !important;
 }
+
+
 
 .extra-image-placeholder {
     color: var(--text-color) !important;

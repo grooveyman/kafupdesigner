@@ -58,10 +58,11 @@ const Login: React.FC = () => {
         "POST",
         {
             onSuccess: async (data) => {
-                console.log("Login successful:", data.designercode);
-                login(data.data, data.designercode)
+                console.log("Login successful:", data.data);
+                // console.log(data.data.account_setup);
+                login(data.data.access_token, data.designercode, data.data.account_setup)
                 toast.success(data.message);
-                console.log("Login successful:", data);
+                console.log("Login successful:", data.data.access_token);
                 navigate("/");
             },
             onError: (error) => {

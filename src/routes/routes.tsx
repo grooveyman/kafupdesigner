@@ -27,6 +27,7 @@ import Register from "../pages/register/Register";
 import VerifyEmail from "../pages/register/VerifyEmail";
 import SendReset from "../pages/forgotpassword/SendReset";
 import ChangePassword from "../pages/forgotpassword/ChangePassword";
+import AccountSetup from "../pages/accountsetup/AccountSetup";
 
 export const router = createBrowserRouter(
   [
@@ -67,7 +68,7 @@ export const router = createBrowserRouter(
               children: [
 
                 { index: true, element: <Dashboard /> },
-                { path: "products", element: <ProductList /> },
+                { path: "designs", element: <ProductList /> },
                 {
                   path: "/addproducts", element: (
                     <ProductProvider>
@@ -83,6 +84,7 @@ export const router = createBrowserRouter(
                 { path: "/profile-category", element: <CategoryWrapper /> },
                 { path: "/profile-collections", element: <CollectionWrapper /> },
                 { path: "/profile-shop", element: <ShopWrapper /> },
+                { path: "/accountsetup/", element: <AccountSetup /> },
                 { path: "*", element: <div>404 Not Found</div> }
               ],
             },
