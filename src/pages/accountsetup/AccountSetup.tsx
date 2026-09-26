@@ -1,29 +1,8 @@
 
 
-<<<<<<< HEAD
-const AccountSetup:React.FC = () => {
-    return (
-        <>
-            <div className="container">
-                <div className="row">
-                    <h5>Welcome to Kafup Designer</h5>
-                    <p>Setup your account to sell and receive profits from your hard work.</p>
-                </div>
-
-                <div className="row">
-                    <div className="">
-                        <label>Bank Name</label>
-                        <input type="text" name="bank_name" placeholder="Enter name of bank"/>
-                    </div>
-                </div>
-
-            </div>
-        </>
-    );
-=======
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import { useApiMutation } from "../../hooks/useApi";
+import { useApiMutation, useApiQuery } from "../../hooks/useApi";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 
@@ -31,10 +10,13 @@ const AccountSetup: React.FC = () => {
     const [showModal, setShowModal] = useState(true);
     const [showSetup, setShowSetup] = useState(false);
     const [accountData, setAccountData] = useState({
-        name: "",
         branch: "",
         account_number: ""
     })
+
+    //get bank list
+    const { data: bankList, isLoading: isBankListLoading } = useApiQuery<{ id: string; code: string; name: string, provider_id: number }[]>(["banks"], "/designer/banks");
+    console.log(!isBankListLoading ? bankList : null);
 
     const { isAccountSetup } = useAuth();
     console.log(isAccountSetup);
@@ -73,7 +55,7 @@ const AccountSetup: React.FC = () => {
         mutation.mutate(accountData);
     }
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setAccountData((prev) => ({ ...prev, [name]: value }));
     }
@@ -94,26 +76,32 @@ const AccountSetup: React.FC = () => {
                                 <div className="row">
                                     <div className="col-md-6">
                                         <label htmlFor="bank-name">Bank Name</label>
-                                        <input
+                                        <select
                                             className="form-control"
                                             id="bank-name"
-                                            type="text"
-                                            name="name"
-                                            placeholder="Enter name of bank"
+                                            name="bank_id"
                                             onChange={handleChange}
-                                        />
+                                        >
+                                            <option value="">Select Bank</option>
+                                            {bankList?.map((bank) => (
+                                                <option key={bank.id} value={bank.provider_id}>
+                                                    {bank.name}
+                                                </option>
+                                            ))}
+                                        </select>
                                     </div>
                                     <div className="col-md-6">
                                         <label htmlFor="bank-branch">Bank Branch</label>
                                         <input
                                             className="form-control"
-                                            id="bank-branch"
-                                            type="text"
+                                            id="branch"
                                             name="branch"
-                                            placeholder="Enter branch of bank"
+                                            type="text"
+                                            placeholder="Enter name of bank"
                                             onChange={handleChange}
                                         />
                                     </div>
+                                    
                                 </div>
 
                                 <div className="mt-2">
@@ -182,7 +170,6 @@ const AccountSetup: React.FC = () => {
     );
 
 
->>>>>>> feature/accountsetup
 };
 
 export default AccountSetup;
