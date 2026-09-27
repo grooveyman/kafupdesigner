@@ -1,78 +1,125 @@
-import { useRef } from "react";
-import { FacebookIcon, InstagramIcon, Pencil, PencilLineIcon, TwitterIcon, YoutubeIcon } from "lucide-react";
+import { Facebook, Instagram, Twitter, Youtube, MapPin, BadgeCheck } from "lucide-react";
+import { FaTiktok } from "react-icons/fa";
+import type { DesignerType } from "../../types/types";
 
+export interface ProfileStats {
+    designs: number;
+    collections: number;
+    categories: number;
+    listed: number;
+}
 
-const Person: React.FC = () => {
-    const fileInputRef = useRef<HTMLInputElement>(null);
+interface PersonProps {
+    designer?: DesignerType;
+    stats: ProfileStats;
+    loading?: boolean;
+}
 
-    const handleEditClick = () => {
-        fileInputRef.current?.click();
-    };
+const getInitials = (name?: string) => {
+    if (!name) return "?";
+    return name
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .map((w) => w[0]?.toUpperCase())
+        .join("");
+};
 
-    const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            console.log("Selected file:", file);
-            // Handle file upload here
-        }
-    };
+const Person: React.FC<PersonProps> = ({ designer, stats, loading }) => {
+    const socials = [
+        { href: designer?.social_fb, Icon: Facebook, label: "Facebook" },
+        { href: designer?.social_ig, Icon: Instagram, label: "Instagram" },
+        { href: designer?.social_tw, Icon: Twitter, label: "Twitter" },
+        { href: designer?.social_yt, Icon: Youtube, label: "YouTube" },
+        { href: designer?.social_tk, Icon: FaTiktok, label: "TikTok" },
+    ].filter((s) => !!s.href);
+
+    const statItems = [
+        { value: stats.designs, label: "Designs" },
+        { value: stats.collections, label: "Collections" },
+        { value: stats.categories, label: "Categories" },
+        { value: stats.listed, label: "Listed" },
+    ];
+
+    if (loading) {
+        return (
+            <div className="kf-card">
+                <div className="kf-person__top">
+                    <div className="kf-skeleton" style={{ width: 88, height: 88, borderRadius: 16 }} />
+                    <div style={{ flex: 1 }}>
+                        <div className="kf-skeleton" style={{ height: 20, width: "70%" }} />
+                        <div className="kf-skeleton" style={{ height: 12, width: "45%", marginTop: 10 }} />
+                    </div>
+                </div>
+                <div className="kf-stats">
+                    {statItems.map((_, i) => (
+                        <div key={i} className="kf-skeleton" style={{ height: 62 }} />
+                    ))}
+                </div>
+                <div className="kf-skeleton" style={{ height: 60, marginTop: 22 }} />
+            </div>
+        );
+    }
 
     return (
-        <>
-            <div className="row">
-                <div className="profile-dp">
-                    <img className="w-full h-[35vh] object-cover rounded" src="https://res.cloudinary.com/dm104hogb/image/upload/v1757794303/kreationz/products/kbbgdq9ffyufsoedz8as.jpg" />
-                    <span className="profile-edit-btn" onClick={handleEditClick} style={{ cursor: 'pointer' }}><Pencil size={15} /></span>
-                    <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileSelect}
-                        style={{ display: 'none' }}
-                    />
+        <div className="kf-card">
+            <div className="kf-person__top">
+                {designer?.brand_profile_img ? (
+                    <img className="kf-avatar" src={designer.brand_profile_img} alt={designer.brand_name} />
+                ) : (
+                    <div className="kf-avatar kf-avatar--fallback">{getInitials(designer?.brand_name)}</div>
+                )}
+                <div>
+                    <h4 className="kf-person__name">{designer?.brand_name || "Unnamed brand"}</h4>
+                    <p className="kf-person__role">
+                        <BadgeCheck size={15} color="#f5c400" /> Verified designer
+                    </p>
                 </div>
             </div>
-            <div className="row mt-3">
-                <div className="head">
-                    <h4 className="head-name">Katy Simpson</h4>
-                </div>
-                <div className="meta row">
-                    <button className="col-md-3 btn btn-sm btn-secondary">23 Designs</button>
-                    <button className="col-md-3 btn btn-sm btn-secondary">9 Collections</button>
-                    <button className="col-md-3 btn btn-sm btn-secondary">7 Sold</button>
-                    <button className="col-md-3 btn btn-sm btn-secondary">5 Followers</button>
-                </div>
-            </div>
-            <div className="row mt-5">
-                <div className="desc text-white">
-                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Iste exercitationem commodi dolores voluptatem, est iure itaque optio dolorum reiciendis nam quisquam reprehenderit consequatur cumque perferendis.
-                </div>
 
-            </div>
-            <div className="row mt-4">
-                <div className="socials text-white">
-                    <h6 className="mb-3">Socials</h6>
-                    <div className="social-icons flex space-x-2">
-                        <span className="p-2 bg-black"><FacebookIcon size={20} /></span>
-                        <span className="p-2 bg-black"><InstagramIcon size={20} /></span>
-                        <span className="p-2 bg-black"><TwitterIcon size={20} /></span>
-                        <span className="p-2 bg-black"><YoutubeIcon size={20} /></span>
+            <div className="kf-stats">
+                {statItems.map((s) => (
+                    <div key={s.label} className="kf-stat">
+                        <div className="kf-stat__value">{s.value}</div>
+                        <span className="kf-stat__label">{s.label}</span>
                     </div>
-
-                </div>
-                
-            </div>
-            <div className="row mt-4 mb-4">
-                <div className="locations text-white">
-                    <h6 className="mb-2">Locations</h6>
-                    <span>Ashaiman, Accra</span>
-                </div>
+                ))}
             </div>
 
-            <div className="row">
+            {designer?.pitch && <p className="kf-person__bio">{designer.pitch}</p>}
 
-            </div>
-        </>
+            {socials.length > 0 && (
+                <>
+                    <hr className="kf-divider" />
+                    <p className="kf-section-title">Socials</p>
+                    <div className="kf-socials">
+                        {socials.map(({ href, Icon, label }) => (
+                            <a
+                                key={label}
+                                href={href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="kf-social"
+                                aria-label={label}
+                            >
+                                <Icon size={18} />
+                            </a>
+                        ))}
+                    </div>
+                </>
+            )}
+
+            {designer?.address && (
+                <>
+                    <hr className="kf-divider" />
+                    <p className="kf-section-title">Location</p>
+                    <div className="kf-location">
+                        <MapPin size={16} color="#f5c400" />
+                        <span>{designer.address}</span>
+                    </div>
+                </>
+            )}
+        </div>
     );
 };
 
