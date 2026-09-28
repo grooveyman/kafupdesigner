@@ -10,7 +10,7 @@ import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import "./admin.css";
 
-const ProductList: React.FC = () => {
+const DesignList: React.FC = () => {
   const [_isDelete, setIsDelete] = useState(false);
   const { data, isLoading } = useApiQuery<Product[]>(["products"], "/designer/designs");
   console.log("Fetched data:", isLoading ? " loading..." : data);
@@ -35,7 +35,7 @@ const ProductList: React.FC = () => {
     console.log("Delete clicked");
     Swal.fire({
       title: "Are you sure?",
-      text: `You are deleting ${name} from products. Note: This action cannot be undone!`,
+      text: `You are deleting ${name} from designs. Note: This action cannot be undone!`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
@@ -46,14 +46,14 @@ const ProductList: React.FC = () => {
         mutation.mutate({ id });
         setIsDelete(true);
         console.log("Item deleted");
-        Swal.fire("Deleted!", "Product has been removed.", "success");
+        Swal.fire("Deleted!", "Design has been removed.", "success");
       }
     });
   };
 
   const handleEdit = (prodid: string) => {
     if (prodid) {
-      navigate(`/editproducts/${prodid}`);
+      navigate(`/editdesigns/${prodid}`);
     }
   };
 
@@ -68,7 +68,7 @@ const ProductList: React.FC = () => {
                 <Breadcrumb
                   crumbs={[
                     { label: "Dashboard", href: "/" },
-                    { label: "Product List", href: "/products" },
+                    { label: "Design List", href: "/designs" },
                   ]}
                 />
               </div>
@@ -84,9 +84,9 @@ const ProductList: React.FC = () => {
                 <div className="">
                   <button
                     className="btn btn-sm btn-secondary"
-                    onClick={() => navigate("/addproducts")}
+                    onClick={() => navigate("/adddesigns")}
                   >
-                    Add Product
+                    Add Design
                   </button>
                 </div>
                 <div className="d-flex justify-content-end gap-2">
@@ -161,7 +161,7 @@ const ProductList: React.FC = () => {
 
                 <thead className="">
                   <tr>
-                    <th>Product Details</th>
+                    <th>Design Details</th>
                     <th>Category</th>
                     <th>Quantity</th>
                     <th>Unit Price</th>
@@ -188,40 +188,40 @@ const ProductList: React.FC = () => {
                   </tr>
                 ) : (
                   data ? (
-                    data?.map((product: any) => {
+                    data?.map((design: any) => {
                       return (
-                        <tr className="" key={product.id}>
+                        <tr className="" key={design.id}>
                           <td className="">
                             <div className="d-flex gap-3">
                               <img
-                                src={product.previewimg}
+                                src={design.previewimg}
                                 height={50}
                                 width={90}
                                 style={{ objectFit: "cover" }}
                               />
                               <div className="prod-det">
-                                <p className="prodname">{product.name}</p>
-                                <p className="prod-var text-wrap">{product.description.length > 30 ? product.description.slice(0, 30) + "..." : product.description}</p>
+                                <p className="prodname">{design.name}</p>
+                                <p className="prod-var text-wrap">{design.description.length > 30 ? design.description.slice(0, 30) + "..." : design.description}</p>
                               </div>
                             </div>
                           </td>
                           <td>
                             <p className="prod-category">
-                              {product.category && (
+                              {design.category && (
                                 <span className="table-card text-black">
-                                  {product.category.name}
+                                  {design.category.name}
                                 </span>
                               )}
 
                             </p>
                           </td>
                           <td className="">
-                            <p>{product.quantity}</p>
+                            <p>{design.quantity}</p>
                           </td>
 
                           <td>
                             <div className="d-flex">
-                              <p>{product.price}</p>
+                              <p>{design.price}</p>
                             </div>
                           </td>
 
@@ -233,7 +233,7 @@ const ProductList: React.FC = () => {
                                 style={{ cursor: "pointer" }}
                                 size={25}
                                 strokeWidth={1.3}
-                                onClick={() => handleEdit(product.id)}
+                                onClick={() => handleEdit(design.id)}
                               />
                               <Trash2Icon
                                 className="prod-action-del"
@@ -241,7 +241,7 @@ const ProductList: React.FC = () => {
                                 style={{ cursor: "pointer" }}
                                 strokeWidth={1.3}
                                 onClick={() =>
-                                  handleDelete(product.name, product.id)
+                                  handleDelete(design.name, design.id)
                                 }
                               />
                               {/* </p> */}
@@ -253,7 +253,7 @@ const ProductList: React.FC = () => {
                   ) : (
                     <div className="flex flex-col items-center text-gray-400 py-6">
                       <ArchiveX className="mb-2" size={32} />
-                      <p>No products available.</p>
+                      <p>No designs available.</p>
                     </div>
 
                   )
@@ -269,4 +269,4 @@ const ProductList: React.FC = () => {
   );
 };
 
-export default ProductList;
+export default DesignList;

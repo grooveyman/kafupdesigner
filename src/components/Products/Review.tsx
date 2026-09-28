@@ -1,4 +1,4 @@
-import { useProductContext } from "../../context/ProductContext";
+import { useDesignContext } from "../../context/ProductContext";
 import namer from "color-namer";
 
 export const hexToColorName = (hex: string): string => {
@@ -7,7 +7,7 @@ export const hexToColorName = (hex: string): string => {
 };
 
 const Review: React.FC = () => {
-    const { product } = useProductContext();
+    const { design } = useDesignContext();
 
     const isDarkColor = (hex: string) => {
         const r = parseInt(hex.slice(1, 3), 16);
@@ -24,7 +24,7 @@ const Review: React.FC = () => {
             {/* Category */}
             <section className="kf-review-section">
                 <h6 className="kf-review-title">Category</h6>
-                <div className="kf-review-value">{product.category?.name || "—"}</div>
+                <div className="kf-review-value">{design.category?.name || "—"}</div>
             </section>
 
             {/* Details */}
@@ -33,15 +33,15 @@ const Review: React.FC = () => {
                 <div className="row g-3">
                     <div className="col-12 col-md-4">
                         <span className="kf-review-label">Name</span>
-                        <div className="kf-review-value">{product.name || "—"}</div>
+                        <div className="kf-review-value">{design.name || "—"}</div>
                     </div>
                     <div className="col-12 col-md-4">
                         <span className="kf-review-label">Price (GHS)</span>
-                        <div className="kf-review-value">{product.price || "—"}</div>
+                        <div className="kf-review-value">{design.price || "—"}</div>
                     </div>
                     <div className="col-12">
                         <span className="kf-review-label">Description</span>
-                        <div className="kf-review-value">{product.description || "—"}</div>
+                        <div className="kf-review-value">{design.description || "—"}</div>
                     </div>
                 </div>
             </section>
@@ -49,7 +49,7 @@ const Review: React.FC = () => {
             {/* Variations */}
             <section className="kf-review-section">
                 <h6 className="kf-review-title">Variations</h6>
-                {product.variations?.length ? (
+                {design.variations?.length ? (
                     <div className="table-responsive">
                         <table className="table text-nowrap kf-review-table">
                             <thead>
@@ -64,7 +64,7 @@ const Review: React.FC = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {product.variations.map((variation, i) => (
+                                {design.variations.map((variation, i) => (
                                     <tr className="variation-tr" key={i}>
                                         <td>
                                             <span
@@ -97,21 +97,21 @@ const Review: React.FC = () => {
             <section className="kf-review-section">
                 <h6 className="kf-review-title">Images</h6>
                 <div className="d-flex flex-wrap align-items-start gap-3">
-                    {product.previewimg && (
+                    {design.previewimg && (
                         <div>
                             <span className="kf-review-label">Preview</span>
                             <img
                                 className="kf-review-preview"
-                                src={srcOf(product.previewimg)}
+                                src={srcOf(design.previewimg)}
                                 alt="Design preview"
                             />
                         </div>
                     )}
-                    {product.otherimages?.length > 0 && (
+                    {design.otherimages?.length > 0 && (
                         <div>
                             <span className="kf-review-label">Gallery</span>
                             <div className="d-flex flex-wrap gap-2">
-                                {product.otherimages.map((img, i) => (
+                                {design.otherimages.map((img, i) => (
                                     <img
                                         key={i}
                                         className="kf-review-thumb"

@@ -1,11 +1,11 @@
 import { z } from "zod";
-import type { ProductType } from "../../context/ProductContext";
+import type { DesignType } from "../../context/ProductContext";
 
 export type StepKey = "categories" | "productdetails" | "images" | "review";
 
 export const STEPS: { key: StepKey; label: string }[] = [
   { key: "categories", label: "Categories" },
-  { key: "productdetails", label: "Product Details" },
+  { key: "productdetails", label: "Design Details" },
   { key: "images", label: "Images" },
   { key: "review", label: "Review" },
 ];
@@ -22,7 +22,7 @@ const categoriesSchema = z.object({
 });
 
 const detailsSchema = z.object({
-  name: z.string().trim().min(1, "Product name is required"),
+  name: z.string().trim().min(1, "Design name is required"),
   price: z.coerce.number().gt(0, "Price must be greater than 0"),
   variations: z.array(variationSchema).min(1, "Add at least one variant"),
 });
@@ -35,7 +35,7 @@ const imagesSchema = z.object({
 });
 
 /** Validate a single wizard step. Returns a list of human-readable errors ([] = valid). */
-export function validateStep(step: StepKey, product: ProductType): string[] {
+export function validateStep(step: StepKey, design: DesignType): string[] {
   let result:
     | ReturnType<typeof categoriesSchema.safeParse>
     | ReturnType<typeof detailsSchema.safeParse>
@@ -43,13 +43,13 @@ export function validateStep(step: StepKey, product: ProductType): string[] {
 
   switch (step) {
     case "categories":
-      result = categoriesSchema.safeParse(product);
+      result = categoriesSchema.safeParse(design);
       break;
     case "productdetails":
-      result = detailsSchema.safeParse(product);
+      result = detailsSchema.safeParse(design);
       break;
     case "images":
-      result = imagesSchema.safeParse(product);
+      result = imagesSchema.safeParse(design);
       break;
     default:
       return [];
@@ -58,12 +58,12 @@ export function validateStep(step: StepKey, product: ProductType): string[] {
   return result.success ? [] : result.error.issues.map((i) => i.message);
 }
 
-/** Validate the whole product before final submit. */
-export function validateProduct(product: ProductType): string[] {
+/** Validate the whole design before final submit. */
+export function validateDesign(design: DesignType): string[] {
   return [
-    ...validateStep("categories", product),
-    ...validateStep("productdetails", product),
-    ...validateStep("images", product),
+    ...validateStep("categories", design),
+    ...validateStep("productdetails", design),
+    ...validateStep("images", design),
   ];
 }
 

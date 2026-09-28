@@ -5,7 +5,7 @@ import Spinner from "../Spinner";
 import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
 import "../../assets/css/categories.css";
-import { useProductContext } from "../../context/ProductContext";
+import { useDesignContext } from "../../context/ProductContext";
 import { tokenService } from "../../context/tokenService";
 
 interface PostDataType {
@@ -25,7 +25,7 @@ interface Response {
 const Categories: React.FC = () => {
     const queryClient = useQueryClient();
     const designerCode = tokenService.getDesignerCode() ?? "";
-    const { product, addToProduct } = useProductContext();
+    const { design, addToDesign } = useDesignContext();
 
     const [catname, setCatName] = useState<string>("");
 
@@ -36,12 +36,12 @@ const Categories: React.FC = () => {
     );
     const categories = data?.data ?? [];
 
-    const selectedName = product.category?.name;
+    const selectedName = design.category?.name;
 
-    // Choosing a category updates the shared product/design draft.
+    // Choosing a category updates the shared design draft.
     const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selected = categories.find((cat) => cat.id === e.target.value);
-        addToProduct({
+        addToDesign({
             category: { id: selected?.id ?? "", name: selected?.name ?? "" },
             designer_code: designerCode,
             cat_code: selected?.id ?? "",
@@ -93,7 +93,7 @@ const Categories: React.FC = () => {
                         <>
                             <select
                                 className="form-select"
-                                value={product.cat_code ?? ""}
+                                value={design.cat_code ?? ""}
                                 onChange={handleSelectChange}
                             >
                                 <option value="">Select a category…</option>

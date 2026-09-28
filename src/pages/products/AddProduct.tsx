@@ -7,13 +7,13 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Categories from "../../components/Products/Categories";
 import "../../assets/css/addproduct.css";
-import ProductDetails from "../../components/Products/ProductDetails";
+import DesignDetails from "../../components/Products/ProductDetails";
 import AddImages from "../../components/Products/AddImages";
 import Review from "../../components/Products/Review";
-import { useProductContext } from "../../context/ProductContext";
-import ProductScrollNav from "../../components/Products/ProductScrollNav";
+import { useDesignContext } from "../../context/ProductContext";
+import DesignScrollNav from "../../components/Products/ProductScrollNav";
 import Spinner from "../../components/Spinner";
-import { STEPS, StepKey, buildVariationsPayload, validateStep, validateProduct } from "./productValidation";
+import { STEPS, StepKey, buildVariationsPayload, validateStep, validateDesign } from "./productValidation";
 
 export interface Variation {
   size: string;
@@ -43,8 +43,8 @@ const TAB_ICONS: Record<StepKey, React.ReactNode> = {
   review: <CheckCheckIcon className="mr-2 inline-block" size={18} />,
 };
 
-const AddProducts: React.FC = () => {
-  const { product } = useProductContext();
+const AddDesigns: React.FC = () => {
+  const { design } = useDesignContext();
   const navigate = useNavigate();
 
   const [stepIndex, setStepIndex] = useState(0);
@@ -53,14 +53,14 @@ const AddProducts: React.FC = () => {
 
   const mutation = useApiMutation<{ message: string }>("/designer/designs", "POST", {
     onSuccess: (data) => {
-      toast.success(data.message ?? "Product created successfully");
-      navigate("/products");
+      toast.success(data.message ?? "Design created successfully");
+      navigate("/designs");
     },
     onError: (error) => toast.error(error.message),
   });
 
   const goNext = () => {
-    const errors = validateStep(currentStep, product);
+    const errors = validateStep(currentStep, design);
     if (errors.length) {
       toast.error(errors[0]);
       return;
@@ -77,7 +77,7 @@ const AddProducts: React.FC = () => {
       return;
     }
     for (let s = stepIndex; s < index; s++) {
-      const errs = validateStep(STEPS[s].key, product);
+      const errs = validateStep(STEPS[s].key, design);
       if (errs.length) {
         toast.error(errs[0]);
         setStepIndex(s);
@@ -90,29 +90,29 @@ const AddProducts: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const errors = validateProduct(product);
+    const errors = validateDesign(design);
     if (errors.length) {
       toast.error(errors[0]);
       return;
     }
 
     const formData = new FormData();
-    formData.append("name", product.name);
-    formData.append("description", product.description ?? "");
-    formData.append("catcode", product.category?.id ?? product.cat_code ?? "");
-    formData.append("price", String(product.price));
-    formData.append("sell", (product as any).sell ?? "0");
+    formData.append("name", design.name);
+    formData.append("description", design.description ?? "");
+    formData.append("catcode", design.category?.id ?? design.cat_code ?? "");
+    formData.append("price", String(design.price));
+    formData.append("sell", (design as any).sell ?? "0");
 
-    const collectioncode = (product as any).collection_code ?? "";
+    const collectioncode = (design as any).collection_code ?? "";
     if (collectioncode) formData.append("collectioncode", collectioncode);
 
     // variations must reach the backend as a JSON array of objects (parsed server-side).
-    formData.append("variations", JSON.stringify(buildVariationsPayload(product.variations)));
+    formData.append("variations", JSON.stringify(buildVariationsPayload(design.variations)));
 
-    if (product.previewimg instanceof File) {
-      formData.append("previewimg", product.previewimg);
+    if (design.previewimg instanceof File) {
+      formData.append("previewimg", design.previewimg);
     }
-    product.otherimages.forEach((img) => {
+    design.otherimages.forEach((img) => {
       if (img.url instanceof File) formData.append("otherimages", img.url);
     });
 
@@ -121,7 +121,7 @@ const AddProducts: React.FC = () => {
 
   return (
     <>
-      <ProductScrollNav prodname={product.name} prodamount={product.price} />
+      <DesignScrollNav prodname={design.name} prodamount={design.price} />
       <div className="container kf-wizard">
         <form className="w-100" onSubmit={handleSubmit} encType="multipart/form-data">
           <div className="row mt-4">
@@ -129,8 +129,8 @@ const AddProducts: React.FC = () => {
               <Breadcrumb
                 crumbs={[
                   { label: "Dashboard", href: "/dashboard" },
-                  { label: "Product List", href: "/products" },
-                  { label: "Add Product", href: "/addproducts" },
+                  { label: "Design List", href: "/designs" },
+                  { label: "Add Design", href: "/adddesigns" },
                 ]}
               />
             </div>
@@ -155,7 +155,7 @@ const AddProducts: React.FC = () => {
           {/* Step body */}
           <div className="card kf-wizard__body mt-4">
             {currentStep === "categories" && <Categories />}
-            {currentStep === "productdetails" && <ProductDetails />}
+            {currentStep === "productdetails" && <DesignDetails />}
             {currentStep === "images" && <AddImages />}
             {currentStep === "review" && <Review />}
           </div>
@@ -191,4 +191,4 @@ const AddProducts: React.FC = () => {
   );
 };
 
-export default AddProducts;
+export default AddDesigns;

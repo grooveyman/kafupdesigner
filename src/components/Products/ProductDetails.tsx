@@ -1,6 +1,6 @@
 import { useRef, useState, useCallback } from "react";
 import { toast } from "react-toastify";
-import { useProductContext } from "../../context/ProductContext";
+import { useDesignContext } from "../../context/ProductContext";
 import { Variation } from "../../context/ProductContext";
 import "../../assets/css/addproduct.css";
 import VariantModal from "./VariantModal";
@@ -13,9 +13,9 @@ const isDarkColor = (hex: string) => {
   return (r * 299 + g * 587 + b * 114) / 1000 < 128;
 };
 
-const ProductDetails: React.FC = () => {
+const DesignDetails: React.FC = () => {
   const colorInputRef = useRef<HTMLInputElement>(null);
-  const { product, addToProduct, removeVariant } = useProductContext();
+  const { design, addToDesign, removeVariant } = useDesignContext();
 
   const [variantForm, setVariantForm] = useState<Variation>({
     size: "",
@@ -31,12 +31,12 @@ const ProductDetails: React.FC = () => {
   });
 
   // 🔹 update name / description
-  const handleProductChange = useCallback(
+  const handleDesignChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const { name, value } = e.target;
-      addToProduct({ [name]: value } as any);
+      addToDesign({ [name]: value } as any);
     },
-    [addToProduct]
+    [addToDesign]
   );
 
   // 🔹 add variation
@@ -46,8 +46,8 @@ const ProductDetails: React.FC = () => {
       return;
     }
 
-    addToProduct({
-      variations: [...product.variations, variantForm],
+    addToDesign({
+      variations: [...design.variations, variantForm],
     });
 
     setVariantForm({
@@ -72,12 +72,12 @@ const ProductDetails: React.FC = () => {
       <div className="row p-3">
         {/* NAME */}
         <div className="col-md-6">
-          <label>Product Name</label>
+          <label>Design Name</label>
           <input
             className="form-control mt-2"
             name="name"
-            value={product.name}
-            onChange={handleProductChange}
+            value={design.name}
+            onChange={handleDesignChange}
           />
         </div>
 
@@ -88,8 +88,8 @@ const ProductDetails: React.FC = () => {
             className="form-control mt-2"
             type="number"
             name="price"
-            value={product.price}
-            onChange={handleProductChange}
+            value={design.price}
+            onChange={handleDesignChange}
           />
         </div>
       </div>
@@ -99,7 +99,7 @@ const ProductDetails: React.FC = () => {
         <div className="col-md-6 mt-3">
           <label>Variants (Size : Quantity)</label>
           <div className="d-flex gap-2 flex-wrap mt-2">
-            {product.variations.map((v, i) => (
+            {design.variations.map((v, i) => (
               <button
                 key={i}
                 className="btn"
@@ -132,8 +132,8 @@ const ProductDetails: React.FC = () => {
             className="form-control mt-2"
             rows={6}
             name="description"
-            value={product.description}
-            onChange={handleProductChange}
+            value={design.description}
+            onChange={handleDesignChange}
             style={{ resize: "none" }}
           />
         </div>
@@ -163,4 +163,4 @@ const ProductDetails: React.FC = () => {
   );
 };
 
-export default ProductDetails;
+export default DesignDetails;

@@ -12,7 +12,7 @@ const AdminLayout: React.FC = () => {
     <div className="admin-layout">
       <MainNavBar items={[
         { label: "Dashboard", to: "/" },
-        { label: "Products", to: "/products" },
+        { label: "Designs", to: "/designs" },
         { label: "Orders", to: "/orders" },
         { label: "Customers", to: "/customers" },
         { label: "Profile", to: "/profile"},

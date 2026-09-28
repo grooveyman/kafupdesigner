@@ -7,14 +7,14 @@ import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import Categories from "../../components/Products/Categories";
 import "../../assets/css/addproduct.css";
-import ProductDetails from "../../components/Products/ProductDetails";
+import DesignDetails from "../../components/Products/ProductDetails";
 import AddImages from "../../components/Products/AddImages";
 import Review from "../../components/Products/Review";
-import { useProductContext } from "../../context/ProductContext";
-import ProductScrollNav from "../../components/Products/ProductScrollNav";
+import { useDesignContext } from "../../context/ProductContext";
+import DesignScrollNav from "../../components/Products/ProductScrollNav";
 import Spinner from "../../components/Spinner";
 import { tokenService } from "../../context/tokenService";
-import { STEPS, StepKey, buildVariationsPayload, validateStep, validateProduct } from "./productValidation";
+import { STEPS, StepKey, buildVariationsPayload, validateStep, validateDesign } from "./productValidation";
 
 const TAB_ICONS: Record<StepKey, React.ReactNode> = {
   categories: <ListChecks className="mr-2 inline-block" size={18} />,
@@ -23,22 +23,22 @@ const TAB_ICONS: Record<StepKey, React.ReactNode> = {
   review: <CheckCheckIcon className="mr-2 inline-block" size={18} />,
 };
 
-const EditProduct: React.FC = () => {
+const EditDesign: React.FC = () => {
   const { prodid } = useParams();
   const designerCode = tokenService.getDesignerCode() ?? "";
   const navigate = useNavigate();
 
   const { data } = useApiQuery<any>(["editproduct_" + prodid], `/designer/designs/${prodid}`);
-  const { product, addToProduct } = useProductContext();
+  const { design, addToDesign } = useDesignContext();
 
   const [stepIndex, setStepIndex] = useState(0);
   const currentStep = STEPS[stepIndex].key;
   const isLastStep = stepIndex === STEPS.length - 1;
 
-  // Map the backend design shape into the wizard's product shape.
+  // Map the backend design shape into the wizard's design draft.
   useEffect(() => {
     if (!data) return;
-    addToProduct({
+    addToDesign({
       name: data.name ?? "",
       description: data.description ?? "",
       price: Number(data.price) || 0,
@@ -61,19 +61,19 @@ const EditProduct: React.FC = () => {
       })),
       ...(data.collection?.id ? { collection_code: data.collection.id } : {}),
     } as any);
-  }, [data, addToProduct, designerCode]);
+  }, [data, addToDesign, designerCode]);
 
   const mutation = useApiMutation<{ message: string }>(`/designer/designs/${prodid}`, "PATCH", {
     onSuccess: (res) => {
-      toast.success(res.message ?? "Product updated successfully");
-      navigate("/products");
+      toast.success(res.message ?? "Design updated successfully");
+      navigate("/designs");
     },
     onError: (error) => toast.error(error.message),
   });
 
   // WIZARD_HELPERS
   const goNext = () => {
-    const errors = validateStep(currentStep, product);
+    const errors = validateStep(currentStep, design);
     if (errors.length) {
       toast.error(errors[0]);
       return;
@@ -89,7 +89,7 @@ const EditProduct: React.FC = () => {
       return;
     }
     for (let s = stepIndex; s < index; s++) {
-      const errs = validateStep(STEPS[s].key, product);
+      const errs = validateStep(STEPS[s].key, design);
       if (errs.length) {
         toast.error(errs[0]);
         setStepIndex(s);
@@ -102,31 +102,31 @@ const EditProduct: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const errors = validateProduct(product);
+    const errors = validateDesign(design);
     if (errors.length) {
       toast.error(errors[0]);
       return;
     }
 
     const formData = new FormData();
-    formData.append("name", product.name);
-    formData.append("description", product.description ?? "");
-    formData.append("catcode", product.category?.id ?? product.cat_code ?? "");
-    formData.append("price", String(product.price));
-    formData.append("sell", (product as any).sell ?? "0");
+    formData.append("name", design.name);
+    formData.append("description", design.description ?? "");
+    formData.append("catcode", design.category?.id ?? design.cat_code ?? "");
+    formData.append("price", String(design.price));
+    formData.append("sell", (design as any).sell ?? "0");
 
-    const collectioncode = (product as any).collection_code ?? "";
+    const collectioncode = (design as any).collection_code ?? "";
     if (collectioncode) formData.append("collectioncode", collectioncode);
 
-    formData.append("variations", JSON.stringify(buildVariationsPayload(product.variations)));
+    formData.append("variations", JSON.stringify(buildVariationsPayload(design.variations)));
 
-    if (product.previewimg instanceof File) {
-      formData.append("previewimg", product.previewimg);
+    if (design.previewimg instanceof File) {
+      formData.append("previewimg", design.previewimg);
     }
 
     // Existing images are kept by their public id; new uploads are sent as files.
     const keepPublicIds: string[] = [];
-    product.otherimages.forEach((img) => {
+    design.otherimages.forEach((img) => {
       if (img.url instanceof File) {
         formData.append("otherimages", img.url);
       } else if (img.pid) {
@@ -140,7 +140,7 @@ const EditProduct: React.FC = () => {
 
   return (
     <>
-      <ProductScrollNav prodname={product.name} prodamount={product.price} />
+      <DesignScrollNav prodname={design.name} prodamount={design.price} />
       <div className="container kf-wizard">
         <form className="w-100" onSubmit={handleSubmit} encType="multipart/form-data">
           <div className="row mt-4">
@@ -148,8 +148,8 @@ const EditProduct: React.FC = () => {
               <Breadcrumb
                 crumbs={[
                   { label: "Dashboard", href: "/dashboard" },
-                  { label: "Product List", href: "/products" },
-                  { label: "Edit Product", href: "#" },
+                  { label: "Design List", href: "/designs" },
+                  { label: "Edit Design", href: "#" },
                 ]}
               />
             </div>
@@ -172,7 +172,7 @@ const EditProduct: React.FC = () => {
 
           <div className="card kf-wizard__body mt-4">
             {currentStep === "categories" && <Categories />}
-            {currentStep === "productdetails" && <ProductDetails />}
+            {currentStep === "productdetails" && <DesignDetails />}
             {currentStep === "images" && <AddImages />}
             {currentStep === "review" && <Review />}
           </div>
@@ -207,4 +207,4 @@ const EditProduct: React.FC = () => {
   );
 };
 
-export default EditProduct;
+export default EditDesign;

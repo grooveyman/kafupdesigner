@@ -1,10 +1,10 @@
 import { CopyPlus } from "lucide-react";
-import { useProductContext } from "../../context/ProductContext";
+import { useDesignContext } from "../../context/ProductContext";
 
 const EXTRA_IMAGE_SLOTS = 3;
 
 const AddImages: React.FC = () => {
-  const { product, addToProduct } = useProductContext();
+  const { design, addToDesign } = useDesignContext();
 
   /* Main image */
   const handleMainImageChange = (
@@ -13,7 +13,7 @@ const AddImages: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    addToProduct({ previewimg: file });
+    addToDesign({ previewimg: file });
   };
 
   /* Extra images */
@@ -24,11 +24,11 @@ const AddImages: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const images = [...product.otherimages];
+    const images = [...design.otherimages];
 
     images[index] = { url: file };
 
-    addToProduct({ otherimages: images });
+    addToDesign({ otherimages: images });
   };
 
   return (
@@ -36,12 +36,12 @@ const AddImages: React.FC = () => {
       {/* Main Image */}
       <div className="col-md-6">
         <label htmlFor="main-upload" className="addcube">
-          {product.previewimg ? (
+          {design.previewimg ? (
             <img
               src={
-                typeof product.previewimg === "string"
-                  ? product.previewimg
-                  : URL.createObjectURL(product.previewimg)
+                typeof design.previewimg === "string"
+                  ? design.previewimg
+                  : URL.createObjectURL(design.previewimg)
               }
               className="img-fluid"
               alt="Main preview"
@@ -66,7 +66,7 @@ const AddImages: React.FC = () => {
       <div className="col-md-6">
         <div className="row g-2">
           {Array.from({ length: EXTRA_IMAGE_SLOTS }).map((_, index) => {
-            const img = product.otherimages[index];
+            const img = design.otherimages[index];
 
             return (
               <div className="col-4" key={index}>
