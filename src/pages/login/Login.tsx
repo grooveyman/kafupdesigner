@@ -1,21 +1,17 @@
-import React, { useEffect } from "react";
-import "./styles.css";
+import React, { useEffect, useState } from "react";
 import ExternalLogin from "./ExternalLogin";
 import { useApiMutation } from "../../hooks/useApi";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import { useAuth } from "../../context/AuthContext";
+import AuthLayout from "../../components/auth/AuthLayout";
+import PasswordInput from "../../components/auth/PasswordInput";
+import { loginSchema, getFieldErrors } from "../../schemas/auth";
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
-    const [userText, setUserText] = React.useState({
-        username: "",
-        password: "",
-    });
-    const [errors, setErrors] = React.useState({
-        username: "",
-        password: "",
-    });
+    const [form, setForm] = useState({ email: "", password: "" });
+    const [errors, setErrors] = useState<Record<string, string>>({});
 
     //auth context
     const { login, isAuthenticated } = useAuth();
@@ -27,23 +23,10 @@ const Login: React.FC = () => {
         }
     }, [isAuthenticated, navigate]);
 
-    //validate function
-    const validateInput = (name: string, value: string) => {
-        if (name === "username" && value.trim() === "") {
-            setErrors((prev) => ({ ...prev, username: "Username is required" }));
-            return "Username is required";
-        }
-        if (name === "password" && value.trim() === "") {
-            setErrors((prev) => ({ ...prev, password: "Password is required" }));
-            return "Password is required";
-        }
-        setErrors((prev) => ({ ...prev, [name]: "" }));
-        return null;
-    };
-    const handleUserTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setUserText((prev) => ({ ...prev, [name]: value }));
-
+        setForm((prev) => ({ ...prev, [name]: value }));
+        setErrors((prev) => ({ ...prev, [name]: "" }));
     };
 
     //mutation
@@ -65,52 +48,71 @@ const Login: React.FC = () => {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const error = validateInput("username", userText.username) || validateInput("password", userText.password);
-
-        // Handle login logic here
-        if (!error) {
-            loginMutation.mutate({ email: userText.username, password: userText.password });
+        const result = loginSchema.safeParse(form);
+        if (!result.success) {
+            setErrors(getFieldErrors(result.error));
+            return;
         }
+
+        loginMutation.mutate(result.data);
     };
 
     return (
-        <>
-            <div className="container">
-                <div className="row">
-                    <div className="col-md-4"></div>
-                    <div className="col-md-4 col-xs-12 col-sm-12 col-lg-4 col-xl-4 col-xxl-4 col-12">
-                        <form className="login-form" onSubmit={handleSubmit}>
-                            <div className="login-card">
-                                <input type="text" name="username" value={userText.username} onChange={handleUserTextChange} placeholder="Username" className="form-control mb-3" />
-                                {errors.username && <span className="text-danger">{errors.username}</span>}
-                                <input type="password" name="password" value={userText.password} onChange={handleUserTextChange} placeholder="Password" className="form-control mb-3" />
-                                {errors.password && <span className="text-danger">{errors.password}</span>}
-
-                                <div>
-                                    <p className="text-right">
-                                        <a href="#" className="text-decoration-none forgot" onClick={() => navigate("/password-reset")}>
-                                            Forgot Password?
-                                        </a>
-                                    </p>
-                                </div>
-                                <button className="btn btn-secondary w-100 h-full p-3" type="submit">
-                                    Login
-                                </button>
-                                <button className="btn btn-tertiary w-100 h-full p-3 my-3" type="button" onClick={() => navigate("/register")}>
-                                    Create Account
-                                </button>
-
-                                {/* login with Google */}
-                                <ExternalLogin />
-                            </div>
-                        </form>
-
-                    </div>
-                    <div className="col-md-4"></div>
+        <AuthLayout
+            title="Welcome back"
+            subtitle="Sign in to manage your brand, designs and orders."
+            quote={{
+                text: "Design is the silent ambassador of your brand.",
+                author: "Paul Rand",
+            }}
+        >
+            <form onSubmit={handleSubmit} noValidate>
+                <div className="kf-auth__field">
+                    <label className="kf-auth__label" htmlFor="email">Email</label>
+                    <input
+                        id="email"
+                        type="email"
+                        name="email"
+                        value={form.email}
+                        onChange={handleChange}
+                        placeholder="you@brand.com"
+                        className="form-control"
+                    />
+                    {errors.email && <span className="kf-auth__error">{errors.email}</span>}
                 </div>
-            </div>
-        </>
+
+                <div className="kf-auth__field">
+                    <label className="kf-auth__label" htmlFor="password">Password</label>
+                    <PasswordInput
+                        id="password"
+                        name="password"
+                        value={form.password}
+                        onChange={handleChange}
+                        placeholder="Enter your password"
+                    />
+                    {errors.password && <span className="kf-auth__error">{errors.password}</span>}
+                </div>
+
+                <a
+                    href="#"
+                    className="kf-auth__forgot"
+                    onClick={(e) => { e.preventDefault(); navigate("/password-reset"); }}
+                >
+                    Forgot Password?
+                </a>
+
+                <button className="kf-auth__submit" type="submit" disabled={loginMutation.isPending}>
+                    {loginMutation.isPending ? "Signing in..." : "Login"}
+                </button>
+                <button className="kf-auth__ghost" type="button" onClick={() => navigate("/register")}>
+                    Create Account
+                </button>
+
+                {/* login with Google */}
+                <ExternalLogin />
+            </form>
+        </AuthLayout>
     );
-}
+};
 
 export default Login;

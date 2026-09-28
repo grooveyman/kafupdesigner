@@ -2,18 +2,16 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useApiMutation } from "../../hooks/useApi";
-
+import AuthLayout from "../../components/auth/AuthLayout";
+import { sendResetSchema, getFieldErrors } from "../../schemas/auth";
 
 const SendReset: React.FC = () => {
-
+    const navigate = useNavigate();
     const [email, setEmail] = useState("");
-
-    const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setEmail(e.target.value);
-    }
+    const [error, setError] = useState("");
 
     const mutation = useApiMutation<{ message: string }>(
-        "/users/auth/request-password-reset",
+        "/designer/request-password-reset",
         "POST",
         {
             onSuccess: (data) => {
@@ -24,37 +22,53 @@ const SendReset: React.FC = () => {
                 toast.error(data.message);
             }
         }
-    )
-
-    const navigate = useNavigate();
+    );
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        mutation.mutate({ email });
-    }
+        const result = sendResetSchema.safeParse({ email });
+        if (!result.success) {
+            setError(getFieldErrors(result.error).email ?? "");
+            return;
+        }
+
+        mutation.mutate(result.data);
+    };
+
     return (
-        <>
-            <div className="container">
-                <div className="row mt-5">
-                    <div className="col-md-3"></div>
-                    <div className="col-md-6">
-                        <div className="verify-email-card">
-                            <h4>Enter your email</h4>
-                            <p>We will email you a link to reset your password if your account exists with us.</p>
-                            <form onSubmit={handleSubmit}>
-                                <input type="email" placeholder="Enter your email" className="form-control mb-3" name="email" onChange={handleEmailChange} />
-                                <button className="btn btn-secondary w-100 h-full p-3" type="submit">
-                                    Send Reset Link
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                    <div className="col-md-3"></div>
+        <AuthLayout
+            title="Forgot your password?"
+            subtitle="We will email you a link to reset your password if your account exists with us."
+            quote={{
+                text: "Simplicity is the ultimate sophistication.",
+                author: "Leonardo da Vinci",
+            }}
+        >
+            <form onSubmit={handleSubmit} noValidate>
+                <div className="kf-auth__field">
+                    <label className="kf-auth__label" htmlFor="email">Email</label>
+                    <input
+                        id="email"
+                        type="email"
+                        placeholder="you@brand.com"
+                        className="form-control"
+                        name="email"
+                        value={email}
+                        onChange={(e) => { setEmail(e.target.value); setError(""); }}
+                    />
+                    {error && <span className="kf-auth__error">{error}</span>}
                 </div>
-            </div>
-        </>
+
+                <button className="kf-auth__submit" type="submit" disabled={mutation.isPending}>
+                    {mutation.isPending ? "Sending..." : "Send Reset Link"}
+                </button>
+                <button className="kf-auth__ghost" type="button" onClick={() => navigate("/login")}>
+                    Back to login
+                </button>
+            </form>
+        </AuthLayout>
     );
-}
+};
 
 export default SendReset;

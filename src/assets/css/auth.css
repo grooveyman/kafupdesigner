@@ -1,0 +1,281 @@
+/* ============================================================
+   Split-screen auth layout
+   Form lives on one half; the other half is a decorative panel
+   with a fine grid / gradient texture and a rotating quote.
+   ============================================================ */
+
+.kf-auth {
+    min-height: 100vh;
+    display: flex;
+    background-color: var(--background-color, #1a1a1a);
+    color: var(--text-color, rgba(255, 255, 255, 0.87));
+}
+
+.kf-auth--reverse {
+    flex-direction: row-reverse;
+}
+
+/* ---------------- Form side ---------------- */
+.kf-auth__form-side {
+    flex: 1 1 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    overflow-y: auto;
+}
+
+.kf-auth__form-wrap {
+    width: 100%;
+    max-width: 440px;
+}
+
+.kf-auth__brand-mark {
+    display: none;
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: 0.02em;
+    margin-bottom: 28px;
+}
+
+.kf-auth__brand-mark span {
+    color: var(--kf-accent, #f5c400);
+}
+
+.kf-auth__title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+}
+
+.kf-auth__subtitle {
+    color: var(--label-color, #9a9a9e);
+    font-size: 0.95rem;
+    margin-bottom: 28px;
+}
+
+.kf-auth__label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--label-color, #cfcfcf);
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.kf-auth__error {
+    display: block;
+    color: #ff6b6b;
+    font-size: 0.8rem;
+    margin-top: -8px;
+    margin-bottom: 12px;
+}
+
+.kf-auth__field {
+    margin-bottom: 16px;
+}
+
+.kf-auth__fine {
+    color: var(--label-color, #9a9a9e);
+    font-size: 0.75rem;
+    margin-top: 6px;
+}
+
+/* password field with eye toggle */
+.kf-auth__password {
+    position: relative;
+}
+
+.kf-auth__password input {
+    padding-right: 46px !important;
+}
+
+.kf-auth__eye {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--label-color, #9a9a9e);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+}
+
+.kf-auth__eye:hover {
+    color: var(--kf-accent, #f5c400);
+}
+
+.kf-auth__row {
+    display: flex;
+    gap: 14px;
+}
+
+.kf-auth__row > * {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.kf-auth__forgot {
+    display: block;
+    text-align: right;
+    color: var(--label-color, #9a9a9e);
+    font-size: 0.85rem;
+    text-decoration: none;
+    margin-bottom: 18px;
+}
+
+.kf-auth__forgot:hover {
+    color: var(--kf-accent, #f5c400);
+}
+
+.kf-auth__submit {
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    padding: 13px 16px;
+    font-weight: 600;
+    background: var(--kf-accent, #f5c400);
+    color: #1d1c1c;
+    cursor: pointer;
+    transition: filter 0.15s ease, opacity 0.15s ease;
+}
+
+.kf-auth__submit:hover:not(:disabled) {
+    filter: brightness(1.05);
+}
+
+.kf-auth__submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.kf-auth__ghost {
+    width: 100%;
+    border-radius: 10px;
+    padding: 13px 16px;
+    font-weight: 600;
+    background: transparent;
+    border: 1px solid var(--kf-border-strong, rgba(255, 255, 255, 0.14));
+    color: #fff;
+    cursor: pointer;
+    margin-top: 14px;
+    transition: background 0.15s ease;
+}
+
+.kf-auth__ghost:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.kf-auth__legal {
+    color: var(--label-color, #9a9a9e);
+    font-size: 0.78rem;
+    line-height: 1.5;
+    margin: 18px 0 4px;
+}
+
+/* ---------------- Decorative panel ---------------- */
+.kf-auth__panel {
+    flex: 1 1 50%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 48px;
+    overflow: hidden;
+    background:
+        radial-gradient(1200px circle at 15% 15%, rgba(245, 196, 0, 0.16), transparent 45%),
+        radial-gradient(900px circle at 85% 85%, rgba(245, 196, 0, 0.10), transparent 40%),
+        linear-gradient(135deg, #201f1d 0%, #141312 100%);
+}
+
+/* fine grid lines overlay */
+.kf-auth__panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(circle at 50% 40%, #000 40%, transparent 85%);
+    -webkit-mask-image: radial-gradient(circle at 50% 40%, #000 40%, transparent 85%);
+    pointer-events: none;
+}
+
+.kf-auth__panel-content {
+    position: relative;
+    z-index: 1;
+}
+
+.kf-auth__panel-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: 0.02em;
+    color: #fff;
+}
+
+.kf-auth__panel-brand span {
+    color: var(--kf-accent, #f5c400);
+}
+
+.kf-auth__quote {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+}
+
+.kf-auth__quote-mark {
+    font-size: 4rem;
+    line-height: 1;
+    color: var(--kf-accent, #f5c400);
+    opacity: 0.5;
+    font-family: Georgia, "Times New Roman", serif;
+}
+
+.kf-auth__quote-text {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #fff;
+    margin: 8px 0 18px;
+}
+
+.kf-auth__quote-author {
+    color: var(--label-color, #9a9a9e);
+    font-size: 0.95rem;
+}
+
+/* ---------------- Google button ---------------- */
+.kf-auth__or {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--label-color, #9a9a9e);
+    font-size: 0.85rem;
+    margin: 20px 0;
+}
+
+.kf-auth__or::before,
+.kf-auth__or::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--kf-border, rgba(255, 255, 255, 0.08));
+}
+
+/* ---------------- Responsive ---------------- */
+@media (max-width: 900px) {
+    .kf-auth__panel {
+        display: none;
+    }
+    .kf-auth__brand-mark {
+        display: block;
+    }
+    .kf-auth__form-side {
+        flex-basis: 100%;
+    }
+}

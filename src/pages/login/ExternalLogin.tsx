@@ -4,8 +4,8 @@ const ExternalLogin: React.FC = () => {
     return (
         <>
             <div className="">
-                <p className="text-center mt-3">or</p>
-                <button className="btn btn-google w-full h-full p-3 mt-3" type="button">
+                <div className="kf-auth__or">or</div>
+                <button className="btn btn-google w-100 p-3" type="button">
                     <span className="google-logo" aria-hidden="true">
                         <svg viewBox="0 0 533.5 544.3" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
                             <path fill="#4285F4" d="M533.5 278.4c0-17.4-1.6-34.1-4.6-50.3H272.1v95.2h146.9c-6.3 33.7-25 62.3-53.2 81.5v67.6h85.9c50.2-46.3 79.8-114.2 79.8-193.9z" />

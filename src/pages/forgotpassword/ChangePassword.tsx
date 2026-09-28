@@ -1,25 +1,21 @@
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useApiMutation } from "../../hooks/useApi";
 import { useState } from "react";
 import { toast } from "react-toastify";
-
+import AuthLayout from "../../components/auth/AuthLayout";
+import PasswordInput from "../../components/auth/PasswordInput";
+import { changePasswordSchema, getFieldErrors } from "../../schemas/auth";
 
 const ChangePassword: React.FC = () => {
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-
-    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPassword(e.target.value);
-    }
-
-    const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setConfirmPassword(e.target.value);
-    }
-
     const navigate = useNavigate();
+    const [form, setForm] = useState({ password: "", confirmPassword: "" });
+    const [errors, setErrors] = useState<Record<string, string>>({});
+
+    const [searchParams] = useSearchParams();
+    const token = searchParams.get("token");
 
     const mutation = useApiMutation<{ message: string }>(
-        "/users/auth/reset-password",
+        "/designer/reset-password",
         "POST",
         {
             onSuccess: (data) => {
@@ -30,45 +26,75 @@ const ChangePassword: React.FC = () => {
                 toast.error(data.message);
             }
         }
-    )
+    );
 
-    const [searchParams] = useSearchParams();
-    const token = searchParams.get("token");
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setForm((prev) => ({ ...prev, [name]: value }));
+        setErrors((prev) => ({ ...prev, [name]: "" }));
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (password !== confirmPassword) {
-            toast.error("Passwords do not match");
+        const result = changePasswordSchema.safeParse(form);
+        if (!result.success) {
+            setErrors(getFieldErrors(result.error));
             return;
         }
 
-        mutation.mutate({ newPassword: password, token });
+        if (!token) {
+            toast.error("Reset link is invalid or has expired");
+            return;
+        }
+
+        mutation.mutate({ newPassword: result.data.password, token });
     };
 
     return (
-        <>
-            <div className="container">
-                <div className="row mt-5">
-                    <div className="col-md-3"></div>
-                    <div className="col-md-6">
-                        <div className="change-password-card">
-                            <h4>Change Password</h4>
-                            <p>Enter your new password below.</p>
-                            <form onSubmit={handleSubmit}>
-                                <input type="password" placeholder="Enter your new password" className="form-control mb-3" name="password" onChange={handlePasswordChange} />
-                                <input type="password" placeholder="Confirm your new password" className="form-control mb-3" name="confirmPassword" onChange={handleConfirmPasswordChange} />
-                                <button className="btn btn-secondary w-100 h-full p-3" type="submit">
-                                    Change Password
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                    <div className="col-md-3"></div>
+        <AuthLayout
+            title="Set a new password"
+            subtitle="Enter and confirm your new password below."
+            formSide="right"
+            quote={{
+                text: "The details are not the details. They make the design.",
+                author: "Charles Eames",
+            }}
+        >
+            <form onSubmit={handleSubmit} noValidate>
+                <div className="kf-auth__field">
+                    <label className="kf-auth__label" htmlFor="password">New password</label>
+                    <PasswordInput
+                        id="password"
+                        placeholder="Enter your new password"
+                        name="password"
+                        value={form.password}
+                        onChange={handleChange}
+                    />
+                    {errors.password && <span className="kf-auth__error">{errors.password}</span>}
                 </div>
-            </div>
-        </>
+
+                <div className="kf-auth__field">
+                    <label className="kf-auth__label" htmlFor="confirmPassword">Confirm password</label>
+                    <PasswordInput
+                        id="confirmPassword"
+                        placeholder="Confirm your new password"
+                        name="confirmPassword"
+                        value={form.confirmPassword}
+                        onChange={handleChange}
+                    />
+                    {errors.confirmPassword && <span className="kf-auth__error">{errors.confirmPassword}</span>}
+                </div>
+
+                <button className="kf-auth__submit" type="submit" disabled={mutation.isPending}>
+                    {mutation.isPending ? "Updating..." : "Change Password"}
+                </button>
+                <button className="kf-auth__ghost" type="button" onClick={() => navigate("/login")}>
+                    Back to login
+                </button>
+            </form>
+        </AuthLayout>
     );
-}
+};
 
 export default ChangePassword;

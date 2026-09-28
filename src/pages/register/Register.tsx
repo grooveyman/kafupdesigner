@@ -1,9 +1,10 @@
-
 import { useNavigate } from "react-router-dom";
-import "./style.css";
 import { useState } from "react";
 import { useApiMutation } from "../../hooks/useApi";
 import { toast } from "react-toastify";
+import AuthLayout from "../../components/auth/AuthLayout";
+import PasswordInput from "../../components/auth/PasswordInput";
+import { registerSchema, getFieldErrors } from "../../schemas/auth";
 
 const Register: React.FC = () => {
     const navigate = useNavigate();
@@ -14,8 +15,9 @@ const Register: React.FC = () => {
         phone_number: "",
         business_location: "",
         password: "",
-        contact_name:"",
+        contact_name: "",
     });
+    const [errors, setErrors] = useState<Record<string, string>>({});
 
     const mutation = useApiMutation<{ message: string }>(
         "/designer/register",
@@ -34,10 +36,17 @@ const Register: React.FC = () => {
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setRegisterData((prev) => ({ ...prev, [name]: value }));
-    }
+        setErrors((prev) => ({ ...prev, [name]: "" }));
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+
+        const result = registerSchema.safeParse(registerData);
+        if (!result.success) {
+            setErrors(getFieldErrors(result.error));
+            return;
+        }
 
         const keyMap: Record<string, string> = {
             brand_name: "brand_name",
@@ -46,85 +55,79 @@ const Register: React.FC = () => {
             phone_number: "contact_phone",
             business_location: "business_location",
             password: "password",
-            contact_name: "contact_name"
-        }
+            contact_name: "contact_name",
+        };
         const payload: Record<string, string> = {};
-        Object.entries(registerData).forEach(([key, value]) => {
+        Object.entries(result.data).forEach(([key, value]) => {
             payload[keyMap[key] ?? key] = value;
         });
-        console.log("payload", payload);
-        console.log("registerData", registerData);
 
         mutation.mutate(payload);
+    };
 
-    }
     return (
-        <>
-            <div className="container">
-                <div className="row">
-                    <div className="col-md-3"></div>
-                    <div className="col-md-6 col-xs-12 col-sm-12 col-lg-6 col-xl-6 col-xxl-6 col-12">
-                        <form className="register-form">
-                            <div className="register-card">
-                                <h4>Get started as a designer on Kafup</h4>
-                                <p>Creat a profile and a launch a brand, porfolio and increase your network.</p>
-                                <div className="row">
-                                    <div className="col-md-6">
-                                        <input type="text" placeholder="Brand Name" className="form-control mb-3" name="brand_name" value={registerData.brand_name} onChange={handleInputChange} />
-                                    </div>
-                                     <div className="col-md-6">
-                                        <input type="text" placeholder="Contact Person Name" className="form-control mb-3" name="contact_name" value={registerData.contact_name} onChange={handleInputChange} />
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col-md-12">
-                                        <textarea placeholder="Tell us about your brand. NB: This your pitch" className="form-control mb-3" name="brand_description" value={registerData.brand_description} onChange={handleInputChange} rows={4}></textarea>
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col-md-12">
-                                        <input type="text" placeholder="Email Address" className="form-control mb-3" name="contact_email" value={registerData.contact_email} onChange={handleInputChange} />
-                                        <p className="text-xs">You may receive notifications and updates about your account on this email.</p>
-                                    </div>
-                                   
-                                    
-                                </div>
-                                
-                                <div className="row">
-                                    <div className="col-md-6">
-                                        <input type="text" placeholder="Phone Number" className="form-control mb-3" name="phone_number" value={registerData.phone_number} onChange={handleInputChange} />
-                                    </div>
-                                    <div className="col-md-6">
-                                        <input type="text" placeholder="Business Location" className="form-control mb-3" name="business_location" value={registerData.business_location} onChange={handleInputChange} />
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col-md-12">
-                                        <input type="password" placeholder="password" className="form-control mb-3" name="password" value={registerData.password} onChange={handleInputChange} />
-                                    </div>
-                                </div>
-
-                                <p>
-                                    By tapping Submit, you agree to create an account and to Kafup's Terms, Privacy Policy and Cookie Policy.
-                                </p>
-                                <p>
-                                    The Privacy Policy describes the ways we can use the information we collect when you create an account. For example, we use this information to provide, personalise and improve our services for you.
-                                </p>
-
-                                <button className="btn btn-secondary w-100 h-full p-3" type="submit" onClick={handleSubmit}>
-                                    Submit
-                                </button>
-                                <button className="btn btn-tertiary w-100 h-full p-3 mt-3" type="button" onClick={() => navigate("/login")}>
-                                    I already have an account
-                                </button>
-                            </div>
-                        </form>
+        <AuthLayout
+            title="Get started as a designer"
+            subtitle="Create a profile, launch your brand and grow your network on Kafup."
+            formSide="right"
+            quote={{
+                text: "Creativity is intelligence having fun.",
+                author: "Albert Einstein",
+            }}
+        >
+            <form onSubmit={handleSubmit} noValidate>
+                <div className="kf-auth__row">
+                    <div className="kf-auth__field">
+                        <input type="text" placeholder="Brand name" className="form-control" name="brand_name" value={registerData.brand_name} onChange={handleInputChange} />
+                        {errors.brand_name && <span className="kf-auth__error">{errors.brand_name}</span>}
                     </div>
-                    <div className="col-md-3"></div>
+                    <div className="kf-auth__field">
+                        <input type="text" placeholder="Contact person name" className="form-control" name="contact_name" value={registerData.contact_name} onChange={handleInputChange} />
+                        {errors.contact_name && <span className="kf-auth__error">{errors.contact_name}</span>}
+                    </div>
                 </div>
-            </div>
-        </>
+
+                <div className="kf-auth__field">
+                    <textarea placeholder="Tell us about your brand. NB: this is your pitch" className="form-control" name="brand_description" value={registerData.brand_description} onChange={handleInputChange} rows={3}></textarea>
+                    {errors.brand_description && <span className="kf-auth__error">{errors.brand_description}</span>}
+                </div>
+
+                <div className="kf-auth__field">
+                    <input type="email" placeholder="Email address" className="form-control" name="contact_email" value={registerData.contact_email} onChange={handleInputChange} />
+                    {errors.contact_email
+                        ? <span className="kf-auth__error">{errors.contact_email}</span>
+                        : <p className="kf-auth__fine">You may receive notifications and updates about your account on this email.</p>}
+                </div>
+
+                <div className="kf-auth__row">
+                    <div className="kf-auth__field">
+                        <input type="text" placeholder="Phone number" className="form-control" name="phone_number" value={registerData.phone_number} onChange={handleInputChange} />
+                        {errors.phone_number && <span className="kf-auth__error">{errors.phone_number}</span>}
+                    </div>
+                    <div className="kf-auth__field">
+                        <input type="text" placeholder="Business location" className="form-control" name="business_location" value={registerData.business_location} onChange={handleInputChange} />
+                        {errors.business_location && <span className="kf-auth__error">{errors.business_location}</span>}
+                    </div>
+                </div>
+
+                <div className="kf-auth__field">
+                    <PasswordInput placeholder="Password" name="password" value={registerData.password} onChange={handleInputChange} />
+                    {errors.password && <span className="kf-auth__error">{errors.password}</span>}
+                </div>
+
+                <p className="kf-auth__legal">
+                    By tapping Submit, you agree to create an account and to Kafup's Terms, Privacy Policy and Cookie Policy. The Privacy Policy describes how we use the information we collect to provide, personalise and improve our services for you.
+                </p>
+
+                <button className="kf-auth__submit" type="submit" disabled={mutation.isPending}>
+                    {mutation.isPending ? "Submitting..." : "Submit"}
+                </button>
+                <button className="kf-auth__ghost" type="button" onClick={() => navigate("/login")}>
+                    I already have an account
+                </button>
+            </form>
+        </AuthLayout>
     );
-}
+};
 
 export default Register;
