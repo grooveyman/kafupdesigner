@@ -130,10 +130,12 @@ const CollectionWrapper: React.FC = () => {
     };
 
     return (
-        <div className="kf-card">
+        <div className="kf-profile">
+            <div className="container kf-profile__container" style={{ marginTop: "1.5rem" }}>
+                <div className="kf-card">
             <div className="kf-content__header">
                 <div>
-                    <h5 className="mb-1">Collections</h5>
+                    <h5 className="kf-content__title mb-1">Collections</h5>
                     <p className="kf-variant-help mb-0">
                         Group your designs into themed collections with a cover image.
                     </p>
@@ -225,6 +227,8 @@ const CollectionWrapper: React.FC = () => {
                     </p>
                 </div>
             )}
+                </div>
+            </div>
 
             <div
                 className="modal fade"
