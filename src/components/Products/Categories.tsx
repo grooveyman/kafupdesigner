@@ -1,4 +1,4 @@
-import { ArchiveX, Save } from "lucide-react";
+import { ArchiveX, Plus, PlusIcon, Save } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useApiMutation, useApiQuery } from "../../hooks/useApi";
 import Spinner from "../Spinner";
@@ -16,6 +16,10 @@ export interface CategoryType {
     alias: string;
     id: string;
 }
+interface Response {
+    status: string;
+    data: CategoryType[];
+}
 const Categories: React.FC = () => {
     const queryClient = useQueryClient();
     const [selected, setSelected] = useState<{ id: string } | null>(null);
@@ -25,9 +29,9 @@ const Categories: React.FC = () => {
         setCatName(e.target.value);
     };
     const queryKey = useMemo(() => ["categories"], []);
-    const { data, isLoading } = useApiQuery<CategoryType[]>(queryKey, "/categories/all?designercode=DES740410");
+    const { data, isLoading } = useApiQuery<Response>(queryKey, "/designer/category");
 
-    const categories = data || [];
+    const categories = data?.data || [];
     const options: { value: string, label: string }[] = categories.map((cat) => ({ value: cat.id, label: cat.name }));
 
     const { product, addToProduct } = useProductContext();
@@ -39,7 +43,7 @@ const Categories: React.FC = () => {
             console.log(selectedCategory);
             if (selectedCategory) {
                 setSelected({ id: selectedCategory.id });
-                addToProduct({ category: { id: selectedCategory.id, name: selectedCategory.name }, designer_code:"DES740410", cat_code: selectedCategory.id });
+                addToProduct({ category: { id: selectedCategory.id, name: selectedCategory.name }, designer_code: "DES740410", cat_code: selectedCategory.id });
             }
         }
     };
@@ -91,6 +95,19 @@ const Categories: React.FC = () => {
 
         mutation.mutate(postData);
     };
+
+    const [showCategoryModal, setShowCategoryModal] = useState(false);
+    const [categoryName, setcategoryName] = useState("");
+
+    const handleAddCategory = () => {
+        console.log(categoryName);
+    }
+
+    const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        if (e.target.value === "add-category") {
+            setShowCategoryModal(true);
+        }
+    }
     return (
         <>
             <div className="container">
@@ -98,6 +115,14 @@ const Categories: React.FC = () => {
                     <div className="col-md-6">
                         <h6 className="text-lg font-semibold mb-2">Select category</h6>
                         <div className="flex flex-col space-y-2">
+
+                            <div>
+                                <select onChange={handleCategoryChange} id="category-select" className="form-control">
+                                    <option>Select a category</option>
+                                    <option>Twuo</option>
+                                    <option value="add-category">+ Add new category</option>
+                                </select>
+                            </div>
                             {isLoading ? (
                                 <div className="flex justify-center py-6">
                                     <Spinner color="secondary" />
@@ -135,6 +160,67 @@ const Categories: React.FC = () => {
                         </div>
                     </div>
                 </div>
+
+                {showCategoryModal && (
+                    <div
+                        className="modal fade show"
+                        tabIndex={-1}
+                        style={{ display: "block" }}
+                        aria-modal="true"
+                        role="dialog"
+                    >
+                        <div className="modal-dialog">
+                            <div className="modal-content">
+
+                                <div className="d-flex justify-content-between">
+                                    <h5 className="modal-title">
+                                        Add New Category
+                                    </h5>
+
+                                    <button
+                                        type="button"
+                                        className="btn-close"
+                                        onClick={() => setShowCategoryModal(false)}
+                                    ></button>
+                                </div>
+
+                                <div className="modal-body">
+                                    <input
+                                        name="category_name"
+                                        type="text"
+                                        value={categoryName}
+                                        placeholder="Category name"
+                                        className="form-control"
+                                        onChange={(e) => setcategoryName(e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="">
+                                    <button
+                                        type="button"
+                                        className="btn btn-primary"
+                                        onClick={handleAddCategory}
+                                    >
+                                        Add Category
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary"
+                                        onClick={() => setShowCategoryModal(false)}
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {showCategoryModal && (
+                    <div className="modal-backdrop fade show"></div>
+                )}
             </div>
         </>
     );
