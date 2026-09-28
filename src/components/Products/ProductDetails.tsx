@@ -66,76 +66,80 @@ const DesignDetails: React.FC = () => {
 
   return (
     <>
-    <div className="row">
-      
-    </div>
-      <div className="row p-3">
-        {/* NAME */}
-        <div className="col-md-6">
-          <label>Design Name</label>
-          <input
-            className="form-control mt-2"
-            name="name"
-            value={design.name}
-            onChange={handleDesignChange}
-          />
-        </div>
+      <div className="p-3">
+        <div className="row g-3">
+          {/* NAME */}
+          <div className="col-md-6">
+            <label className="form-label">Design Name</label>
+            <input
+              className="form-control"
+              name="name"
+              value={design.name}
+              onChange={handleDesignChange}
+            />
+          </div>
 
-        {/* PRICE */}
-        <div className="col-md-6">
-          <label>Price</label>
-          <input
-            className="form-control mt-2"
-            type="number"
-            name="price"
-            value={design.price}
-            onChange={handleDesignChange}
-          />
-        </div>
-      </div>
-
-      <div className="row">
-        {/* VARIANTS */}
-        <div className="col-md-6 mt-3">
-          <label>Variants (Size : Quantity)</label>
-          <div className="d-flex gap-2 flex-wrap mt-2">
-            {design.variations.map((v, i) => (
-              <button
-                key={i}
-                className="btn"
-                style={{
-                  backgroundColor: v.color,
-                  color: isDarkColor(v.color) ? "#fff" : "#000",
-                }}
-                onDoubleClick={() => removeVariant(i)}
-                type="button"
-              >
-                {v.size}:{v.quantity}
-              </button>
-            ))}
-
-            <button
-              className="btn btn-outline-secondary"
-              data-bs-toggle="modal"
-              data-bs-target="#sizeModal"
-              type="button"
-            >
-              + Add Variant
-            </button>
+          {/* PRICE */}
+          <div className="col-md-6">
+            <label className="form-label">Price</label>
+            <input
+              className="form-control"
+              type="number"
+              name="price"
+              value={design.price}
+              onChange={handleDesignChange}
+            />
           </div>
         </div>
 
-        {/* DESCRIPTION */}
-        <div className="col-md-6 mt-3">
-          <label>Description</label>
-          <textarea
-            className="form-control mt-2"
-            rows={6}
-            name="description"
-            value={design.description}
-            onChange={handleDesignChange}
-            style={{ resize: "none" }}
-          />
+        <div className="row g-3 mt-1">
+          {/* DESCRIPTION */}
+          <div className="col-md-6">
+            <label className="form-label">Description</label>
+            <textarea
+              className="form-control"
+              rows={6}
+              name="description"
+              value={design.description}
+              onChange={handleDesignChange}
+              style={{ resize: "none" }}
+            />
+          </div>
+
+          {/* VARIANTS */}
+          <div className="col-md-6">
+            <label className="form-label">Variants (Size : Quantity)</label>
+            <div className="d-flex gap-2 flex-wrap">
+              {design.variations.map((v, i) => (
+                <button
+                  key={i}
+                  className="btn"
+                  style={{
+                    backgroundColor: v.color,
+                    color: isDarkColor(v.color) ? "#fff" : "#000",
+                  }}
+                  onDoubleClick={() => removeVariant(i)}
+                  type="button"
+                >
+                  {v.size}:{v.quantity}
+                </button>
+              ))}
+
+              <button
+                className="btn btn-outline-secondary"
+                data-bs-toggle="modal"
+                data-bs-target="#sizeModal"
+                type="button"
+              >
+                + Add Variant
+              </button>
+            </div>
+            {design.variations.length > 0 && (
+              <small className="kf-variant-help d-block mt-2">
+                Double-click a variant to remove it.
+              </small>
+            )}
+          </div>
         </div>
 
         {/* COLOR PICKER */}
@@ -151,15 +155,13 @@ const DesignDetails: React.FC = () => {
 
         {/* MODAL */}
         <VariantModal
-        variantForm={variantForm}
-        setVariantForm={setVariantForm}
-        onSave={addVariation}
-        colorInputRef={colorInputRef}
-      />
-        
+          variantForm={variantForm}
+          setVariantForm={setVariantForm}
+          onSave={addVariation}
+          colorInputRef={colorInputRef}
+        />
       </div>
     </>
-
   );
 };
 
