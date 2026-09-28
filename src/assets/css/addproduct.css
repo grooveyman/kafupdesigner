@@ -195,9 +195,14 @@ select {
 
 /* ---------------- Variant modal ---------------- */
 .kf-variant-dialog {
-    width: auto;
-    max-width: min(920px, calc(100% - 2rem)) !important;
+    --bs-modal-width: 1040px;
+    width: 100%;
+    max-width: min(1040px, calc(100% - 2rem)) !important;
     margin: 1.75rem auto;
+}
+
+.kf-variant-dialog .modal-content {
+    width: 100%;
 }
 
 .kf-variant-dialog .modal-body {
