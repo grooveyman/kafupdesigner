@@ -77,7 +77,7 @@ const CategoryWrapper: React.FC = () => {
 
     return (
         <div className="kf-profile">
-            <div className="container kf-profile__container" style={{ marginTop: "1.5rem" }}>
+            <div className="container" style={{ marginTop: "1.5rem" }}>
                 <div className="kf-card">
                     <div className="kf-content__header">
                         <div>

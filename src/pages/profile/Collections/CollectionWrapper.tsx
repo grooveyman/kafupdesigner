@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { Plus, Search, Trash2, FolderOpen, Pencil, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
@@ -18,6 +19,7 @@ interface CollectionType {
 
 const CollectionWrapper: React.FC = () => {
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
     const queryKey = useMemo(() => ["collections"], []);
     const closeRef = useRef<HTMLButtonElement>(null);
 
@@ -131,7 +133,7 @@ const CollectionWrapper: React.FC = () => {
 
     return (
         <div className="kf-profile">
-            <div className="container kf-profile__container" style={{ marginTop: "1.5rem" }}>
+            <div className="container" style={{ marginTop: "1.5rem" }}>
                 <div className="kf-card">
             <div className="kf-content__header">
                 <div>
@@ -170,7 +172,19 @@ const CollectionWrapper: React.FC = () => {
             ) : filtered.length ? (
                 <div className="kf-grid">
                     {filtered.map((c) => (
-                        <div className="kf-design" key={c.id}>
+                        <div
+                            className="kf-design kf-design--clickable"
+                            key={c.id}
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => navigate(`/collections/${c.id}`)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                    e.preventDefault();
+                                    navigate(`/collections/${c.id}`);
+                                }
+                            }}
+                        >
                             <div className="kf-design__media">
                                 {c.image ? (
                                     <img src={c.image} alt={c.name} />
@@ -186,7 +200,10 @@ const CollectionWrapper: React.FC = () => {
                                         aria-label={`Edit ${c.name}`}
                                         data-bs-toggle="modal"
                                         data-bs-target="#collectionModal"
-                                        onClick={() => openEdit(c)}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            openEdit(c);
+                                        }}
                                     >
                                         <Pencil size={16} />
                                     </button>
@@ -194,7 +211,10 @@ const CollectionWrapper: React.FC = () => {
                                         type="button"
                                         className="kf-cat-del"
                                         aria-label={`Delete ${c.name}`}
-                                        onClick={() => handleDelete(c)}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDelete(c);
+                                        }}
                                     >
                                         <Trash2 size={16} />
                                     </button>

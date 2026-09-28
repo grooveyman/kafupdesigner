@@ -15,7 +15,10 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ crumbs }) => {
 
   return (
     <nav aria-label="Breadcrumb">
-      <ol className="flex items-center flex-wrap text-sm text-gray-400">
+      <ol
+        className="flex items-center flex-wrap text-sm text-gray-400"
+        style={{ paddingLeft: 0, marginBottom: 0, listStyle: "none" }}
+      >
         {crumbs.map((crumb, index) => {
           const isLast = index === crumbs.length - 1;
 
@@ -25,7 +28,7 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ crumbs }) => {
                 <button
                   type="button"
                   onClick={() => navigate(crumb.href!)}
-                  className="font-medium hover:text-blue-600 focus:outline-none focus:underline"
+                  className="font-medium focus:outline-none focus:underline kf-crumb-link"
                 >
                   {crumb.label}
                 </button>
