@@ -192,3 +192,94 @@ select {
         flex: 1 1 0;
     }
 }
+
+/* ---------------- Variant modal ---------------- */
+.kf-color-swatch {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    border: 1px solid var(--kf-border, rgba(255, 255, 255, 0.14));
+    display: inline-block;
+    flex: 0 0 auto;
+}
+
+.kf-variant-help {
+    color: var(--label-color, #9a9a9e);
+    font-size: 0.8rem;
+}
+
+.kf-variant-divider {
+    border-color: var(--kf-border, rgba(255, 255, 255, 0.08));
+    opacity: 1;
+    margin: 20px 0;
+}
+
+/* ---------------- Review step ---------------- */
+.kf-review-section {
+    padding: 18px 0;
+    border-bottom: 1px solid var(--kf-border, rgba(255, 255, 255, 0.08));
+}
+.kf-review-section:last-child {
+    border-bottom: none;
+}
+
+.kf-review-title {
+    color: #fff;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.kf-review-label {
+    display: block;
+    color: var(--label-color, #9a9a9e);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+}
+
+.kf-review-value {
+    color: #fff;
+    font-size: 0.95rem;
+    word-break: break-word;
+}
+
+.kf-review-table {
+    color: var(--label-color, #cfcfcf);
+}
+.kf-review-table thead th {
+    color: var(--label-color, #9a9a9e);
+    font-size: 0.8rem;
+    font-weight: 500;
+    border-bottom: 1px solid var(--kf-border, rgba(255, 255, 255, 0.08));
+}
+.kf-review-table td {
+    color: #fff;
+    vertical-align: middle;
+    border-color: var(--kf-border, rgba(255, 255, 255, 0.05));
+}
+
+.kf-review-chip {
+    display: inline-block;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.kf-review-preview {
+    display: block;
+    width: 160px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid var(--kf-border, rgba(255, 255, 255, 0.08));
+}
+
+.kf-review-thumb {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid var(--kf-border, rgba(255, 255, 255, 0.08));
+}

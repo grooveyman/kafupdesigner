@@ -21,191 +21,140 @@ interface Response {
     status: string;
     data: CategoryType[];
 }
+
 const Categories: React.FC = () => {
     const queryClient = useQueryClient();
-    const [catname, setCatName] = useState<string>("");
     const designerCode = tokenService.getDesignerCode() ?? "";
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setCatName(e.target.value);
-    };
-    const queryKey = useMemo(() => ["categories"], []);
-    const { data, isLoading } = useApiQuery<Response>(queryKey, "/designer/category");
-
-    const categories = data?.data ?? [];
-    const options: { value: string, label: string }[] = categories.map((cat) => ({ value: cat.id, label: cat.name }));
-
     const { product, addToProduct } = useProductContext();
-    const handleSelectChange = (selectedOption: any) => {
 
-        if (selectedOption) {
-            const selectedCategory = categories.find(cat => cat.id === selectedOption.target.value);
-            console.log("selected category");
-            console.log(selectedCategory);
-            if (selectedCategory) {
-                addToProduct({ category: { id: selectedCategory.id, name: selectedCategory.name }, designer_code: designerCode, cat_code: selectedCategory.id });
-            }
-        }
+    const [catname, setCatName] = useState<string>("");
+
+    const queryKey = useMemo(() => ["categories", designerCode], [designerCode]);
+    const { data, isLoading } = useApiQuery<Response>(
+        queryKey,
+        `/designer/category?designercode=${designerCode}`
+    );
+    const categories = data?.data ?? [];
+
+    const selectedName = product.category?.name;
+
+    // Choosing a category updates the shared product/design draft.
+    const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selected = categories.find((cat) => cat.id === e.target.value);
+        addToProduct({
+            category: { id: selected?.id ?? "", name: selected?.name ?? "" },
+            designer_code: designerCode,
+            cat_code: selected?.id ?? "",
+        });
     };
 
-    //create mutation
-    const mutation = useApiMutation<{ message: string }>(
-        "/designer/category/",
-        "POST",
-        {
-            onSuccess: (data) => {
-                console.log("Category added:", data.message);
-                toast.success("Category added successfully");
-                setCatName("");
-                // Optionally, you can add code to refresh the categories list here
-                queryClient.invalidateQueries({ queryKey });
-            },
-            onError: (error) => {
-                console.error("Error adding category:", error);
-                toast.error(`Error adding category: ${error.message}`);
-            }
-        }
-    );
+    // Create a new category; on success it is refetched and appears in the list.
+    const mutation = useApiMutation<{ message: string }>("/designer/category/", "POST", {
+        onSuccess: () => {
+            toast.success("Category added successfully");
+            setCatName("");
+            queryClient.invalidateQueries({ queryKey });
+        },
+        onError: (error) => toast.error(`Error adding category: ${error.message}`),
+    });
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-
-        const postData: PostDataType = {
-            name: catname,
-            designercode: designerCode
+        const name = catname.trim();
+        if (!name) {
+            toast.error("Please enter a category name");
+            return;
         }
-
+        const postData: PostDataType = { name, designercode: designerCode };
         mutation.mutate(postData);
     };
 
-    const [showCategoryModal, setShowCategoryModal] = useState(false);
-    const [categoryName, setcategoryName] = useState("");
-
-    const handleAddCategory = () => {
-        console.log(categoryName);
-    }
-
-    const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        if (e.target.value === "add-category") {
-            setShowCategoryModal(true);
-        }
-    }
     return (
-        <>
-            <div className="container">
-                <div className="row p-3">
-                    <div className="col-md-6">
-                        <h6 className="text-lg font-semibold mb-2">Select category</h6>
-                        <div className="flex flex-col space-y-2">
+        <div className="container">
+            <div className="row g-4 p-3">
+                {/* Choose an existing category */}
+                <div className="col-md-7">
+                    <h6 className="text-white mb-1">Choose a category</h6>
+                    <p className="kf-cat-help mb-3">
+                        Pick the category this design belongs to so shoppers can find it.
+                    </p>
 
-                            <div>
-                                <select onChange={handleCategoryChange} id="category-select" className="form-control">
-                                    <option>Select a category</option>
-                                    <option>Twuo</option>
-                                    <option value="add-category">+ Add new category</option>
-                                </select>
-                            </div>
-                            {isLoading ? (
-                                <div className="flex justify-center py-6">
-                                    <Spinner color="secondary" />
-                                </div>
-                            ) : categories.length === 0 ? (
-                                <div className="flex flex-col items-center text-gray-400 py-6">
-                                    <ArchiveX className="mb-2" size={32} />
-                                    <p>No categories available.</p>
+                    {isLoading ? (
+                        <div className="d-flex justify-content-center py-5">
+                            <Spinner color="secondary" />
+                        </div>
+                    ) : categories.length === 0 ? (
+                        <div className="kf-cat-empty text-center py-5">
+                            <ArchiveX className="mb-2" size={32} />
+                            <p className="mb-1">You have no categories yet.</p>
+                            <small>Create your first one using the form on the right.</small>
+                        </div>
+                    ) : (
+                        <>
+                            <select
+                                className="form-select"
+                                value={product.cat_code ?? ""}
+                                onChange={handleSelectChange}
+                            >
+                                <option value="">Select a category…</option>
+                                {categories.map((cat) => (
+                                    <option key={cat.id} value={cat.id}>
+                                        {cat.name}
+                                    </option>
+                                ))}
+                            </select>
+
+                            {selectedName ? (
+                                <div className="kf-cat-selected mt-3">
+                                    Selected: <strong>{selectedName}</strong>
                                 </div>
                             ) : (
-                                <select onChange={handleSelectChange} value={product.cat_code} className="form-select select-category">
-                                    <option value=""> Select a category </option>
-                                    {options.map((option) => (
-                                        <option key={option.value} value={option.value}>
-                                            {option.label}
-                                        </option>
-                                    ))}
-                                </select>
+                                <small className="kf-cat-help d-block mt-2">
+                                    No category selected yet.
+                                </small>
                             )}
-                        </div>
-
-                    </div>
-
-                    <div className="col-md-6">
-
-
-                        <div className="p-3">
-                            <h6>Not in List? Add New Category</h6>
-                            <div className="mb-3">
-                                <label htmlFor="categoryName" className="form-label">Category Name</label>
-                                <input type="text" name="catname" value={catname} onChange={handleChange} className="form-control" id="categoryName" placeholder="Enter category name" />
-                            </div>
-                            <button type="button" onClick={handleSubmit} className="btn btn-secondary flex items-center gap-2">
-                                {mutation.isPending ? (<Spinner className="inline-block" color="secondary" size="sm" />) : <Save className="inline-block" />} Save </button>
-                        </div>
-                    </div>
+                        </>
+                    )}
                 </div>
 
-                {showCategoryModal && (
-                    <div
-                        className="modal fade show"
-                        tabIndex={-1}
-                        style={{ display: "block" }}
-                        aria-modal="true"
-                        role="dialog"
-                    >
-                        <div className="modal-dialog">
-                            <div className="modal-content">
-
-                                <div className="d-flex justify-content-between">
-                                    <h5 className="modal-title">
-                                        Add New Category
-                                    </h5>
-
-                                    <button
-                                        type="button"
-                                        className="btn-close"
-                                        onClick={() => setShowCategoryModal(false)}
-                                    ></button>
-                                </div>
-
-                                <div className="modal-body">
-                                    <input
-                                        name="category_name"
-                                        type="text"
-                                        value={categoryName}
-                                        placeholder="Category name"
-                                        className="form-control"
-                                        onChange={(e) => setcategoryName(e.target.value)}
-                                    />
-                                </div>
-
-                                <div className="">
-                                    <button
-                                        type="button"
-                                        className="btn btn-primary"
-                                        onClick={handleAddCategory}
-                                    >
-                                        Add Category
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        className="btn btn-secondary"
-                                        onClick={() => setShowCategoryModal(false)}
-                                    >
-                                        Cancel
-                                    </button>
-                                </div>
-
-                            </div>
-                        </div>
+                {/* Add a new category */}
+                <div className="col-md-5">
+                    <div className="kf-cat-add">
+                        <h6 className="text-white mb-1">Add a new category</h6>
+                        <p className="kf-cat-help mb-3">
+                            Not in the list? Create one and it appears here instantly.
+                        </p>
+                        <form onSubmit={handleSubmit}>
+                            <label htmlFor="categoryName" className="form-label">
+                                Category name
+                            </label>
+                            <input
+                                id="categoryName"
+                                type="text"
+                                name="catname"
+                                value={catname}
+                                onChange={(e) => setCatName(e.target.value)}
+                                className="form-control mb-3"
+                                placeholder="e.g. Evening Gowns"
+                            />
+                            <button
+                                type="submit"
+                                className="btn btn-secondary d-inline-flex align-items-center gap-2"
+                                disabled={mutation.isPending}
+                            >
+                                {mutation.isPending ? (
+                                    <Spinner color="secondary" size="sm" />
+                                ) : (
+                                    <Save size={16} />
+                                )}
+                                Save category
+                            </button>
+                        </form>
                     </div>
-                )}
-
-                {showCategoryModal && (
-                    <div className="modal-backdrop fade show"></div>
-                )}
+                </div>
             </div>
-        </>
+        </div>
     );
-}
+};
 
 export default Categories;
