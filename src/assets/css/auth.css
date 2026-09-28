@@ -267,6 +267,31 @@
     background: var(--kf-border, rgba(255, 255, 255, 0.08));
 }
 
+.btn-google {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+    background-color: #ffffff;
+    color: #202124;
+    border: 1px solid #dfe1e5;
+    border-radius: 10px !important;
+    font-weight: 600;
+    padding: 13px 16px;
+}
+
+.btn-google:hover {
+    background-color: #f7f7f7;
+    color: #202124;
+}
+
+.google-logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
 /* ---------------- Responsive ---------------- */
 @media (max-width: 900px) {
     .kf-auth__panel {
