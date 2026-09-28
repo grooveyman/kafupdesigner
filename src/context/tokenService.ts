@@ -5,4 +5,7 @@ export const tokenService = {
   getDesignerCode: () => localStorage.getItem("designerCode"),
   setDesignerCode: (code: string) => localStorage.setItem("designerCode", code),
   clearDesignerCode: () => localStorage.removeItem("designerCode"),
+  setAccountSetup: (isAccountSetup: boolean) => localStorage.setItem("is_account_setup", isAccountSetup.toString()),
+  getAccountSetup: () => localStorage.getItem("is_account_setup"),
+  clearAccountSetup: () => localStorage.removeItem("is_account_setup")
 };
