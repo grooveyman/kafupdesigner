@@ -208,9 +208,11 @@ select {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    margin-left: auto;
     width: 36px;
     height: 36px;
     padding: 0;
+    flex: 0 0 auto;
     border-radius: 50%;
     border: 1px solid var(--kf-border, rgba(255, 255, 255, 0.14));
     background: transparent;
