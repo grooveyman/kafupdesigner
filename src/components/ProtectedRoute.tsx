@@ -1,14 +1,10 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { tokenService } from "../context/tokenService";
 
 export default function ProtectedRoute() {
-    const { isAuthenticated } = useAuth();
-    const hasToken = Boolean(tokenService.get());
+    const { isAuthenticated, isBootstrapping } = useAuth();
 
-    if (!isAuthenticated && !hasToken) {
-        return <Navigate to="/login" replace />;
-    }
+    if (isBootstrapping) return null;
 
-    return <Outlet />;
+    return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
 }

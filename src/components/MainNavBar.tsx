@@ -51,7 +51,15 @@ const MainNavBar: React.FC<NavbarProps> = ({ items }) => {
   }, [location.pathname]);
 
   return (
-    <header className="border-b bg-dark relative">
+    <header
+      className="sticky top-0 z-[1000] relative"
+      style={{
+        background: "rgba(20,20,20,0.85)",
+        backdropFilter: "blur(10px)",
+        WebkitBackdropFilter: "blur(10px)",
+        borderBottom: "1px solid rgba(255,255,255,0.10)",
+      }}
+    >
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         {/* Top Bar */}

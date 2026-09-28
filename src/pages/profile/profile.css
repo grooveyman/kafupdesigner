@@ -1,123 +1,679 @@
-.profile-dp {
+/* ============================================================
+   Profile design tokens (aligned with the app's dark theme)
+   ============================================================ */
+.kf-profile {
+    --kf-accent: #f5c400;
+    --kf-surface: #1d1c1c;
+    --kf-surface-2: #242323;
+    --kf-border: rgba(255, 255, 255, 0.08);
+    --kf-border-strong: rgba(255, 255, 255, 0.14);
+    --kf-text: rgba(255, 255, 255, 0.9);
+    --kf-muted: #9a9a9e;
+    padding-bottom: 6rem;
+    color: var(--kf-text);
+}
+
+/* Match the MainNavBar container: max-w-7xl (80rem) + px-4 / sm:px-6 / lg:px-8,
+   so the profile's left/right edges line up with the navbar title. */
+.kf-profile .kf-profile__container {
+    max-width: 80rem;
+    margin-inline: auto;
+    padding-inline: 1rem;
+}
+
+@media (min-width: 640px) {
+    .kf-profile .kf-profile__container {
+        padding-inline: 1.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .kf-profile .kf-profile__container {
+        padding-inline: 2rem;
+    }
+}
+
+/* ============================================================
+   Banner / hero
+   ============================================================ */
+.kf-banner {
     position: relative;
-    display: inline-block;
-}
-
-.profile-dp img {
     width: 100%;
-    border-radius: 10px;
+    border-radius: 0;
+    overflow: hidden;
+    min-height: 260px;
+    display: flex;
+    align-items: flex-end;
+    border-bottom: 1px solid var(--kf-border);
+    background:
+        radial-gradient(120% 140% at 0% 0%, rgba(245, 196, 0, 0.22) 0%, transparent 55%),
+        radial-gradient(120% 140% at 100% 100%, rgba(100, 108, 255, 0.18) 0%, transparent 50%),
+        linear-gradient(135deg, #201f1f 0%, #141414 100%);
 }
 
-.profile-edit-btn {
+.kf-banner__cover {
     position: absolute;
-    top: 5px;
-    right: 20px;
-    z-index: 10;
-    background-color: rgb(146, 143, 143);
-    padding: 8px;
-    border-radius: 20px;
-    cursor: pointer;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.5;
 }
 
-.categories>span {
-    background-color: black;
-    padding: 10px;
-    margin: 5px 5px 5px 0;
+.kf-banner__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(15, 15, 15, 0) 30%, rgba(15, 15, 15, 0.85) 100%);
 }
 
-.meta>button {
-    font-size: x-small;
-    color: white;
+.kf-banner__content {
+    position: relative;
+    width: 100%;
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 2rem 1rem 1.75rem;
+}
+
+@media (min-width: 640px) {
+    .kf-banner__content {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .kf-banner__content {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+}
+
+.kf-banner__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--kf-accent);
+    font-weight: 600;
+}
+
+.kf-banner__title {
+    margin: 0.4rem 0 0;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 700;
+    line-height: 1.1;
+    color: #fff;
+}
+
+.kf-banner__sub {
+    margin: 0.35rem 0 0;
+    color: var(--kf-muted);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+/* ============================================================
+   Layout grid
+   ============================================================ */
+.kf-profile__grid {
+    margin-top: 1.5rem;
+    row-gap: 1.5rem;
+}
+
+/* ============================================================
+   Reusable card
+   ============================================================ */
+.kf-card {
+    background: var(--kf-surface);
+    border: 1px solid var(--kf-border);
+    border-radius: 16px;
+    padding: 1.5rem;
+}
+
+.kf-card + .kf-card {
+    margin-top: 1.25rem;
+}
+
+/* ============================================================
+   Person / identity card
+   ============================================================ */
+.kf-person {
+    text-align: center;
+}
+
+.kf-person__photo {
     width: auto;
-    height: auto;
-    margin: 0px 5px 5px 0px;
-
+    margin: -0.75rem -0.75rem 0;
+    aspect-ratio: 4 / 5;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--kf-border-strong);
+    background: var(--kf-surface-2);
 }
 
-.cat-img{
-    position: absolute;
+.kf-person__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
-.cat-trash-btn{
-    position: absolute;
-    top:10%
+
+.kf-person__img--fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: 700;
+    color: #141414;
+    background: linear-gradient(135deg, var(--kf-accent) 0%, #d8a900 100%);
 }
+
+.kf-person__name {
+    margin: 1.15rem 0 0;
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+}
+
+/* Inline stats row */
+.kf-person__stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.35rem 1.1rem;
+    margin-top: 0.85rem;
+    font-size: 0.9rem;
+    color: var(--kf-muted);
+}
+
+.kf-pstat {
+    white-space: nowrap;
+}
+
+.kf-pstat__value {
+    color: #fff;
+    font-weight: 700;
+    margin-right: 0.2rem;
+}
+
+/* Bio */
+.kf-person__bio {
+    margin-top: 1.25rem;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.92rem;
+    line-height: 1.65;
+    text-align: left;
+}
+
+/* Action buttons (like / share / save) */
+.kf-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.35rem;
+}
+
+.kf-action {
+    flex: 1;
+    height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: var(--kf-surface-2);
+    border: 1px solid var(--kf-border);
+    color: var(--kf-text);
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.kf-action:hover {
+    transform: translateY(-2px);
+    border-color: var(--kf-border-strong);
+}
+
+.kf-action.is-active {
+    color: var(--kf-accent);
+    border-color: var(--kf-accent);
+    background: rgba(245, 196, 0, 0.12);
+}
+
+.kf-section-title {
+    font-size: 0.74rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--kf-muted);
+    margin: 1.5rem 0 0.75rem;
+    font-weight: 600;
+    text-align: left;
+}
+
+/* Socials */
+.kf-socials {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.kf-social {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: var(--kf-surface-2);
+    border: 1px solid var(--kf-border);
+    color: var(--kf-text);
+    transition: transform 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.kf-social:hover {
+    transform: translateY(-2px);
+    border-color: var(--kf-accent);
+    color: var(--kf-accent);
+}
+
+/* Location */
+.kf-location {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 0.9rem;
+}
+
+.kf-divider {
+    height: 1px;
+    background: var(--kf-border);
+    margin: 1.4rem 0;
+    border: 0;
+}
+
+/* ============================================================
+   Content / featured designs
+   ============================================================ */
+.kf-content__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.kf-content__title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.kf-content__subtitle {
+    margin: 0.2rem 0 0;
+    font-size: 0.85rem;
+    color: var(--kf-muted);
+}
+
+/* Filter bar (search + collection/category selects) */
+.kf-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+}
+
+.kf-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1 1 220px;
+    min-width: 180px;
+}
+
+.kf-search svg {
+    position: absolute;
+    left: 0.75rem;
+    color: var(--kf-muted);
+    pointer-events: none;
+}
+
+.kf-search input {
+    width: 100%;
+    height: 42px;
+    padding: 0 0.85rem 0 2.4rem;
+    border-radius: 10px;
+    background: var(--kf-surface-2);
+    border: 1px solid var(--kf-border);
+    color: var(--kf-text);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.15s ease;
+}
+
+.kf-search input::placeholder {
+    color: var(--kf-muted);
+}
+
+.kf-select {
+    height: 42px;
+    padding: 0 2rem 0 0.85rem;
+    border-radius: 10px;
+    background-color: var(--kf-surface-2);
+    border: 1px solid var(--kf-border);
+    color: var(--kf-text);
+    font-size: 0.9rem;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239a9a9e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.7rem center;
+    transition: border-color 0.15s ease;
+}
+
+.kf-search input:focus,
+.kf-select:focus {
+    border-color: var(--kf-accent);
+}
+
+.kf-select option {
+    background: var(--kf-surface);
+    color: var(--kf-text);
+}
+
+@media (max-width: 575.98px) {
+    .kf-select {
+        flex: 1 1 100%;
+    }
+}
+
+.kf-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.1rem;
+}
+
+.kf-design {
+    background: var(--kf-surface);
+    border: 1px solid var(--kf-border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: transform 0.18s ease, border-color 0.18s ease;
+}
+
+.kf-design:hover {
+    transform: translateY(-4px);
+    border-color: var(--kf-border-strong);
+}
+
+.kf-design__media {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background: var(--kf-surface-2);
+}
+
+.kf-design__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.kf-badge {
+    position: absolute;
+    top: 0.6rem;
+    left: 0.6rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 0.25rem 0.55rem;
+    border-radius: 999px;
+    background: rgba(245, 196, 0, 0.92);
+    color: #141414;
+}
+
+.kf-design__body {
+    padding: 0.85rem 0.95rem 1rem;
+}
+
+.kf-design__name {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.kf-design__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.45rem;
+    gap: 0.5rem;
+}
+
+.kf-design__cat {
+    font-size: 0.76rem;
+    color: var(--kf-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.kf-design__price {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--kf-accent);
+    white-space: nowrap;
+}
+
+/* Empty state */
+.kf-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--kf-muted);
+    border: 1px dashed var(--kf-border-strong);
+    border-radius: 14px;
+}
+
+.kf-empty svg {
+    margin-bottom: 0.75rem;
+    opacity: 0.6;
+}
+
+/* ============================================================
+   Skeleton loaders
+   ============================================================ */
+.kf-skeleton {
+    background: linear-gradient(90deg, #242323 25%, #2f2e2e 50%, #242323 75%);
+    background-size: 200% 100%;
+    animation: kf-shimmer 1.4s ease-in-out infinite;
+    border-radius: 8px;
+}
+
+@keyframes kf-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* ============================================================
+   Profile navigation (desktop bar + mobile bottom nav)
+   ============================================================ */
+.kf-nav {
+    position: sticky;
+    top: 3.5rem; /* sits directly below the sticky MainNavBar (h-14 = 56px) */
+    z-index: 998;
+    background: rgba(20, 20, 20, 0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--kf-border, rgba(255, 255, 255, 0.08));
+}
+
+.kf-nav__inner {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.kf-nav__brand {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.kf-nav__links {
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.kf-nav__link {
+    position: relative;
+    font-size: 0.9rem;
+    color: #9a9a9e;
+    text-decoration: none;
+    padding: 0.35rem 0;
+    transition: color 0.15s ease;
+}
+
+.kf-nav__link:hover {
+    color: #fff;
+}
+
+.kf-nav__link.active {
+    color: #fff;
+}
+
+.kf-nav__link.active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    border-radius: 2px;
+    background: #f5c400;
+}
+
+/* Mobile bottom nav */
+.kf-bottomnav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 9999;
+    background: rgba(20, 20, 20, 0.96);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.kf-bottomnav ul {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 0;
+    padding: 0.5rem 0;
+    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+    list-style: none;
+}
+
+.kf-bottomnav__link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    font-size: 0.68rem;
+    color: #9a9a9e;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.kf-bottomnav__link.active {
+    color: #f5c400;
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 991.98px) {
+    .kf-profile__aside {
+        order: -1;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .kf-card {
+        padding: 1.15rem;
+    }
+    .kf-banner__content {
+        padding: 1.25rem;
+    }
+    .kf-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 0.85rem;
+    }
+    .kf-person__photo {
+        aspect-ratio: 1 / 1;
+    }
+}
+
+/* ============================================================
+   Legacy classes retained for other profile sub-pages
+   (Categories / Collections / Shop content + filters)
+   ============================================================ */
 .feat-desc p {
     margin: 0 !important;
 }
-.feat-desc p:nth-child(2){
-    font-weight: bold !important; 
-}
-.feat-desc p:nth-child(3){
-    text-decoration: line-through;
-    font-style: italic;
-    font-size: small;
-}
-.feat-desc > p>span{
-    font-style: italic;
-    text-decoration: line-through;
-    font-weight: normal;
-}
-
 .feat-desc .feat-cat {
     font-size: x-small !important;
     color: rgb(146, 143, 143);
 }
-
-input{
-    /* height: auto !important; */
+.feat-cat {
+    font-size: x-small !important;
+    color: rgb(146, 143, 143);
 }
-
-.filter-category>select {
-    background-color: black !important;
-    color: white;
-    height: 100% !important;
-}
-
-.filter-collections>select {
-    background-color: black !important;
-    color: white;
-    height: 100% !important;
-}
-
 .filters {
     gap: 10px;
 }
-
-.portfolio {
-    margin: 0px 0px 10px 0px !important;
+.filter-category > select,
+.filter-collections > select {
+    background-color: black !important;
+    color: white;
+    height: 100% !important;
 }
-
-.portfolio-item>img {
-    position: relative;
-    display: inline-block;
+.portfolio {
+    margin: 0 0 10px 0 !important;
+}
+.portfolio-item > img {
     width: 100% !important;
-    margin: 0px 0px 10px 0px !important;
+    margin: 0 0 10px 0 !important;
     height: 70% !important;
     border-radius: 10px;
 }
-
-.portfolio-desc>p {
+.portfolio-desc > p {
     margin: 0 !important;
-    background-color: none !important;
 }
-
 .portfolio-cat {
     font-size: x-small !important;
     color: rgb(146, 143, 143);
 }
-
-.featured-designs>img {
+.featured-designs > img {
     border-radius: 10px;
 }
-
-.profilenav {
-    position: sticky !important;
-    top: 0px;
-    z-index: 999;
-    background: white;
-    width: 100%;
-}
-.profile-banner{
-    position: relative;
-}
-

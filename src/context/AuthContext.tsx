@@ -1,15 +1,14 @@
-import React, { createContext } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { tokenService } from "./tokenService";
-
+import { refreshSession, logoutRequest } from "../hooks/useApi";
 
 interface AuthContextType {
     isAuthenticated: boolean;
-    login: (token: string, designerCode: string, isAccountSetup?: boolean) => void;
+    isBootstrapping: boolean;
+    login: (designerCode: string) => void;
     logout: () => void;
-    setAccessToken?: (token: string) => void;
-    getAccessToken?: () => string | null;
-    clearAccessToken?: () => void;
     isAccountSetup: boolean;
+
 }
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -18,37 +17,39 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-    const [authcredentials, setAuthcredentials] = React.useState({
-        token: tokenService.get() || "",
-        designerCode: tokenService.getDesignerCode() || "",
-        isAccountSetup:  tokenService.getAccountSetup() == "true" ? true:false
-    });
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isBootstrapping, setIsBootstrapping] = useState(true);
+    const [isAccountSetup, setIsAccountSetup] = useState(tokenService.getAccountSetup() == "true" ? true : false);
 
+    // Restore the session from the httpOnly refresh cookie on load.
+    useEffect(() => {
+        let active = true;
+        refreshSession()
+            .then((ok) => { if (active) setIsAuthenticated(ok); })
+            .finally(() => { if (active) setIsBootstrapping(false); });
+        return () => { active = false; };
+    }, []);
 
-    const login = (token: string, designerCode: string, isAccountSetup = false) => {
-        setAuthcredentials({ token, designerCode, isAccountSetup });
-        tokenService.set(token);
-        tokenService.setDesignerCode(designerCode);
+    const login = (designerCode: string, isAccountSetup = false) => {
+        if (designerCode) tokenService.setDesignerCode(designerCode);
+        setIsAuthenticated(true);
         tokenService.setAccountSetup(isAccountSetup);
+        setIsAccountSetup(isAccountSetup);
     };
 
     const logout = () => {
-        setAuthcredentials({ token: "", designerCode: "", isAccountSetup: false });
-        tokenService.clear();
+        logoutRequest();
         tokenService.clearDesignerCode();
+        setIsAuthenticated(false);
+        tokenService.clearAccountSetup();
+        setIsAccountSetup(false);
     };
 
-    const isAuthenticated = !!authcredentials.token;
-    const isAccountSetup = authcredentials.isAccountSetup;
-    //restore token on mount
-    
-
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout, isAccountSetup}}>
+        <AuthContext.Provider value={{ isAuthenticated, isBootstrapping, login, logout, isAccountSetup }}>
             {children}
         </AuthContext.Provider>
     );
-
 }
 
 export function useAuth() {

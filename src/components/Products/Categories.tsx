@@ -29,7 +29,11 @@ const Categories: React.FC = () => {
         setCatName(e.target.value);
     };
     const queryKey = useMemo(() => ["categories"], []);
+<<<<<<< HEAD
     const { data, isLoading } = useApiQuery<Response>(queryKey, "/designer/category");
+=======
+    const { data, isLoading } = useApiQuery<CategoryType[]>(queryKey, "/designer/category/all?designercode=5a626ce4-957a-4104-b09a-cad34180d7f7");
+>>>>>>> main
 
     const categories = data?.data || [];
     const options: { value: string, label: string }[] = categories.map((cat) => ({ value: cat.id, label: cat.name }));
@@ -50,7 +54,7 @@ const Categories: React.FC = () => {
 
     //delete mutation
     const deleteMutation = useApiMutation<{ message: string }>(
-        "/categories/",
+        "/designer/category/",
         "DELETE",
         {
             onSuccess: (data) => {
@@ -68,7 +72,7 @@ const Categories: React.FC = () => {
 
     //create mutation
     const mutation = useApiMutation<{ message: string }>(
-        "/categories/",
+        "/designer/category/",
         "POST",
         {
             onSuccess: (data) => {

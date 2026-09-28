@@ -55,3 +55,37 @@ export interface OrderType{
     created_at: string;
     updated_at: string;
 }
+
+export interface DesignerType {
+    id: string;
+    brand_name: string;
+    brand_email: string;
+    brand_phone: string;
+    brand_profile_img?: string;
+    pitch: string;
+    address: string;
+    social_fb?: string;
+    social_tw?: string;
+    social_yt?: string;
+    social_tk?: string;
+    social_ig?: string;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export interface DesignerResponseType {
+    status: boolean;
+    data: DesignerType;
+}
+
+export interface ProfileDesignType {
+    id: string;
+    name: string;
+    description: string;
+    previewimg: string;
+    price: number;
+    isSell: string;
+    categories?: { id: string; name: string } | null;
+    collection?: { id: string; name: string } | null;
+    createdAt?: string;
+}

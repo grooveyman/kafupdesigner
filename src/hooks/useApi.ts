@@ -1,74 +1,65 @@
 import { UseMutationOptions, UseQueryOptions, useMutation, useQuery } from "@tanstack/react-query";
-import { tokenService } from "../context/tokenService";
 
 const BASE_URL = import.meta.env.VITE_APP_BASE_URL || "http://localhost:5000/api/v1";
-console.log("Base URL:", BASE_URL);
 
+let refreshPromise: Promise<boolean> | null = null;
 
-const refreshAccessToken = async (): Promise<boolean> => {
-  console.log("Attempting to refresh access token");
+// Single-flighted refresh using the httpOnly refresh_token cookie.
+// The backend sets fresh access_token/refresh_token cookies on success.
+export async function refreshSession(): Promise<boolean> {
+  if (!refreshPromise) {
+    refreshPromise = (async () => {
+      try {
+        const res = await fetch(`${BASE_URL}/auth/refresh`, {
+          method: "POST",
+          credentials: "include",
+        });
+        return res.ok;
+      } catch {
+        return false;
+      } finally {
+        refreshPromise = null;
+      }
+    })();
+  }
+  return refreshPromise;
+}
+
+export async function logoutRequest(): Promise<void> {
   try {
-    const refreshRes = await fetch(`${BASE_URL}/auth/refresh`, {
-      method: "POST",
-      credentials: "include", // include cookies
-    });
+    await fetch(`${BASE_URL}/auth/logout`, { method: "POST", credentials: "include" });
+  } catch {
+    /* best-effort */
+  }
+}
 
-    if (!refreshRes.ok) {
-      return false;
-    }
-
-    const responseText = await refreshRes.text();
-    if (!responseText) {
-      return false;
-    }
-
-    const data: { access_token?: string } = JSON.parse(responseText);
-    if (!data.access_token) {
-      return false;
-    }
-
-    tokenService.set(data.access_token);
-    return true;
-  } catch (error) {
-    console.error("Error refreshing access token:", error);
-    return false;
+const redirectToLogin = () => {
+  if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
+    window.location.href = "/login";
   }
 };
 
-//generic fetch function
-async function fetcher<T>(url: string, options?: RequestInit): Promise<T> {
-  console.log(`${BASE_URL}${url}`);
-  const request = () => fetch(`${BASE_URL}${url}`, {
+// Auth travels via httpOnly cookies, so every request just needs credentials.
+// On a 401 we refresh once and retry; if that fails the session is over.
+async function fetcher<T>(url: string, options?: RequestInit, retry = true): Promise<T> {
+  const res = await fetch(`${BASE_URL}${url}`, {
     ...options,
-    headers: {
-      Authorization: tokenService.get() ? `Bearer ${tokenService.get()}` : "",
-      ...(options?.headers || {}),
-    },
     credentials: "include",
   });
 
-  let res = await request();
-
-  if (res.status === 401) {
-    const refreshed = await refreshAccessToken();
-    console.log(localStorage.getItem("token"));
-    if (!refreshed) {
-      tokenService.clear();
-      // window.location.href = "/admin/login";
-    } else {
-      res = await request();
-    }
+  if (res.status === 401 && retry) {
+    const ok = await refreshSession();
+    if (ok) return fetcher<T>(url, options, false);
+    redirectToLogin();
+    throw new Error("Session expired");
   }
+
   if (!res.ok) {
-    const errorText = await res.text();
-    console.log("API request failed:", res.status, errorText);
-    throw new Error(errorText || "API request failed");
+    throw new Error((await res.text()) || "API request failed");
   }
 
   return res.json();
 }
-
-
 
 export function useApiQuery<T>(
   key: string[],
@@ -97,16 +88,15 @@ export function useApiMutation<T>(
       let fetchOptions: RequestInit;
       if (body instanceof FormData) {
         fetchOptions = { method, body };
-
       } else {
         fetchOptions = {
           method,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body)
+          body: JSON.stringify(body),
         };
       }
       return fetcher<T>(url, fetchOptions);
-    }, ...options
+    },
+    ...options,
   });
-
 }
