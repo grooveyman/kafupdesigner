@@ -94,7 +94,7 @@ const DesignList: React.FC = () => {
               <div className="d-flex justify-content-between align-items-center">
                 <div className="">
                   <button
-                    className="btn btn-sm btn-secondary"
+                    className="btn btn-secondary"
                     onClick={() => navigate("/adddesigns")}
                   >
                     Add Design
@@ -160,7 +160,7 @@ const DesignList: React.FC = () => {
                 <tbody>
                 {isLoading ? (
                   <tr>
-                    <td colSpan={5}>
+                    <td colSpan={5} className="skeleton-cell">
                       <ListSkeletonLoader count={5} />
                     </td>
                   </tr>
