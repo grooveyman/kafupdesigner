@@ -10,13 +10,7 @@ const AdminLayout: React.FC = () => {
 
   return (
     <div className="admin-layout">
-      <MainNavBar items={[
-        { label: "Dashboard", to: "/" },
-        { label: "Designs", to: "/designs" },
-        { label: "Orders", to: "/orders" },
-        { label: "Customers", to: "/customers" },
-        { label: "Profile", to: "/profile"},
-      ]} />
+      <MainNavBar />
       <main>
         <Outlet /> {/* renders nested admin routes */}
       </main>

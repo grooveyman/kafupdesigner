@@ -396,7 +396,7 @@ const OrdersList: React.FC = () => {
                 {/* Table */}
                 <div className="row">
                     <div className="">
-                        <div className="">
+                        <div className="card">
                             {isLoading ? (
                                 <Spinner />
                             ) : (
