@@ -102,8 +102,8 @@
 }
 
 .kf-auth .form-control::placeholder {
-    color: #ffffff;
-    opacity: 0.75;
+    color: var(--kf-muted, #9a9a9e);
+    opacity: 1;
 }
 
 /* password field with eye toggle */
