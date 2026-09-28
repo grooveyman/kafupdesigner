@@ -102,7 +102,7 @@
 }
 
 .kf-auth .form-control::placeholder {
-    color: var(--kf-muted, #9a9a9e);
+    color: var(--label-color, #ced4da);
     opacity: 1;
 }
 
