@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { X } from "lucide-react";
 import { Variation } from "../../context/ProductContext";
 
 interface VariantModalProps {
@@ -62,17 +63,19 @@ const VariantModal: React.FC<VariantModalProps> = ({
 
   return (
     <div className="modal fade" id="sizeModal" tabIndex={-1} aria-hidden="true">
-      <div className="modal-dialog modal-lg modal-dialog-centered">
+      <div className="modal-dialog modal-lg modal-dialog-centered kf-variant-dialog">
         <div className="modal-content">
           {/* Header */}
           <div className="modal-header border-0">
             <h5 className="modal-title text-white">Add Variant</h5>
             <button
               type="button"
-              className="btn-close"
+              className="kf-modal-close"
               data-bs-dismiss="modal"
               aria-label="Close"
-            ></button>
+            >
+              <X size={18} />
+            </button>
           </div>
 
           <div className="modal-body">

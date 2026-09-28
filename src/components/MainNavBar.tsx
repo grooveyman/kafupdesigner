@@ -67,7 +67,7 @@ const MainNavBar: React.FC<NavbarProps> = ({ items }) => {
 
           {/* Logo */}
           <span className="text-lg font-semibold text-white">
-            Kafup Designer
+            Kaf<span style={{ color: "var(--kf-accent, #f5c400)" }}>up</span>
           </span>
 
           {/* ✅ Desktop Menu */}

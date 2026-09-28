@@ -12,9 +12,20 @@ import "./admin.css";
 
 const DesignList: React.FC = () => {
   const [_isDelete, setIsDelete] = useState(false);
+  const [search, setSearch] = useState("");
   const { data, isLoading } = useApiQuery<Product[]>(["products"], "/designer/designs");
-  console.log("Fetched data:", isLoading ? " loading..." : data);
   const navigate = useNavigate();
+
+  const designs = Array.isArray(data) ? data : [];
+  const filtered = designs.filter((d: any) => {
+    const q = search.trim().toLowerCase();
+    if (!q) return true;
+    return (
+      d.name?.toLowerCase().includes(q) ||
+      d.description?.toLowerCase().includes(q) ||
+      d.category?.name?.toLowerCase().includes(q)
+    );
+  });
 
   const queryClient = useQueryClient();
   const mutation = useApiMutation<{ message: string }>(
@@ -95,44 +106,20 @@ const DesignList: React.FC = () => {
                     <div className="input-group">
                       <input
                         type="text"
-                        placeholder="Search by order # or customer..."
-                        className="form-control border-start-0"
-                        value={"search"}
-                        onChange={() => { }}
+                        placeholder="Search designs by name, description or category…"
+                        className="form-control"
+                        style={{ minWidth: "260px" }}
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
                       />
                     </div>
-                  </div>
-                  {/* Status Filter */}
-                  <div className="">
-                    <select
-                      className="form-select"
-                      value={""}
-                      onChange={() => { }}
-                    >
-                      <option value="all">All Statuses</option>
-                      <option value="0">Pending</option>
-                      <option value="2">Processing</option>
-                      <option value="3">Shipped</option>
-                      <option value="1">Delivered</option>
-                      <option value="4">Cancelled</option>
-                    </select>
-                  </div>
-
-                  {/* Price Range Filter */}
-                  <div className="">
-                    <select
-                      className="form-select"
-                      value={""}
-                      onChange={() => { }}
-                    >
-
-                    </select>
                   </div>
 
                   <div className="">
                     <button
                       className="btn btn-outline-danger"
-                      onClick={() => { }}
+                      onClick={() => setSearch("")}
+                      disabled={!search}
                     >
                       Reset
                     </button>
@@ -145,7 +132,9 @@ const DesignList: React.FC = () => {
             {/* Results count */}
             <div className="mt-2">
               <small className="text-muted">
-
+                {isLoading
+                  ? "Loading…"
+                  : `${filtered.length} of ${designs.length} design${designs.length === 1 ? "" : "s"}`}
               </small>
             </div>
           </div>
@@ -168,27 +157,15 @@ const DesignList: React.FC = () => {
                     <th>Action</th>
                   </tr>
                 </thead>
+                <tbody>
                 {isLoading ? (
                   <tr>
-                    <td>
-                      <ListSkeletonLoader count={3} />
-                    </td>
-                    <td>
-                      <ListSkeletonLoader count={3} />
-                    </td>
-                    <td>
-                      <ListSkeletonLoader count={3} />
-                    </td>
-                    <td>
-                      <ListSkeletonLoader count={3} />
-                    </td>
-                    <td>
-                      <ListSkeletonLoader count={3} />
+                    <td colSpan={5}>
+                      <ListSkeletonLoader count={5} />
                     </td>
                   </tr>
-                ) : (
-                  data ? (
-                    data?.map((design: any) => {
+                ) : filtered.length ? (
+                    filtered.map((design: any) => {
                       return (
                         <tr className="" key={design.id}>
                           <td className="">
@@ -251,15 +228,20 @@ const DesignList: React.FC = () => {
                       );
                     })
                   ) : (
-                    <div className="flex flex-col items-center text-gray-400 py-6">
-                      <ArchiveX className="mb-2" size={32} />
-                      <p>No designs available.</p>
-                    </div>
-
-                  )
-
-                )}
-
+                    <tr>
+                      <td colSpan={5}>
+                        <div className="d-flex flex-column align-items-center text-gray-400 py-4">
+                          <ArchiveX className="mb-2" size={32} />
+                          <p className="mb-0">
+                            {designs.length === 0
+                              ? "No designs available."
+                              : "No designs match your search."}
+                          </p>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
               </table>
             </div>
           </div>
