@@ -58,8 +58,7 @@ const Categories: React.FC = () => {
         onError: (error) => toast.error(`Error adding category: ${error.message}`),
     });
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSave = () => {
         const name = catname.trim();
         if (!name) {
             toast.error("Please enter a category name");
@@ -67,6 +66,15 @@ const Categories: React.FC = () => {
         }
         const postData: PostDataType = { name, designercode: designerCode };
         mutation.mutate(postData);
+    };
+
+    // This block is rendered inside the design wizard's <form>, so it can't be
+    // a nested <form>. Submit on Enter manually instead.
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            handleSave();
+        }
     };
 
     return (
@@ -124,7 +132,7 @@ const Categories: React.FC = () => {
                         <p className="kf-cat-help mb-3">
                             Not in the list? Create one and it appears here instantly.
                         </p>
-                        <form onSubmit={handleSubmit}>
+                        <div className="kf-cat-form">
                             <label htmlFor="categoryName" className="form-label">
                                 Category name
                             </label>
@@ -134,11 +142,13 @@ const Categories: React.FC = () => {
                                 name="catname"
                                 value={catname}
                                 onChange={(e) => setCatName(e.target.value)}
+                                onKeyDown={handleKeyDown}
                                 className="form-control mb-3"
                                 placeholder="e.g. Evening Gowns"
                             />
                             <button
-                                type="submit"
+                                type="button"
+                                onClick={handleSave}
                                 className="btn btn-secondary d-inline-flex align-items-center gap-2"
                                 disabled={mutation.isPending}
                             >
@@ -149,7 +159,7 @@ const Categories: React.FC = () => {
                                 )}
                                 Save category
                             </button>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
