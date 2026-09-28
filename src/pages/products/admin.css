@@ -280,3 +280,15 @@ input[type='checkbox'] {
   height: 20px !important;
   width: 20px !important;
 }
+
+/* Skeleton loader row: drop the fat cell padding/card styling */
+tbody td.skeleton-cell {
+  padding: 4px !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+td.skeleton-cell .card {
+  background-color: transparent !important;
+  padding: 0 !important;
+}
