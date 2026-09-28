@@ -40,21 +40,18 @@ select {
     border-radius: 10px !important;
     height: 48px !important;
     background-color: var(--input-background-color) !important;
-    border: 1px solid var(--kf-border, rgba(255, 255, 255, 0.08)) !important;
 }
 
 input:focus,
 select:focus,
 textarea:focus {
     outline: none !important;
-    border-color: var(--kf-accent, #f5c400) !important;
     box-shadow: 0 0 0 2px rgba(245, 196, 0, 0.15) !important;
 }
 
 textarea {
     border-radius: 10px !important;
     background-color: var(--input-background-color) !important;
-    border: 1px solid var(--kf-border, rgba(255, 255, 255, 0.08)) !important;
     height: auto;
     padding: 12px 14px;
 }
@@ -99,7 +96,6 @@ select {
     flex: 1 1 auto;
     justify-content: center;
     background: transparent;
-    border: 1px solid var(--kf-border, rgba(255, 255, 255, 0.08));
     color: var(--nav-item-color, #9a9a9e);
     border-radius: 10px;
     padding: 10px 14px;
@@ -111,19 +107,16 @@ select {
 
 .kf-wizard__tab:hover {
     color: #fff;
-    border-color: var(--kf-border-strong, rgba(255, 255, 255, 0.14));
 }
 
 .kf-wizard__tab.is-active {
     color: #1d1c1c;
     background: var(--kf-accent, #f5c400);
-    border-color: var(--kf-accent, #f5c400);
     font-weight: 600;
 }
 
 .kf-wizard__tab.is-done:not(.is-active) {
     color: #fff;
-    border-color: var(--kf-accent, #f5c400);
 }
 
 .kf-wizard__tab-index {
@@ -165,7 +158,6 @@ select {
 
 .kf-wizard__btn--ghost {
     background: transparent;
-    border: 1px solid var(--kf-border-strong, rgba(255, 255, 255, 0.14));
     color: #fff;
 }
 
@@ -219,7 +211,6 @@ select {
     padding: 0;
     flex: 0 0 auto;
     border-radius: 50%;
-    border: 1px solid var(--kf-border, rgba(255, 255, 255, 0.14));
     background: transparent;
     color: var(--label-color, #9a9a9e);
     transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
@@ -228,7 +219,6 @@ select {
 .kf-modal-close:hover {
     background: rgba(255, 255, 255, 0.06);
     color: #fff;
-    border-color: var(--kf-border-strong, rgba(255, 255, 255, 0.24));
 }
 
 .kf-modal-close:focus-visible {
@@ -240,7 +230,6 @@ select {
     width: 44px;
     height: 44px;
     border-radius: 10px;
-    border: 1px solid var(--kf-border, rgba(255, 255, 255, 0.14));
     display: inline-block;
     flex: 0 0 auto;
 }
@@ -251,7 +240,6 @@ select {
 }
 
 .kf-variant-divider {
-    border-color: var(--kf-border, rgba(255, 255, 255, 0.08));
     opacity: 1;
     margin: 20px 0;
 }
@@ -298,7 +286,6 @@ select {
 .kf-review-table td {
     color: #fff;
     vertical-align: middle;
-    border-color: var(--kf-border, rgba(255, 255, 255, 0.05));
 }
 
 .kf-review-chip {
@@ -315,7 +302,6 @@ select {
     height: 200px;
     object-fit: cover;
     border-radius: 12px;
-    border: 1px solid var(--kf-border, rgba(255, 255, 255, 0.08));
 }
 
 .kf-review-thumb {
@@ -323,5 +309,4 @@ select {
     height: 72px;
     object-fit: cover;
     border-radius: 10px;
-    border: 1px solid var(--kf-border, rgba(255, 255, 255, 0.08));
 }
