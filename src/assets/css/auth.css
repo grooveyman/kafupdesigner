@@ -5,7 +5,9 @@
    ============================================================ */
 
 .kf-auth {
-    min-height: 100vh;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
     display: flex;
     background-color: var(--background-color, #1a1a1a);
     color: var(--text-color, rgba(255, 255, 255, 0.87));
@@ -18,9 +20,8 @@
 /* ---------------- Form side ---------------- */
 .kf-auth__form-side {
     flex: 1 1 50%;
+    height: 100%;
     display: flex;
-    align-items: center;
-    justify-content: center;
     padding: 40px 24px;
     overflow-y: auto;
 }
@@ -28,6 +29,9 @@
 .kf-auth__form-wrap {
     width: 100%;
     max-width: 440px;
+    /* margin auto centres the form when it fits and lets it scroll from the
+       top (rather than clipping) once it grows taller than the viewport */
+    margin: auto;
 }
 
 .kf-auth__brand-mark {
@@ -79,6 +83,27 @@
     color: var(--label-color, #9a9a9e);
     font-size: 0.75rem;
     margin-top: 6px;
+}
+
+/* Dark-theme form controls so text + placeholder read clearly on the
+   dark auth background (inputs, textarea, selects). */
+.kf-auth .form-control,
+.kf-auth textarea.form-control {
+    background-color: var(--input-background-color, #2a2a2a);
+    border: 1px solid var(--kf-border-strong, rgba(255, 255, 255, 0.14));
+    color: #fff;
+}
+
+.kf-auth .form-control:focus {
+    background-color: var(--input-background-color, #2a2a2a);
+    color: #fff;
+    border-color: var(--kf-accent, #f5c400);
+    box-shadow: 0 0 0 0.15rem rgba(245, 196, 0, 0.20);
+}
+
+.kf-auth .form-control::placeholder {
+    color: #ffffff;
+    opacity: 0.75;
 }
 
 /* password field with eye toggle */
