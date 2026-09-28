@@ -82,13 +82,20 @@ export function useApiMutation<T>(
     mutationFn: async (body: any) => {
       let url = baseUrl;
 
-      if (body?.id) {
-        url = `${baseUrl}/${body.id}`;
-      }
       let fetchOptions: RequestInit;
       if (body instanceof FormData) {
+        // Allow dynamic `/:id` targets (e.g. PATCH) by passing an `id` field
+        // in the FormData; it is stripped from the payload before sending.
+        const formId = body.get("id");
+        if (formId != null && formId !== "") {
+          url = `${baseUrl}/${formId}`;
+          body.delete("id");
+        }
         fetchOptions = { method, body };
       } else {
+        if (body?.id) {
+          url = `${baseUrl}/${body.id}`;
+        }
         fetchOptions = {
           method,
           headers: { "Content-Type": "application/json" },
