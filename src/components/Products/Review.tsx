@@ -1,4 +1,4 @@
-import { useProductContext } from "../../context/ProductContext";
+import { useDesignContext } from "../../context/ProductContext";
 import namer from "color-namer";
 
 export const hexToColorName = (hex: string): string => {
@@ -7,7 +7,7 @@ export const hexToColorName = (hex: string): string => {
 };
 
 const Review: React.FC = () => {
-
+    const { design } = useDesignContext();
 
     const isDarkColor = (hex: string) => {
         const r = parseInt(hex.slice(1, 3), 16);
@@ -16,121 +16,116 @@ const Review: React.FC = () => {
         return (r * 299 + g * 587 + b * 114) / 1000 < 128;
     };
 
-    const { product } = useProductContext();
+    const srcOf = (val: string | File) =>
+        typeof val === "string" ? val : URL.createObjectURL(val);
+
     return (
-        <>
-            <div className="container">
+        <div className="container kf-review">
+            {/* Category */}
+            <section className="kf-review-section">
+                <h6 className="kf-review-title">Category</h6>
+                <div className="kf-review-value">{design.category?.name || "—"}</div>
+            </section>
 
-                <div className="row p-3">
-                    {/* Categories review */}
-                    <div className="d-flex justify-content-between">
-                        <label>Category</label>
-                        <a href="#">Edit</a>
+            {/* Details */}
+            <section className="kf-review-section">
+                <h6 className="kf-review-title">Design Details</h6>
+                <div className="row g-3">
+                    <div className="col-12 col-md-4">
+                        <span className="kf-review-label">Name</span>
+                        <div className="kf-review-value">{design.name || "—"}</div>
                     </div>
-
-                    <div className="text-gray-400 pt-3 pb-3">
-                        {product.category.name}
+                    <div className="col-12 col-md-4">
+                        <span className="kf-review-label">Price (GHS)</span>
+                        <div className="kf-review-value">{design.price || "—"}</div>
                     </div>
-                    <hr style={{ color: "white" }} />
-                </div>
-
-                <div className="row p-3">
-                    {/* Categories review */}
-                    <div className="d-flex justify-content-between">
-                        <label>Product Details</label>
-                        <a href="#">Edit</a>
-                    </div>
-
-                    <div className="text-gray-400 pt-3 pb-3 gap-5 d-flex flex-wrap justify-content-start">
-                        <div className="flex-fill flex-md-grow-0 col-12 col-sm-6 col-md-4">
-                            <label>Product Name</label>
-                            <div>{product.name}</div>
-                        </div>
-
-                        <div className="flex-fill flex-md-grow-0 col-12 col-sm-6 col-md-4">
-                            <label>Product Description</label>
-                            <div>{product.description}</div>
-                        </div>
-
-                        <div className="flex-fill flex-md-grow-0 col-12 col-sm-6 col-md-4">
-                            <label>Product Price (GHS)</label>
-                            <div>{product.price}</div>
-                        </div>
+                    <div className="col-12">
+                        <span className="kf-review-label">Description</span>
+                        <div className="kf-review-value">{design.description || "—"}</div>
                     </div>
                 </div>
+            </section>
 
-                {/* variations */}
-                <div className="row">
-                    <label>Product Variations</label>
-                    <div className="table-responsive py-2">
-                        <table className="table table-striped text-gray text-nowrap">
+            {/* Variations */}
+            <section className="kf-review-section">
+                <h6 className="kf-review-title">Variations</h6>
+                {design.variations?.length ? (
+                    <div className="table-responsive">
+                        <table className="table text-nowrap kf-review-table">
                             <thead>
                                 <tr>
-                                    <th>Color:Size:Quantity</th>
+                                    <th>Variant</th>
+                                    <th>Gender</th>
                                     <th>Bust</th>
+                                    <th>Waist</th>
                                     <th>Hip</th>
                                     <th>Neck</th>
                                     <th>Sleeve</th>
-                                    <th>Waist</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {product.variations?.map((variation) => (
-                                    <tr className="variation-tr">
+                                {design.variations.map((variation, i) => (
+                                    <tr className="variation-tr" key={i}>
                                         <td>
-                                            <div style={{ backgroundColor: variation.color, color: isDarkColor(variation.color) ? "#fff" : "#000", borderRadius: "20px", padding: "10px" }}>{hexToColorName(variation.color)}: {variation.size}: {variation.quantity}
-                                            </div>
+                                            <span
+                                                className="kf-review-chip"
+                                                style={{
+                                                    backgroundColor: variation.color,
+                                                    color: isDarkColor(variation.color) ? "#fff" : "#000",
+                                                }}
+                                            >
+                                                {hexToColorName(variation.color)} · {variation.size} · {variation.quantity}
+                                            </span>
                                         </td>
-                                        <td> <p>{variation.bust}</p></td>
-                                        <td> <p>{variation.hip}</p></td>
-                                        <td> <p>{variation.neck}</p></td>
-                                        <td> <p>{variation.sleeve}</p></td>
-                                        <td> <p>{variation.waist}</p></td>
-
+                                        <td>{variation.gender || "—"}</td>
+                                        <td>{variation.bust || "—"}</td>
+                                        <td>{variation.waist || "—"}</td>
+                                        <td>{variation.hip || "—"}</td>
+                                        <td>{variation.neck || "—"}</td>
+                                        <td>{variation.sleeve || "—"}</td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
-
                     </div>
-                </div>
-                <div className="row">
-                    <hr style={{ color: "white" }} />
-                </div>
+                ) : (
+                    <div className="kf-review-value">No variations added.</div>
+                )}
+            </section>
 
-
-                <div className="text-gray-400 pt-3 pb-3">
-                    <div className="flex justify-content-between pt-3">
-                        <label>Product Images</label>
-                        <a href="#">Edit</a>
-                    </div>
-                    <div className="pt-3">
-                        <div className="preview">
-                            <img className="img-fluid" height={"50%"} width={"50%"} src={
-                                typeof product.previewimg == "string" ? product.previewimg : URL.createObjectURL(product.previewimg)
-                            } />
+            {/* Images */}
+            <section className="kf-review-section">
+                <h6 className="kf-review-title">Images</h6>
+                <div className="d-flex flex-wrap align-items-start gap-3">
+                    {design.previewimg && (
+                        <div>
+                            <span className="kf-review-label">Preview</span>
+                            <img
+                                className="kf-review-preview"
+                                src={srcOf(design.previewimg)}
+                                alt="Design preview"
+                            />
                         </div>
-
-                        <div className="d-flex justify-content-start pt-3 gap-2">
-                            {product.otherimages.map((img) => (
-                                <div>
-                                    <img src={
-                                        typeof img.url == "string" ? img.url : URL.createObjectURL(img.url)
-                                    } style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                                </div>
-
-                            ))}
+                    )}
+                    {design.otherimages?.length > 0 && (
+                        <div>
+                            <span className="kf-review-label">Gallery</span>
+                            <div className="d-flex flex-wrap gap-2">
+                                {design.otherimages.map((img, i) => (
+                                    <img
+                                        key={i}
+                                        className="kf-review-thumb"
+                                        src={srcOf(img.url)}
+                                        alt={`Design image ${i + 1}`}
+                                    />
+                                ))}
+                            </div>
                         </div>
-                    </div>
-
+                    )}
                 </div>
-                <hr style={{ color: "white" }} />
-                <div className="d-flex justify-content-end">
-                    <button className="btn btn-secondary" type="submit">Submit</button>
-                </div>
-            </div>
-        </>
+            </section>
+        </div>
     );
-}
+};
 
 export default Review;

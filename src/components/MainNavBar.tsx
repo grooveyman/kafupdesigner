@@ -3,16 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-interface NavItem {
-  label: string;
-  to: string;
-}
-
-interface NavbarProps {
-  items: NavItem[];
-}
-
-const MainNavBar: React.FC<NavbarProps> = ({ items }) => {
+const MainNavBar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout } = useAuth();
@@ -23,10 +14,10 @@ const MainNavBar: React.FC<NavbarProps> = ({ items }) => {
   };
 
   const menuRef = useRef<HTMLLIElement>(null);
-  const productsMenuRef = useRef<HTMLLIElement>(null);
+  const designsMenuRef = useRef<HTMLLIElement>(null);
   const [open, setOpen] = useState(false); // profile dropdown
-  const [productsOpen, setProductsOpen] = useState(false);
-  const [mobileProductsOpen, setMobileProductsOpen] = useState(false);
+  const [designsOpen, setDesignsOpen] = useState(false);
+  const [mobileDesignsOpen, setMobileDesignsOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState(false); // mobile menu
 
   // ✅ Close profile dropdown on outside click
@@ -35,8 +26,8 @@ const MainNavBar: React.FC<NavbarProps> = ({ items }) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setOpen(false);
       }
-      if (productsMenuRef.current && !productsMenuRef.current.contains(event.target as Node)) {
-        setProductsOpen(false);
+      if (designsMenuRef.current && !designsMenuRef.current.contains(event.target as Node)) {
+        setDesignsOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -46,8 +37,8 @@ const MainNavBar: React.FC<NavbarProps> = ({ items }) => {
   // ✅ Close mobile menu when route changes
   useEffect(() => {
     setOpenMenu(false);
-    setMobileProductsOpen(false);
-    setProductsOpen(false);
+    setMobileDesignsOpen(false);
+    setDesignsOpen(false);
   }, [location.pathname]);
 
   return (
@@ -60,14 +51,14 @@ const MainNavBar: React.FC<NavbarProps> = ({ items }) => {
         borderBottom: "1px solid rgba(255,255,255,0.10)",
       }}
     >
-      <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <nav className="container">
 
         {/* Top Bar */}
         <div className="flex h-14 items-center justify-between">
 
           {/* Logo */}
           <span className="text-lg font-semibold text-white">
-            Kafup Designer
+            Kaf<span style={{ color: "var(--kf-accent, #f5c400)" }}>up</span>
           </span>
 
           {/* ✅ Desktop Menu */}
@@ -79,19 +70,19 @@ const MainNavBar: React.FC<NavbarProps> = ({ items }) => {
             >
               Dashboard
             </NavLink>
-            <li className="relative" ref={productsMenuRef}>
+            <li className="relative" ref={designsMenuRef}>
               <button
                 type="button"
-                onClick={() => setProductsOpen(!productsOpen)}
+                onClick={() => setDesignsOpen(!designsOpen)}
                 className="flex items-center gap-1 text-sm text-white"
-                aria-expanded={productsOpen}
+                aria-expanded={designsOpen}
                 aria-haspopup="menu"
               >
-                Products
-                <ChevronDown className={`h-4 w-4 transition-transform ${productsOpen ? "rotate-180" : ""}`} />
+                Designs
+                <ChevronDown className={`h-4 w-4 transition-transform ${designsOpen ? "rotate-180" : ""}`} />
               </button>
 
-              {productsOpen && (
+              {designsOpen && (
                 <div className="absolute left-0 mt-2 w-48 rounded-md bg-white py-1 shadow-lg z-[9999]" role="menu">
                   <NavLink
                     to="/designs"
@@ -192,46 +183,66 @@ const MainNavBar: React.FC<NavbarProps> = ({ items }) => {
                 : "opacity-0 -translate-y-3 scale-95 pointer-events-none"
               }`}
           >
-            {items.map((item) => item.label === "Products" ? (
-              <div key={item.to} className="border-b px-4 py-2">
-                <button
-                  type="button"
-                  onClick={() => setMobileProductsOpen(!mobileProductsOpen)}
-                  className="flex w-full items-center justify-between py-2 text-left text-gray-700"
-                  aria-expanded={mobileProductsOpen}
-                >
-                  Products
-                  <ChevronDown className={`h-4 w-4 transition-transform ${mobileProductsOpen ? "rotate-180" : ""}`} />
-                </button>
-                {mobileProductsOpen && (
-                  <div className="pb-1 pl-3">
-                    <NavLink
-                      to="/products"
-                      onClick={() => setOpenMenu(false)}
-                      className="block py-2 text-sm text-gray-600 no-underline hover:text-black"
-                    >
-                      All products
-                    </NavLink>
-                    <NavLink
-                      to="/addproducts"
-                      onClick={() => setOpenMenu(false)}
-                      className="block py-2 text-sm text-gray-600 no-underline hover:text-black"
-                    >
-                      Add product
-                    </NavLink>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                onClick={() => setOpenMenu(false)}
-                className="block px-4 py-2 no-underline text-gray-700 hover:text-black focus:outline-none"
+            <NavLink
+              to="/"
+              onClick={() => setOpenMenu(false)}
+              className="block px-4 py-2 no-underline text-gray-700 hover:text-black focus:outline-none"
+            >
+              Dashboard
+            </NavLink>
+
+            <div className="border-b px-4 py-2">
+              <button
+                type="button"
+                onClick={() => setMobileDesignsOpen(!mobileDesignsOpen)}
+                className="flex w-full items-center justify-between py-2 text-left text-gray-700"
+                aria-expanded={mobileDesignsOpen}
               >
-                {item.label}
-              </NavLink>
-            ))}
+                Designs
+                <ChevronDown className={`h-4 w-4 transition-transform ${mobileDesignsOpen ? "rotate-180" : ""}`} />
+              </button>
+              {mobileDesignsOpen && (
+                <div className="pb-1 pl-3">
+                  <NavLink
+                    to="/designs"
+                    onClick={() => setOpenMenu(false)}
+                    className="block py-2 text-sm text-gray-600 no-underline hover:text-black"
+                  >
+                    List
+                  </NavLink>
+                  <NavLink
+                    to="/collections"
+                    onClick={() => setOpenMenu(false)}
+                    className="block py-2 text-sm text-gray-600 no-underline hover:text-black"
+                  >
+                    Collections
+                  </NavLink>
+                  <NavLink
+                    to="/categories"
+                    onClick={() => setOpenMenu(false)}
+                    className="block py-2 text-sm text-gray-600 no-underline hover:text-black"
+                  >
+                    Categories
+                  </NavLink>
+                </div>
+              )}
+            </div>
+
+            <NavLink
+              to="/orders"
+              onClick={() => setOpenMenu(false)}
+              className="block px-4 py-2 no-underline text-gray-700 hover:text-black focus:outline-none"
+            >
+              Orders
+            </NavLink>
+
+            <NavLink
+              to="/"
+              onClick={() => setOpenMenu(false)}
+              className="block px-4 py-2 no-underline text-gray-700 hover:text-black focus:outline-none"
+            >
+              Reports
+            </NavLink>
 
             <div className="border-t mt-2 pt-2">
               <button

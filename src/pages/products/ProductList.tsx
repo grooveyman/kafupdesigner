@@ -9,18 +9,27 @@ import { toast } from "react-toastify";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import "./admin.css";
-import { Variation } from "./AddProduct";
 
-const ProductList: React.FC = () => {
+const DesignList: React.FC = () => {
   const [_isDelete, setIsDelete] = useState(false);
-  const [randomNum] = useState(() => Math.floor(Math.random() * 1000000));
-  const { data, isLoading } = useApiQuery<Product[]>(["products_" + randomNum], "/designs/DES740410");
-  console.log("Fetched data:", isLoading ? " loading..." : data);
+  const [search, setSearch] = useState("");
+  const { data, isLoading } = useApiQuery<Product[]>(["products"], "/designer/designs");
   const navigate = useNavigate();
+
+  const designs = Array.isArray(data) ? data : [];
+  const filtered = designs.filter((d: any) => {
+    const q = search.trim().toLowerCase();
+    if (!q) return true;
+    return (
+      d.name?.toLowerCase().includes(q) ||
+      d.description?.toLowerCase().includes(q) ||
+      d.category?.name?.toLowerCase().includes(q)
+    );
+  });
 
   const queryClient = useQueryClient();
   const mutation = useApiMutation<{ message: string }>(
-    `/products/del`,
+    `/designer/designs`,
     "DELETE",
     {
       onSuccess: (data) => {
@@ -37,7 +46,7 @@ const ProductList: React.FC = () => {
     console.log("Delete clicked");
     Swal.fire({
       title: "Are you sure?",
-      text: `You are deleting ${name} from products. Note: This action cannot be undone!`,
+      text: `You are deleting ${name} from designs. Note: This action cannot be undone!`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
@@ -48,14 +57,14 @@ const ProductList: React.FC = () => {
         mutation.mutate({ id });
         setIsDelete(true);
         console.log("Item deleted");
-        Swal.fire("Deleted!", "Product has been removed.", "success");
+        Swal.fire("Deleted!", "Design has been removed.", "success");
       }
     });
   };
 
   const handleEdit = (prodid: string) => {
     if (prodid) {
-      navigate(`/editproducts/${prodid}`);
+      navigate(`/editdesigns/${prodid}`);
     }
   };
 
@@ -70,7 +79,7 @@ const ProductList: React.FC = () => {
                 <Breadcrumb
                   crumbs={[
                     { label: "Dashboard", href: "/" },
-                    { label: "Product List", href: "/products" },
+                    { label: "Design List", href: "/designs" },
                   ]}
                 />
               </div>
@@ -85,10 +94,10 @@ const ProductList: React.FC = () => {
               <div className="d-flex justify-content-between align-items-center">
                 <div className="">
                   <button
-                    className="btn btn-sm btn-secondary"
-                    onClick={() => navigate("/addproducts")}
+                    className="btn btn-secondary"
+                    onClick={() => navigate("/adddesigns")}
                   >
-                    Add Product
+                    Add Design
                   </button>
                 </div>
                 <div className="d-flex justify-content-end gap-2">
@@ -97,44 +106,20 @@ const ProductList: React.FC = () => {
                     <div className="input-group">
                       <input
                         type="text"
-                        placeholder="Search by order # or customer..."
-                        className="form-control border-start-0"
-                        value={"search"}
-                        onChange={(e) => { }}
+                        placeholder="Search designs by name, description or category…"
+                        className="form-control"
+                        style={{ minWidth: "260px" }}
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
                       />
                     </div>
-                  </div>
-                  {/* Status Filter */}
-                  <div className="">
-                    <select
-                      className="form-select"
-                      value={""}
-                      onChange={(e) => { }}
-                    >
-                      <option value="all">All Statuses</option>
-                      <option value="0">Pending</option>
-                      <option value="2">Processing</option>
-                      <option value="3">Shipped</option>
-                      <option value="1">Delivered</option>
-                      <option value="4">Cancelled</option>
-                    </select>
-                  </div>
-
-                  {/* Price Range Filter */}
-                  <div className="">
-                    <select
-                      className="form-select"
-                      value={""}
-                      onChange={(e) => { }}
-                    >
-
-                    </select>
                   </div>
 
                   <div className="">
                     <button
                       className="btn btn-outline-danger"
-                      onClick={() => { }}
+                      onClick={() => setSearch("")}
+                      disabled={!search}
                     >
                       Reset
                     </button>
@@ -147,7 +132,9 @@ const ProductList: React.FC = () => {
             {/* Results count */}
             <div className="mt-2">
               <small className="text-muted">
-
+                {isLoading
+                  ? "Loading…"
+                  : `${filtered.length} of ${designs.length} design${designs.length === 1 ? "" : "s"}`}
               </small>
             </div>
           </div>
@@ -163,67 +150,55 @@ const ProductList: React.FC = () => {
 
                 <thead className="">
                   <tr>
-                    <th>Product Details</th>
+                    <th>Design Details</th>
                     <th>Category</th>
                     <th>Quantity</th>
                     <th>Unit Price</th>
                     <th>Action</th>
                   </tr>
                 </thead>
+                <tbody>
                 {isLoading ? (
                   <tr>
-                    <td>
-                      <ListSkeletonLoader count={3} />
-                    </td>
-                    <td>
-                      <ListSkeletonLoader count={3} />
-                    </td>
-                    <td>
-                      <ListSkeletonLoader count={3} />
-                    </td>
-                    <td>
-                      <ListSkeletonLoader count={3} />
-                    </td>
-                    <td>
-                      <ListSkeletonLoader count={3} />
+                    <td colSpan={5} className="skeleton-cell">
+                      <ListSkeletonLoader count={5} />
                     </td>
                   </tr>
-                ) : (
-                  data ? (
-                    data?.map((product: any) => {
+                ) : filtered.length ? (
+                    filtered.map((design: any) => {
                       return (
-                        <tr className="" key={product.id}>
+                        <tr className="" key={design.id}>
                           <td className="">
                             <div className="d-flex gap-3">
                               <img
-                                src={product.previewimg}
+                                src={design.previewimg}
                                 height={50}
                                 width={90}
                                 style={{ objectFit: "cover" }}
                               />
                               <div className="prod-det">
-                                <p className="prodname">{product.name}</p>
-                                <p className="prod-var text-wrap">{product.description.length > 30 ? product.description.slice(0, 30) + "..." : product.description}</p>
+                                <p className="prodname">{design.name}</p>
+                                <p className="prod-var text-wrap">{design.description.length > 30 ? design.description.slice(0, 30) + "..." : design.description}</p>
                               </div>
                             </div>
                           </td>
                           <td>
                             <p className="prod-category">
-                              {product.category && (
+                              {design.category && (
                                 <span className="table-card text-black">
-                                  {product.category.name}
+                                  {design.category.name}
                                 </span>
                               )}
 
                             </p>
                           </td>
                           <td className="">
-                            <p>{product.quantity}</p>
+                            <p>{design.quantity}</p>
                           </td>
 
                           <td>
                             <div className="d-flex">
-                              <p>{product.price}</p>
+                              <p>{design.price}</p>
                             </div>
                           </td>
 
@@ -235,7 +210,7 @@ const ProductList: React.FC = () => {
                                 style={{ cursor: "pointer" }}
                                 size={25}
                                 strokeWidth={1.3}
-                                onClick={() => handleEdit(product.id)}
+                                onClick={() => handleEdit(design.id)}
                               />
                               <Trash2Icon
                                 className="prod-action-del"
@@ -243,7 +218,7 @@ const ProductList: React.FC = () => {
                                 style={{ cursor: "pointer" }}
                                 strokeWidth={1.3}
                                 onClick={() =>
-                                  handleDelete(product.name, product.id)
+                                  handleDelete(design.name, design.id)
                                 }
                               />
                               {/* </p> */}
@@ -253,15 +228,20 @@ const ProductList: React.FC = () => {
                       );
                     })
                   ) : (
-                    <div className="flex flex-col items-center text-gray-400 py-6">
-                      <ArchiveX className="mb-2" size={32} />
-                      <p>No products available.</p>
-                    </div>
-
-                  )
-
-                )}
-
+                    <tr>
+                      <td colSpan={5}>
+                        <div className="d-flex flex-column align-items-center text-gray-400 py-4">
+                          <ArchiveX className="mb-2" size={32} />
+                          <p className="mb-0">
+                            {designs.length === 0
+                              ? "No designs available."
+                              : "No designs match your search."}
+                          </p>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
               </table>
             </div>
           </div>
@@ -271,4 +251,4 @@ const ProductList: React.FC = () => {
   );
 };
 
-export default ProductList;
+export default DesignList;

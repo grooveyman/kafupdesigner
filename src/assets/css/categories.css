@@ -29,3 +29,31 @@
     color: white !important;
     background-color: red !important;
 }
+
+/* ---------------- Category step ---------------- */
+.kf-cat-help {
+    color: var(--label-color, #9a9a9e);
+    font-size: 0.85rem;
+}
+
+.kf-cat-empty {
+    color: var(--label-color, #9a9a9e);
+    border: 1px dashed var(--kf-border, rgba(255, 255, 255, 0.14));
+    border-radius: 12px;
+}
+
+.kf-cat-selected {
+    color: #fff;
+    font-size: 0.9rem;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: rgba(245, 196, 0, 0.1);
+    border: 1px solid var(--kf-accent, #f5c400);
+}
+
+.kf-cat-add {
+    padding: 20px;
+    border-radius: 12px;
+    background: var(--card-background-color, rgba(255, 255, 255, 0.02));
+    border: 1px solid var(--kf-border, rgba(255, 255, 255, 0.08));
+}

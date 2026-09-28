@@ -337,7 +337,7 @@ const OrderDetails = () => {
                                         <table className="table table-striped text-gray text-nowrap">
                                             <thead>
                                                 <tr>
-                                                    <th>Product</th>
+                                                    <th>Design</th>
                                                     <th>Qty</th>
                                                     <th>Price (GHS)</th>
                                                     <th>Total (GHS)</th>

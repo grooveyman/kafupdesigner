@@ -7,16 +7,11 @@ interface SkeletonLoaderProps {
 const ListSkeletonLoader: React.FC<SkeletonLoaderProps> = ({ count = 3 }) => {
   return (
     <>
-      <div className="row">
+      <div className="row g-2">
         {Array.from({ length: count }).map((_, index) => (
-          <div className="col-md-12 mb-4" key={index}>
-            <div className="card p-2" >
-              <Skeleton height={100} style={{backgroundColor:"black"}} /> {/* Image placeholder */}
-              {/* <div className="p-2">
-                <Skeleton width="80%" height={20} />
-                <Skeleton width="60%" height={15} />
-                <Skeleton width="40%" height={15} />
-              </div> */}
+          <div className="col-md-12" key={index}>
+            <div className="card p-0">
+              <Skeleton variant="rounded" height={64} style={{ backgroundColor: "#2a2a2a" }} /> {/* Row placeholder */}
             </div>
           </div>
         ))}

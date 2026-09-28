@@ -4,7 +4,7 @@ interface ScrollNavProps{
     prodname:string;
     prodamount:number;
 }
-const ProductScrollNav: React.FC<ScrollNavProps> = ({prodname, prodamount}) => {
+const DesignScrollNav: React.FC<ScrollNavProps> = ({prodname, prodamount}) => {
     const [visisble, setVisible] = useState(false);
 
     useEffect(() => {
@@ -46,4 +46,4 @@ const ProductScrollNav: React.FC<ScrollNavProps> = ({prodname, prodamount}) => {
     );
 };
 
-export default ProductScrollNav;
+export default DesignScrollNav;

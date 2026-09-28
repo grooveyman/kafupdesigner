@@ -29,8 +29,8 @@ interface CategoryType{
   id: string,
   name: string;
 }
-export interface ProductType {
-  code?: string; 
+export interface DesignType {
+  code?: string;
   name: string;
   description: string;
   price: number;
@@ -42,20 +42,20 @@ export interface ProductType {
   cat_code: string;
 }
 
-interface ProductContextType {
-  product: ProductType;
-  addToProduct: (data: Partial<ProductType>) => void;
+interface DesignContextType {
+  design: DesignType;
+  addToDesign: (data: Partial<DesignType>) => void;
   removeVariant: (index: number) => void;
 }
 
-const ProductContext = createContext<ProductContextType | undefined>(undefined);
+const DesignContext = createContext<DesignContextType | undefined>(undefined);
 
-interface ProductProviderProps {
+interface DesignProviderProps {
   children: ReactNode;
 }
 
-export function ProductProvider({ children }: ProductProviderProps) {
-  const [product, setProduct] = useState<ProductType>({
+export function DesignProvider({ children }: DesignProviderProps) {
+  const [design, setDesign] = useState<DesignType>({
     name: "",
     description: "",
     price: 0,
@@ -66,48 +66,48 @@ export function ProductProvider({ children }: ProductProviderProps) {
     designer_code: "",
     cat_code:"",
     code:""
-    
+
   });
 
-  // Add / update product fields
-  const addToProduct = useCallback((data: Partial<ProductType>) => {
-    setProduct((prev) => ({
+  // Add / update design fields
+  const addToDesign = useCallback((data: Partial<DesignType>) => {
+    setDesign((prev) => ({
       ...prev,
       ...data,
     }));
-    
+
   }, []);
 
   useEffect(()=> {
-    console.log(product);
-  }, [product]);
+    console.log(design);
+  }, [design]);
 
   // Remove variant by index
   const removeVariant = useCallback((index: number) => {
-    setProduct((prev) => ({
+    setDesign((prev) => ({
       ...prev,
       variations: prev.variations.filter((_, i) => i !== index),
     }));
   }, []);
 
   const contextValue = useMemo(
-    () => ({ product, addToProduct, removeVariant }),
-    [product, addToProduct, removeVariant]
+    () => ({ design, addToDesign, removeVariant }),
+    [design, addToDesign, removeVariant]
   );
 
   return (
-    <ProductContext.Provider value={contextValue}>
+    <DesignContext.Provider value={contextValue}>
       {children}
-    </ProductContext.Provider>
+    </DesignContext.Provider>
   );
 }
 
 // Custom hook
-export function useProductContext(): ProductContextType {
-  const ctx = useContext(ProductContext);
+export function useDesignContext(): DesignContextType {
+  const ctx = useContext(DesignContext);
   if (!ctx)
     throw new Error(
-      "useProductContext must be used inside ProductProvider"
+      "useDesignContext must be used inside DesignProvider"
     );
   return ctx;
 }

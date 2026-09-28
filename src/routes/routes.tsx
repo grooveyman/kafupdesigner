@@ -5,11 +5,11 @@ import { createBrowserRouter, Outlet } from "react-router-dom";
 // import Cart from "../pages/Cart";
 // import Categories from "../pages/Categories";
 // import Checkout from "../pages/Checkout";
-import AddProducts from "../pages/products/AddProduct";
+import AddDesigns from "../pages/products/AddProduct";
 import Dashboard from "../pages/Dashboard";
-import ProductList from "../pages/products/ProductList";
+import DesignList from "../pages/products/ProductList";
 import AdminLayout from "../layouts/AdminLayout";
-import EditProduct from "../pages/products/EditProduct";
+import EditDesign from "../pages/products/EditProduct";
 import OrdersList from "../pages/orders/OrdersList";
 import OrderDetails from "../pages/orders/OrderDetails";
 import CustomerList from "../pages/customers/CustomerList";
@@ -19,9 +19,10 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "../queryClient";
 import { AuthProvider } from "../context/AuthContext";
-import { ProductProvider } from "../context/ProductContext";
+import { DesignProvider } from "../context/ProductContext";
 import CategoryWrapper from "../pages/profile/Categories/CategoryWrapper";
 import CollectionWrapper from "../pages/profile/Collections/CollectionWrapper";
+import CollectionDetails from "../pages/profile/Collections/CollectionDetails";
 import ShopWrapper from "../pages/profile/Shop/ShopWrapper";
 import Register from "../pages/register/Register";
 import VerifyEmail from "../pages/register/VerifyEmail";
@@ -68,21 +69,22 @@ export const router = createBrowserRouter(
               children: [
 
                 { index: true, element: <Dashboard /> },
-                { path: "designs", element: <ProductList /> },
+                { path: "/designs", element: <DesignList /> },
                 {
-                  path: "/addproducts", element: (
-                    <ProductProvider>
-                      <AddProducts />
-                    </ProductProvider>
+                  path: "/adddesigns", element: (
+                    <DesignProvider>
+                      <AddDesigns />
+                    </DesignProvider>
                   )
                 },
-                { path: "/editproducts/:prodid", element: <EditProduct /> },
+                { path: "/editdesigns/:prodid", element: <EditDesign /> },
                 { path: "/orders", element: <OrdersList /> },
                 { path: "/orders/:orderid", element: <OrderDetails /> },
                 { path: "/customers", element: <CustomerList /> },
                 { path: "/profile", element: <Profile /> },
-                { path: "/profile-category", element: <CategoryWrapper /> },
-                { path: "/profile-collections", element: <CollectionWrapper /> },
+                { path: "/categories", element: <CategoryWrapper /> },
+                { path: "/collections", element: <CollectionWrapper /> },
+                { path: "/collections/:id", element: <CollectionDetails /> },
                 { path: "/profile-shop", element: <ShopWrapper /> },
                 { path: "/accountsetup/", element: <AccountSetup /> },
                 { path: "*", element: <div>404 Not Found</div> }

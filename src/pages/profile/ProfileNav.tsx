@@ -7,8 +7,8 @@ interface ProfileNavProps {
 
 const links = [
     { to: "/profile", label: "Overview", icon: UserRound },
-    { to: "/profile-category", label: "Categories", icon: LayoutGrid },
-    { to: "/profile-collections", label: "Collections", icon: FolderOpen },
+    { to: "/categories", label: "Categories", icon: LayoutGrid },
+    { to: "/collections", label: "Collections", icon: FolderOpen },
     { to: "/profile-shop", label: "Shop", icon: Store },
 ];
 

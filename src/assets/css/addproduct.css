@@ -37,18 +37,26 @@
 
 input,
 select {
-    border-radius: 30px !important;
-    height: 60px !important;
+    border-radius: 10px !important;
+    height: 48px !important;
     background-color: var(--input-background-color) !important;
-    border: none !important;
-    padding: 20px;
+    border: 1px solid var(--kf-border, rgba(255, 255, 255, 0.08)) !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none !important;
+    border-color: var(--kf-accent, #f5c400) !important;
+    box-shadow: 0 0 0 2px rgba(245, 196, 0, 0.15) !important;
 }
 
 textarea {
-    border-radius: 30px !important;
+    border-radius: 10px !important;
     background-color: var(--input-background-color) !important;
-    border: none !important;
+    border: 1px solid var(--kf-border, rgba(255, 255, 255, 0.08)) !important;
     height: auto;
+    padding: 12px 14px;
 }
 
 input::placeholder,
@@ -73,4 +81,247 @@ select {
     color: var(--label-color) !important;
     align-items: center;
     background: none;
+}
+
+/* ---------------- Wizard ---------------- */
+.kf-wizard__tabs {
+    display: flex;
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px !important;
+}
+
+.kf-wizard__tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1 1 auto;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid var(--kf-border, rgba(255, 255, 255, 0.08));
+    color: var(--nav-item-color, #9a9a9e);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.kf-wizard__tab:hover {
+    color: #fff;
+    border-color: var(--kf-border-strong, rgba(255, 255, 255, 0.14));
+}
+
+.kf-wizard__tab.is-active {
+    color: #1d1c1c;
+    background: var(--kf-accent, #f5c400);
+    border-color: var(--kf-accent, #f5c400);
+    font-weight: 600;
+}
+
+.kf-wizard__tab.is-done:not(.is-active) {
+    color: #fff;
+    border-color: var(--kf-accent, #f5c400);
+}
+
+.kf-wizard__tab-index {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    background: rgba(255, 255, 255, 0.08);
+    color: inherit;
+}
+
+.kf-wizard__tab.is-active .kf-wizard__tab-index {
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.kf-wizard__body {
+    padding: 24px !important;
+}
+
+.kf-wizard__nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 20px 0 40px;
+}
+
+.kf-wizard__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 0.375rem !important;
+    padding: 10px 20px;
+    font-weight: 600;
+}
+
+.kf-wizard__btn--ghost {
+    background: transparent;
+    border: 1px solid var(--kf-border-strong, rgba(255, 255, 255, 0.14));
+    color: #fff;
+}
+
+.kf-wizard__btn--ghost:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+}
+
+.kf-wizard__btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.kf-wizard__progress {
+    color: var(--label-color, #9a9a9e);
+    font-size: 0.85rem;
+}
+
+@media (max-width: 576px) {
+    .kf-wizard__tab-label {
+        display: none;
+    }
+    .kf-wizard__tab {
+        flex: 1 1 0;
+    }
+}
+
+/* ---------------- Variant modal ---------------- */
+.kf-variant-dialog {
+    --bs-modal-width: 860px;
+    width: 100%;
+    max-width: min(860px, calc(100% - 2rem)) !important;
+    margin: 1.75rem auto;
+}
+
+.kf-variant-dialog .modal-content {
+    width: 100%;
+}
+
+.kf-variant-dialog .modal-body {
+    padding: 8px 24px 24px;
+}
+
+.kf-modal-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    border: 1px solid var(--kf-border, rgba(255, 255, 255, 0.14));
+    background: transparent;
+    color: var(--label-color, #9a9a9e);
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.kf-modal-close:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+    border-color: var(--kf-border-strong, rgba(255, 255, 255, 0.24));
+}
+
+.kf-modal-close:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(245, 196, 0, 0.25);
+}
+
+.kf-color-swatch {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    border: 1px solid var(--kf-border, rgba(255, 255, 255, 0.14));
+    display: inline-block;
+    flex: 0 0 auto;
+}
+
+.kf-variant-help {
+    color: var(--label-color, #9a9a9e);
+    font-size: 0.8rem;
+}
+
+.kf-variant-divider {
+    border-color: var(--kf-border, rgba(255, 255, 255, 0.08));
+    opacity: 1;
+    margin: 20px 0;
+}
+
+/* ---------------- Review step ---------------- */
+.kf-review-section {
+    padding: 18px 0;
+    border-bottom: 1px solid var(--kf-border, rgba(255, 255, 255, 0.08));
+}
+.kf-review-section:last-child {
+    border-bottom: none;
+}
+
+.kf-review-title {
+    color: #fff;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.kf-review-label {
+    display: block;
+    color: var(--label-color, #9a9a9e);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+}
+
+.kf-review-value {
+    color: #fff;
+    font-size: 0.95rem;
+    word-break: break-word;
+}
+
+.kf-review-table {
+    color: var(--label-color, #cfcfcf);
+}
+.kf-review-table thead th {
+    color: var(--label-color, #9a9a9e);
+    font-size: 0.8rem;
+    font-weight: 500;
+    border-bottom: 1px solid var(--kf-border, rgba(255, 255, 255, 0.08));
+}
+.kf-review-table td {
+    color: #fff;
+    vertical-align: middle;
+    border-color: var(--kf-border, rgba(255, 255, 255, 0.05));
+}
+
+.kf-review-chip {
+    display: inline-block;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.kf-review-preview {
+    display: block;
+    width: 160px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid var(--kf-border, rgba(255, 255, 255, 0.08));
+}
+
+.kf-review-thumb {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid var(--kf-border, rgba(255, 255, 255, 0.08));
 }

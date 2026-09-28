@@ -37,7 +37,7 @@ const designData = [
     { name: "Unsold", value: 15 },
 ];
 
-const trendingProducts = [
+const trendingDesigns = [
     { name: "Sunset Muse", category: "Print", sales: 128, revenue: "GHS 4,860", change: "+24%" },
     { name: "Urban Lines", category: "Digital", sales: 96, revenue: "GHS 3,420", change: "+18%" },
     { name: "Soft Geometry", category: "Canvas", sales: 74, revenue: "GHS 2,960", change: "+12%" },
@@ -282,7 +282,7 @@ const Dashboard: React.FC = () => {
                         <div className="card-body p-4">
                             <div className="dashboard-table-header">
                                 <div>
-                                    <h5 className="mb-1">Trending products</h5>
+                                    <h5 className="mb-1">Trending designs</h5>
                                     <p className="text-muted mb-0">Your best-performing designs this month</p>
                                 </div>
                                 <button type="button" className="dashboard-table-link">View all</button>
@@ -292,7 +292,7 @@ const Dashboard: React.FC = () => {
                                 <table className="dashboard-table">
                                     <thead>
                                         <tr>
-                                            <th scope="col">Product</th>
+                                            <th scope="col">Design</th>
                                             <th scope="col">Category</th>
                                             <th scope="col">Sales</th>
                                             <th scope="col">Revenue</th>
@@ -300,22 +300,22 @@ const Dashboard: React.FC = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {trendingProducts.map((product, index) => (
-                                            <tr key={product.name}>
+                                        {trendingDesigns.map((design, index) => (
+                                            <tr key={design.name}>
                                                 <td>
                                                     <div className="dashboard-product-cell">
                                                         <span className="dashboard-product-rank">0{index + 1}</span>
-                                                        <strong>{product.name}</strong>
+                                                        <strong>{design.name}</strong>
                                                     </div>
                                                 </td>
-                                                <td><span className="dashboard-category">{product.category}</span></td>
-                                                <td>{product.sales}</td>
-                                                <td><strong>{product.revenue}</strong></td>
+                                                <td><span className="dashboard-category">{design.category}</span></td>
+                                                <td>{design.sales}</td>
+                                                <td><strong>{design.revenue}</strong></td>
                                                 <td>
                                                     <div className="dashboard-trend-cell">
-                                                        <span>{product.change}</span>
+                                                        <span>{design.change}</span>
                                                         <div className="dashboard-trend-bar">
-                                                            <span style={{ width: `${product.sales / 1.4}%` }} />
+                                                            <span style={{ width: `${design.sales / 1.4}%` }} />
                                                         </div>
                                                     </div>
                                                 </td>
