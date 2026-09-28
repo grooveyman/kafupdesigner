@@ -48,7 +48,6 @@
     padding: 10px 14px;
     border-radius: 10px;
     background: rgba(245, 196, 0, 0.1);
-    border: 1px solid var(--kf-accent, #f5c400);
 }
 
 .kf-cat-add {
