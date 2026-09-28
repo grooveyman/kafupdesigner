@@ -70,6 +70,14 @@ body {
   border-radius: 0.375rem !important;
 }
 
+/* Breadcrumb link hover uses the app accent instead of blue */
+.kf-crumb-link {
+  transition: color 0.15s ease;
+}
+.kf-crumb-link:hover {
+  color: var(--kf-accent, #f5c400);
+}
+
 
 /* :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
