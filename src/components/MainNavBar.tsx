@@ -111,7 +111,7 @@ const MainNavBar: React.FC<NavbarProps> = ({ items }) => {
             </li>
 
              <NavLink
-              to="/"
+              to="/orders"
               className="no-underline text-sm text-gray-300 hover:text-white"
               style={{ textDecoration: "none", color: "white" }}
             >

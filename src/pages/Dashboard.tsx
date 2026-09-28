@@ -60,7 +60,7 @@ const Dashboard: React.FC = () => {
             {/* Statistics */}
             <div className="row mt-5">
 
-                <div className="col-md-6 col-lg-4 col-sm-12">
+                <div className="col-md-6 col-lg-4 col-xl-3 col-sm-6 mb-2">
                     <div className="dashboard-card card">
                         <div className="card-body">
                             <div className="d-flex justify-content-start">
@@ -79,7 +79,7 @@ const Dashboard: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="col-md-6 col-lg-4 col-sm-12">
+                <div className="col-md-6 col-lg-4 col-xl-3 col-xxl-3 col-sm-6 mb-2">
                     <div className="dashboard-card card">
                         <div className="card-body">
                             <div className="d-flex justify-content-start">
@@ -98,7 +98,7 @@ const Dashboard: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="col-md-6 col-lg-4 col-sm-12">
+                <div className="col-md-6 col-lg-4 col-xl-3 col-sm-6 mb-2">
                     <div className="dashboard-card card">
                         <div className="card-body">
                             <div className="d-flex justify-content-start">
@@ -118,7 +118,7 @@ const Dashboard: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="col-md-6 col-lg-4">
+                <div className="col-md-6 col-lg-4 col-xl-3 col-sm-6 mb-2">
                     <div className="dashboard-card card">
                         <div className="card-body">
                             <div className="d-flex justify-content-start">
@@ -143,7 +143,7 @@ const Dashboard: React.FC = () => {
             {/* Sales Chart */}
             <div className="row mt-5">
 
-                <div className="col-md-8">
+                <div className="col-md-12 col-lg-8 col-xl-8 col-xxl-8 mb-2">
                     <div className="dashboard-chart card border-0">
                         <div className="card-body p-4">
                             <div className="d-flex justify-content-between align-items-center mb-4">
@@ -225,7 +225,7 @@ const Dashboard: React.FC = () => {
                     </div>
 
                 </div>
-                <div className="col-md-4">
+                <div className="col-md-12 col-lg-4 col-xl-4 col-xxl-4">
                     <div className="dashboard-chart card border-0">
                         <div className="card-body p-4">
 
@@ -277,7 +277,7 @@ const Dashboard: React.FC = () => {
             </div>
 
             <div className="row">
-                <div className="col-md-8">
+                <div className="col-md-12 col-lg-8 col-xl-8">
                     <div className="dashboard-table-card card border-0">
                         <div className="card-body p-4">
                             <div className="dashboard-table-header">
@@ -328,7 +328,7 @@ const Dashboard: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="col-md-4">
+                <div className="col-md-12 col-lg-4 col-xl-4">
                     <div className="dashboard-table-card dashboard-orders-card card">
                         <div className="card-body p-4">
                             <div className="dashboard-table-header">

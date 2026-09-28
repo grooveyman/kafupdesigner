@@ -9,6 +9,9 @@ import { useState, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import "../products/admin.css";
 import { OrderType } from "../../types/types";
+import EmptyPage from "../../components/EmptyPage";
+import { DataTable } from "../../components/DataTable";
+import Spinner from "../../components/Spinner";
 
 // Status label map
 const STATUS_MAP: Record<string, string> = {
@@ -44,7 +47,7 @@ const OrdersList: React.FC = () => {
     // --- Selection state ---
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
-    const { data, isLoading } = useApiQuery<OrderType[]>(["orders"], "/orders/DES740410");
+    const { data, isLoading } = useApiQuery<OrderType[]>(["orders"], "/designer/orders");
     const navigate = useNavigate();
     const queryClient = useQueryClient();
 
@@ -256,17 +259,17 @@ const OrdersList: React.FC = () => {
         <>
             <div className="container">
                 <div className="row">
-                    
-                        <div className="d-flex justify-content-between pt-4">
-                            <div>
-                                <Breadcrumb
-                                    crumbs={[
-                                        { label: "Dashboard", href: "/" },
-                                        { label: "Orders List", href: "/orders" },
-                                    ]}
-                                />
-                            </div>
-                        
+
+                    <div className="d-flex justify-content-between pt-4">
+                        <div>
+                            <Breadcrumb
+                                crumbs={[
+                                    { label: "Dashboard", href: "/" },
+                                    { label: "Orders List", href: "/orders" },
+                                ]}
+                            />
+                        </div>
+
                     </div>
                 </div>
 
@@ -339,7 +342,7 @@ const OrdersList: React.FC = () => {
                         <div className="mt-2">
                             <small className="text-muted">
                                 {filteredData.length === 0
-                                    ? "No orders found"
+                                    ? ""
                                     : `Showing ${startEntry}–${endEntry} of ${filteredData.length} orders`}
                             </small>
                         </div>
@@ -393,131 +396,93 @@ const OrdersList: React.FC = () => {
                 {/* Table */}
                 <div className="row">
                     <div className="">
-                        <div className="table-responsive">
-                            <table
-                                className="table table-borderless table-hover"
-                                style={{ background: "none" }}
-                            >
-                                <thead>
-                                    <tr>
-                                        {/* Select-all checkbox */}
-                                        <th style={{ width: "44px" }}>
-                                            <input
-                                                type="checkbox"
-                                                className="form-check-input"
-                                                checked={allPageSelected}
-                                                ref={(el) => {
-                                                    if (el) el.indeterminate = somePageSelected;
-                                                }}
-                                                onChange={handleSelectAll}
-                                                title="Select all on this page"
-                                            />
-                                        </th>
-                                        <th>Order</th>
-                                        <th>Customer</th>
-                                        <th>Quantity</th>
-                                        <th>Status</th>
-                                        <th>Total Price (GHS)</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {isLoading ? (
-                                        <tr>
-                                            {[...Array(7)].map((_, i) => (
-                                                <td key={i}><ListSkeletonLoader count={3} /></td>
-                                            ))}
-                                        </tr>
-                                    ) : paginatedData.length === 0 ? (
-                                        <tr>
-                                            <td colSpan={7}>
-                                                <div className="d-flex flex-column align-items-center text-muted py-5">
-                                                    <ArchiveX className="mb-2" size={32} />
-                                                    <p className="mb-0">No orders match your filters.</p>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ) : (
-                                        paginatedData.map((product: any) => {
-                                            const isSelected = selectedIds.has(product.id);
-                                            return (
-                                                <tr
-                                                    key={product.id}
-                                                    style={isSelected
-                                                        ? { outline: "2px solid var(--bs-primary)", outlineOffset: "-1px" }
-                                                        : {}
-                                                    }
-                                                >
-                                                    {/* Row checkbox */}
-                                                    <td>
-                                                        <input
-                                                            type="checkbox"
-                                                            className="form-check-input"
-                                                            checked={isSelected}
-                                                            onChange={() => handleSelectRow(product.id)}
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <div className="d-flex gap-3">
-                                                            <User />
-                                                            <div className="prod-det">{product.tck_no}</div>
+                        <div className="">
+                            {isLoading ? (
+                                <Spinner />
+                            ) : (
+                                !isLoading && filteredData.length === 0 ? (
+                                    <EmptyPage title="No orders" message="No orders found at this time" />
+                                ) : (
+                                    <DataTable headings={["Order", "Customer", "Quantity", "Status", "Total Price", "Action"]} data={paginatedData} renderRow={(item) => {
+                                        const isSelected = selectedIds.has(item.id);
+
+                                        return (
+                                            <tr key={item.id}
+                                                style={isSelected
+                                                    ? { outline: "2px solid var(--bs-primary)", outlineOffset: "-1px" }
+                                                    : {}
+                                                }>
+                                                <td>
+                                                    <input
+                                                        type="checkbox"
+                                                        className="form-check-input"
+                                                        checked={isSelected}
+                                                        onChange={() => handleSelectRow(item.id)}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <div className="d-flex gap-3">
+                                                        <User />
+                                                        <div className="prod-det">{item.tck_no}</div>
+                                                    </div>
+                                                </td>
+                                                <td>{item.customer.name}</td>
+                                                <td>{item.quantity}</td>
+                                                <td>{handleOrderStatus(item.status)}</td>
+                                                <td>{item.total_price}</td>
+                                                <td>
+                                                    <div className="d-flex justify-content-start align-items-center">
+                                                        {/* Mobile: 3-dot dropdown */}
+                                                        <div className="d-block d-md-none" style={{ position: "relative" }}>
+                                                            <MoreVertical
+                                                                style={{ cursor: "pointer" }}
+                                                                size={22}
+                                                                onClick={() => handleDropdownToggle(item.id)}
+                                                            />
+                                                            {openDropdown === item.id && (
+                                                                <div style={{
+                                                                    position: "absolute", top: "28px", right: 0,
+                                                                    background: "#fff", border: "1px solid #ddd",
+                                                                    borderRadius: "4px", boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+                                                                    zIndex: 10, minWidth: "120px", color: "#000",
+                                                                }}>
+                                                                    <div style={{ padding: "8px", cursor: "pointer" }} onClick={() => handleDropdownAction("view", item)}>View</div>
+                                                                    <div style={{ padding: "8px", cursor: "pointer" }} onClick={() => handleDropdownAction("ship", item)}>Ship</div>
+                                                                    <div style={{ padding: "8px", cursor: "pointer", color: "red" }} onClick={() => handleDropdownAction("delete", item)}>Cancel</div>
+                                                                </div>
+                                                            )}
                                                         </div>
-                                                    </td>
-                                                    <td>{product.customer.name}</td>
-                                                    <td>{product.quantity}</td>
-                                                    <td>{handleOrderStatus(product.status)}</td>
-                                                    <td>{product.totalamount}</td>
-                                                    <td>
-                                                        <div className="d-flex justify-content-start align-items-center">
-                                                            {/* Mobile: 3-dot dropdown */}
-                                                            <div className="d-block d-md-none" style={{ position: "relative" }}>
-                                                                <MoreVertical
-                                                                    style={{ cursor: "pointer" }}
-                                                                    size={22}
-                                                                    onClick={() => handleDropdownToggle(product.id)}
-                                                                />
-                                                                {openDropdown === product.id && (
-                                                                    <div style={{
-                                                                        position: "absolute", top: "28px", right: 0,
-                                                                        background: "#fff", border: "1px solid #ddd",
-                                                                        borderRadius: "4px", boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
-                                                                        zIndex: 10, minWidth: "120px", color: "#000",
-                                                                    }}>
-                                                                        <div style={{ padding: "8px", cursor: "pointer" }} onClick={() => handleDropdownAction("view", product)}>View</div>
-                                                                        <div style={{ padding: "8px", cursor: "pointer" }} onClick={() => handleDropdownAction("ship", product)}>Ship</div>
-                                                                        <div style={{ padding: "8px", cursor: "pointer", color: "red" }} onClick={() => handleDropdownAction("delete", product)}>Cancel</div>
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                            {/* Desktop: icon actions */}
-                                                            <div className="d-none d-md-flex gap-2">
-                                                                <EyeIcon
-                                                                    className="prod-action-edit"
-                                                                    style={{ cursor: "pointer" }}
-                                                                    size={22} strokeWidth={1.3}
-                                                                    onClick={() => handleDropdownAction("view", product)}
-                                                                />
-                                                                <Motorbike
-                                                                    className="prod-action-edit"
-                                                                    style={{ cursor: "pointer" }}
-                                                                    size={22} strokeWidth={1.3}
-                                                                    onClick={() => handleDropdownAction("ship", product)}
-                                                                />
-                                                                <Ban
-                                                                    className="prod-action-del"
-                                                                    style={{ cursor: "pointer", color: "red" }}
-                                                                    size={22} strokeWidth={1.3}
-                                                                    onClick={() => handleDropdownAction("delete", product)}
-                                                                />
-                                                            </div>
+                                                        {/* Desktop: icon actions */}
+                                                        <div className="d-none d-md-flex gap-2">
+                                                            <EyeIcon
+                                                                className="prod-action-edit"
+                                                                style={{ cursor: "pointer" }}
+                                                                size={22} strokeWidth={1.3}
+                                                                onClick={() => handleDropdownAction("view", item)}
+                                                            />
+                                                            <Motorbike
+                                                                className="prod-action-edit"
+                                                                style={{ cursor: "pointer" }}
+                                                                size={22} strokeWidth={1.3}
+                                                                onClick={() => handleDropdownAction("ship", item)}
+                                                            />
+                                                            <Ban
+                                                                className="prod-action-del"
+                                                                style={{ cursor: "pointer", color: "red" }}
+                                                                size={22} strokeWidth={1.3}
+                                                                onClick={() => handleDropdownAction("delete", item)}
+                                                            />
                                                         </div>
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })
-                                    )}
-                                </tbody>
-                            </table>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    }
+                                    }
+                                    />
+                                )
+                            )}
+
                         </div>
 
                         {/* Pagination Footer */}
