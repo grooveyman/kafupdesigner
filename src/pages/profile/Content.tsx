@@ -1,4 +1,5 @@
-import { ImageOff } from "lucide-react";
+import { useMemo, useState } from "react";
+import { ImageOff, Search } from "lucide-react";
 import type { ProfileDesignType } from "../../types/types";
 
 interface ContentProps {
@@ -13,16 +14,81 @@ const formatPrice = (price: number) => {
 };
 
 const Content: React.FC<ContentProps> = ({ designs, loading }) => {
+    const [search, setSearch] = useState("");
+    const [collectionId, setCollectionId] = useState("");
+    const [categoryId, setCategoryId] = useState("");
+
+    const collections = useMemo(() => {
+        const map = new Map<string, string>();
+        designs.forEach((d) => d.collection?.id && map.set(d.collection.id, d.collection.name));
+        return Array.from(map, ([id, name]) => ({ id, name }));
+    }, [designs]);
+
+    const categories = useMemo(() => {
+        const map = new Map<string, string>();
+        designs.forEach((d) => d.categories?.id && map.set(d.categories.id, d.categories.name));
+        return Array.from(map, ([id, name]) => ({ id, name }));
+    }, [designs]);
+
+    const filtered = useMemo(() => {
+        const q = search.trim().toLowerCase();
+        return designs.filter((d) => {
+            if (collectionId && d.collection?.id !== collectionId) return false;
+            if (categoryId && d.categories?.id !== categoryId) return false;
+            if (q && !d.name?.toLowerCase().includes(q)) return false;
+            return true;
+        });
+    }, [designs, search, collectionId, categoryId]);
+
     return (
         <div className="kf-card">
             <div className="kf-content__header">
                 <div>
                     <h5 className="kf-content__title">Designs</h5>
                     <p className="kf-content__subtitle">
-                        {loading ? "Loading your work…" : `${designs.length} design${designs.length === 1 ? "" : "s"} in your portfolio`}
+                        {loading
+                            ? "Loading your work…"
+                            : `${filtered.length} of ${designs.length} design${designs.length === 1 ? "" : "s"}`}
                     </p>
                 </div>
             </div>
+
+            {!loading && designs.length > 0 && (
+                <div className="kf-filters">
+                    <div className="kf-search">
+                        <Search size={16} />
+                        <input
+                            type="search"
+                            placeholder="Search designs…"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            aria-label="Search designs"
+                        />
+                    </div>
+                    <select
+                        className="kf-select"
+                        value={collectionId}
+                        onChange={(e) => setCollectionId(e.target.value)}
+                        aria-label="Filter by collection"
+                    >
+                        <option value="">All collections</option>
+                        {collections.map((c) => (
+                            <option key={c.id} value={c.id}>{c.name}</option>
+                        ))}
+                    </select>
+                    <select
+                        className="kf-select"
+                        value={categoryId}
+                        onChange={(e) => setCategoryId(e.target.value)}
+                        aria-label="Filter by category"
+                    >
+                        <option value="">All categories</option>
+                        {categories.map((c) => (
+                            <option key={c.id} value={c.id}>{c.name}</option>
+                        ))}
+                    </select>
+                </div>
+            )}
 
             {loading ? (
                 <div className="kf-grid">
@@ -41,9 +107,14 @@ const Content: React.FC<ContentProps> = ({ designs, loading }) => {
                     <ImageOff size={34} />
                     <p className="mb-0">No designs yet. Your published work will appear here.</p>
                 </div>
+            ) : filtered.length === 0 ? (
+                <div className="kf-empty">
+                    <ImageOff size={34} />
+                    <p className="mb-0">No designs match your filters.</p>
+                </div>
             ) : (
                 <div className="kf-grid">
-                    {designs.map((design) => (
+                    {filtered.map((design) => (
                         <div key={design.id} className="kf-design">
                             <div className="kf-design__media">
                                 {design.isSell === "1" && <span className="kf-badge">For sale</span>}
