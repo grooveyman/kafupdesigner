@@ -18,27 +18,21 @@ const Login: React.FC = () => {
     });
 
     //auth context
-    const { login } = useAuth();
+    const { login, isAuthenticated } = useAuth();
 
     //check if user is already logged in and redirect to home page
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
+        if (isAuthenticated) {
             navigate("/");
         }
-    }, [navigate]);
+    }, [isAuthenticated, navigate]);
 
-    //validate function 
+    //validate function
     const validateInput = (name: string, value: string) => {
         if (name === "username" && value.trim() === "") {
             setErrors((prev) => ({ ...prev, username: "Username is required" }));
             return "Username is required";
         }
-        // const passRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>]).{5,}$/;
-        // if (name === "password" && !passRegex.test(value)) {
-        //     setErrors((prev) => ({ ...prev, password: "Password must be at least 5 characters long and contain a special character" }));
-        //     return "Password must be at least 5 characters long and contain a special character";
-        // }
         if (name === "password" && value.trim() === "") {
             setErrors((prev) => ({ ...prev, password: "Password is required" }));
             return "Password is required";
@@ -53,15 +47,13 @@ const Login: React.FC = () => {
     };
 
     //mutation
-    const loginMutation = useApiMutation <{ message: string, data: any, designercode: string; }>(
+    const loginMutation = useApiMutation<{ status: boolean; message: string; data: { email: string; brand_name: string; designer_code: string; access_token: string } }>(
         `/auth/login`,
         "POST",
         {
-            onSuccess: async (data) => {
-                console.log("Login successful:", data.designercode);
-                login(data.data, data.designercode)
-                toast.success(data.message);
-                console.log("Login successful:", data);
+            onSuccess: async (res) => {
+                login(res.data.designer_code);
+                toast.success(res.message);
                 navigate("/");
             },
             onError: (error) => {
@@ -74,11 +66,10 @@ const Login: React.FC = () => {
         e.preventDefault();
 
         const error = validateInput("username", userText.username) || validateInput("password", userText.password);
-        console.log("error", error);
 
         // Handle login logic here
         if (!error) {
-            loginMutation.mutate({ email:userText.username, password: userText.password });
+            loginMutation.mutate({ email: userText.username, password: userText.password });
         }
     };
 

@@ -1,14 +1,12 @@
-import React, { createContext, useEffect } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { tokenService } from "./tokenService";
-
+import { refreshSession, logoutRequest } from "../hooks/useApi";
 
 interface AuthContextType {
     isAuthenticated: boolean;
-    login: (token: string, designerCode: string) => void;
+    isBootstrapping: boolean;
+    login: (designerCode: string) => void;
     logout: () => void;
-    setAccessToken?: (token: string) => void;
-    getAccessToken?: () => string | null;
-    clearAccessToken?: () => void;
 }
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -17,35 +15,34 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-    const [authcredentials, setAuthcredentials] = React.useState({
-        token: tokenService.get() || "",
-        designerCode: tokenService.getDesignerCode() || "",
-    });
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isBootstrapping, setIsBootstrapping] = useState(true);
 
+    // Restore the session from the httpOnly refresh cookie on load.
+    useEffect(() => {
+        let active = true;
+        refreshSession()
+            .then((ok) => { if (active) setIsAuthenticated(ok); })
+            .finally(() => { if (active) setIsBootstrapping(false); });
+        return () => { active = false; };
+    }, []);
 
-    const login = (token: string, designerCode: string) => {
-        setAuthcredentials({ token, designerCode });
-        tokenService.set(token);
-        tokenService.setDesignerCode(designerCode);
+    const login = (designerCode: string) => {
+        if (designerCode) tokenService.setDesignerCode(designerCode);
+        setIsAuthenticated(true);
     };
 
     const logout = () => {
-        setAuthcredentials({ token: "", designerCode: "" });
-        tokenService.clear();
+        logoutRequest();
         tokenService.clearDesignerCode();
+        setIsAuthenticated(false);
     };
 
-    const isAuthenticated = !!authcredentials.token;
-
-    //restore token on mount
-    
-
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout}}>
+        <AuthContext.Provider value={{ isAuthenticated, isBootstrapping, login, logout }}>
             {children}
         </AuthContext.Provider>
     );
-
 }
 
 export function useAuth() {
