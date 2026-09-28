@@ -9,18 +9,16 @@ import { toast } from "react-toastify";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import "./admin.css";
-import { Variation } from "./AddProduct";
 
 const ProductList: React.FC = () => {
   const [_isDelete, setIsDelete] = useState(false);
-  const [randomNum] = useState(() => Math.floor(Math.random() * 1000000));
-  const { data, isLoading } = useApiQuery<Product[]>(["products_" + randomNum], "/designs/DES740410");
+  const { data, isLoading } = useApiQuery<Product[]>(["products"], "/designer/designs");
   console.log("Fetched data:", isLoading ? " loading..." : data);
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();
   const mutation = useApiMutation<{ message: string }>(
-    `/products/del`,
+    `/designer/designs`,
     "DELETE",
     {
       onSuccess: (data) => {
@@ -100,7 +98,7 @@ const ProductList: React.FC = () => {
                         placeholder="Search by order # or customer..."
                         className="form-control border-start-0"
                         value={"search"}
-                        onChange={(e) => { }}
+                        onChange={() => { }}
                       />
                     </div>
                   </div>
@@ -109,7 +107,7 @@ const ProductList: React.FC = () => {
                     <select
                       className="form-select"
                       value={""}
-                      onChange={(e) => { }}
+                      onChange={() => { }}
                     >
                       <option value="all">All Statuses</option>
                       <option value="0">Pending</option>
@@ -125,7 +123,7 @@ const ProductList: React.FC = () => {
                     <select
                       className="form-select"
                       value={""}
-                      onChange={(e) => { }}
+                      onChange={() => { }}
                     >
 
                     </select>

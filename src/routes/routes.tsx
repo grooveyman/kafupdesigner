@@ -81,8 +81,8 @@ export const router = createBrowserRouter(
                 { path: "/orders/:orderid", element: <OrderDetails /> },
                 { path: "/customers", element: <CustomerList /> },
                 { path: "/profile", element: <Profile /> },
-                { path: "/profile-category", element: <CategoryWrapper /> },
-                { path: "/profile-collections", element: <CollectionWrapper /> },
+                { path: "/categories", element: <CategoryWrapper /> },
+                { path: "/collections", element: <CollectionWrapper /> },
                 { path: "/profile-shop", element: <ShopWrapper /> },
                 { path: "/accountsetup/", element: <AccountSetup /> },
                 { path: "*", element: <div>404 Not Found</div> }

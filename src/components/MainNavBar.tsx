@@ -94,7 +94,7 @@ const MainNavBar: React.FC<NavbarProps> = ({ items }) => {
               {productsOpen && (
                 <div className="absolute left-0 mt-2 w-48 rounded-md bg-white py-1 shadow-lg z-[9999]" role="menu">
                   <NavLink
-                    to="/designs"
+                    to="/products"
                     className="nv-link block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     role="menuitem"
                   >

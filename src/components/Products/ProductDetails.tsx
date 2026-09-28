@@ -3,7 +3,6 @@ import { toast } from "react-toastify";
 import { useProductContext } from "../../context/ProductContext";
 import { Variation } from "../../context/ProductContext";
 import "../../assets/css/addproduct.css";
-import DressWithMeasurements from "./VariantModal";
 import VariantModal from "./VariantModal";
 
 // utility (outside component)
@@ -39,17 +38,6 @@ const ProductDetails: React.FC = () => {
     },
     [addToProduct]
   );
-
-  // 🔹 update variant form
-  const handleVariantChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const { name, value } = e.target;
-    setVariantForm((prev) => ({
-      ...prev,
-      [name]: name === "quantity" || name === "price" ? Number(value) : value,
-    }));
-  };
 
   // 🔹 add variation
   const addVariation = () => {

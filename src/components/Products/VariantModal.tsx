@@ -1,33 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useState } from "react";
 import { Variation } from "../../context/ProductContext";
-import { useApiQuery } from "../../hooks/useApi";
-import Spinner from "../Spinner";
 
 interface VariantModalProps {
   variantForm: Variation;
   setVariantForm: React.Dispatch<React.SetStateAction<Variation>>;
   onSave: () => void;
   colorInputRef: React.RefObject<HTMLInputElement | null>;
-}
-
-interface DimensionDetailType {
-  bust: string;
-  chest: string;
-  hip: string;
-  neck: string;
-  sleeve: string;
-  waist: string;
-  sizeNo: string;
-}
-
-interface DimensionType {
-  type: string;
-  size: string;
-  unit?: string;
-  alias: string;
-  gender: string;
-  dimensiondetail: DimensionDetailType[];
-  id: string;
 }
 
 type FieldErrors = Partial<Record<string, string>>;

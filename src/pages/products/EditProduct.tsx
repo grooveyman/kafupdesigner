@@ -1,249 +1,210 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./admin.css";
-import { CheckCheckIcon, CopyPlus, Image, ListChecks, NotebookPen, NotepadTextDashed } from "lucide-react";
+import { CheckCheckIcon, Image, ListChecks, NotebookPen, ChevronLeft, ChevronRight } from "lucide-react";
 import Breadcrumb from "../../components/Breadcrumb";
 import { useApiMutation, useApiQuery } from "../../hooks/useApi";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
-import Categories, { CategoryType } from "../../components/Products/Categories";
+import Categories from "../../components/Products/Categories";
 import "../../assets/css/addproduct.css";
 import ProductDetails from "../../components/Products/ProductDetails";
 import AddImages from "../../components/Products/AddImages";
 import Review from "../../components/Products/Review";
-import { ProductType, useProductContext } from "../../context/ProductContext";
+import { useProductContext } from "../../context/ProductContext";
 import ProductScrollNav from "../../components/Products/ProductScrollNav";
-import z from "zod";
+import Spinner from "../../components/Spinner";
+import { tokenService } from "../../context/tokenService";
+import { STEPS, StepKey, buildVariationsPayload, validateStep, validateProduct } from "./productValidation";
 
-export interface Variation {
-    size: string;
-    color: string;
-    price: number;
-    quantity: number;
-}
-
-interface OtherImage {
-    url: string | File;
-}
-
-export interface FormDataType {
-    name: string;
-    description: string;
-    price: number;
-    variation: Variation[];
-    previmage: string | File;
-    otherimages: OtherImage[];
-    category: string;
-}
-
-const AddProducts: React.FC = () => {
-    const [variations, setVariations] = useState<Variation[]>([]);
-
-    //prodid
-    const { prodid } = useParams();
-    const { data, isLoading } = useApiQuery<ProductType>(["editproduct_" + prodid], `/designs/product/${prodid}`);
-
-    //load context
-    const { product, addToProduct } = useProductContext();
-
-    useEffect(() => {
-        
-        if (data) {
-            addToProduct(data);
-            addToProduct({ designer_code: "DES740410" });
-            // console.log(data);
-        }
-    }, [data, addToProduct]);
-    // addToProduct(data);
-
-
-
-    //create form submission 
-    const navigate = useNavigate();
-
-    //mutation to send post request
-    const mutation = useApiMutation<{ message: string }>(
-        `/designs/product/${prodid}`,
-        "PUT",
-        {
-            onSuccess: (data) => {
-                toast.success(data.message);
-                navigate("/products");
-            },
-            onError: (error) => {
-                toast.error(error.message);
-            },
-        }
-    );
-
-    //submit handler
-    //handle sending produc
-    const variationSchema = z.object({
-        color: z.string().trim().min(1, "Color is required"),
-        size: z.string().trim().min(1, "Size is requird"),
-        quantity: z.number().min(1),
-        bust: z.string().min(1),
-        hip: z.string().min(1),
-        waist: z.string().min(1),
-        neck: z.string().min(1),
-        sleeve: z.string().min(1),
-        gender: z.string().min(1)
-    });
-    const productSchema = z.object({
-        name: z.string().trim().min(1, "Name field cannot be empty"),
-        description: z.string().transform((value) => value.replace(/[^a-zA-Z0-9\s]/g, '')).nullable(),
-        price: z.string(),
-        designer_code: z.string().trim().min(1, "designer code cannot be empty"),
-        cat_code: z.string().trim().min(1, "category code cannot be empty"),
-        variations: z.array(variationSchema).min(1, "At lest one variation is required")
-    });
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        const formData = new FormData();
-        ["name", "description"].forEach((key) => {
-            formData.append(key, (product as any)[key]);
-        });
-
-        //category 
-        formData.append("cat_code", product.category.id);
-        //variations
-        formData.append("variations", JSON.stringify(product.variations));
-
-        //price
-        formData.append("price", product.price.toString());
-
-        //collection code
-        formData.append("collection_code", "");
-        //preview image
-        if (product.previewimg instanceof File) {
-            formData.append("previewimg", product.previewimg);
-        }
-
-        //designercode
-        formData.append("designer_code", "DES740410");
-
-        //extra images
-        // formData.append("otherimages", JSON.stringify(data.otherimages));
-        // product.otherimages.forEach((img) => {
-        //     if (img.url instanceof File) {
-        //         formData.append("images", img.url);
-        //     }
-        // });
-
-        //handle images to delete
-        
-        let delImgs: string[] = [];
-        product.otherimages.forEach((img) => {
-            if (img.url instanceof File) {
-                formData.append("images", img.url);
-            }else{
-                delImgs.push(img.url!);
-            }
-        });
-        
-        console.log("other images...")
-        console.log(product.otherimages);
-
-        formData.append("delImgs", JSON.stringify(delImgs));
-
-        //validation
-        console.log("products");
-        console.log(product);
-        const validated = productSchema.safeParse(product);
-        if (!validated.success) {
-            toast.error(validated.error.issues.map((e => `${e.path.join(".")}: ${e.message}`)).join("/n"));
-            return;
-        } else {
-            //send data to backend
-            mutation.mutate(formData);
-        }
-
-    };
-
-
-
-    //tab state
-    const [selectedTab, setSelectedTab] = useState("categories");
-
-    //tab click handler
-    const handleTabClick = (tab: string) => () => {
-        if (tab === "categories") {
-            console.log("Categories tab clicked");
-            setSelectedTab("categories");
-        } else if (tab === "productdetails") {
-            console.log("Product Details tab clicked");
-            setSelectedTab("productdetails");
-        } else if (tab === "images") {
-            console.log("Images tab clicked");
-            setSelectedTab("images");
-        } else if (tab === "review") {
-            console.log("Review tab clicked");
-            setSelectedTab("review");
-        }
-    }
-
-
-
-    return (
-        <>
-            <ProductScrollNav prodname={product.name} prodamount={product.price} />
-            <div className="container">
-                <form
-                    className="w-100"
-                    onSubmit={handleSubmit}
-                    encType="multipart/form-data"
-                >
-                    <div className="row mt-4">
-
-                        <div>
-                            <Breadcrumb
-                                crumbs={[
-                                    { label: "Dashboard", href: "/dashboard" },
-                                    { label: "Product List", href: "/products" },
-                                    { label: "Edit Product", href: "/editproducts" },
-                                ]}
-                            />
-                        </div>
-                        {/* <h5>Add New Product</h5> */}
-                    </div>
-
-                    <div className="container">
-                        <div className="col-md-12">
-
-
-                            <div className="card">
-                                <div className="flex justify-content-start space-x-7 p-3 border-gray-200">
-                                    <div className={`${selectedTab === "categories" ? "active-tab" : "tab"}`} onClick={handleTabClick("categories")}><ListChecks className="mr-2 inline-block" /> Categories</div>
-                                    <div className={`${selectedTab === "productdetails" ? "active-tab" : "tab"}`} onClick={handleTabClick("productdetails")}><NotebookPen className="mr-2 inline-block" /> Product Details</div>
-                                    <div className={`${selectedTab === "images" ? "active-tab" : "tab"}`} onClick={handleTabClick("images")}><Image className="mr-2 inline-block" /> Images</div>
-                                    <div className={`${selectedTab === "review" ? "active-tab" : "tab"}`} onClick={handleTabClick("review")}><CheckCheckIcon className="mr-2 inline-block" /> Review</div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-
-                    <div className="row">
-                        <div className="col-md-12">
-                            <div className="card mt-5 pt-5 px-4 pb-5">
-                                {selectedTab === "categories" && <Categories />}
-                                {selectedTab === "productdetails" && <ProductDetails />}
-                                {selectedTab === "images" && <div><AddImages /></div>}
-                                {selectedTab === "review" && <div><Review /></div>}
-                            </div>
-
-
-                        </div>
-
-                    </div>
-                </form>
-
-            </div>Ï
-        </>
-
-    );
+const TAB_ICONS: Record<StepKey, React.ReactNode> = {
+  categories: <ListChecks className="mr-2 inline-block" size={18} />,
+  productdetails: <NotebookPen className="mr-2 inline-block" size={18} />,
+  images: <Image className="mr-2 inline-block" size={18} />,
+  review: <CheckCheckIcon className="mr-2 inline-block" size={18} />,
 };
 
-export default AddProducts;
+const EditProduct: React.FC = () => {
+  const { prodid } = useParams();
+  const designerCode = tokenService.getDesignerCode() ?? "";
+  const navigate = useNavigate();
+
+  const { data } = useApiQuery<any>(["editproduct_" + prodid], `/designer/designs/${prodid}`);
+  const { product, addToProduct } = useProductContext();
+
+  const [stepIndex, setStepIndex] = useState(0);
+  const currentStep = STEPS[stepIndex].key;
+  const isLastStep = stepIndex === STEPS.length - 1;
+
+  // Map the backend design shape into the wizard's product shape.
+  useEffect(() => {
+    if (!data) return;
+    addToProduct({
+      name: data.name ?? "",
+      description: data.description ?? "",
+      price: Number(data.price) || 0,
+      designer_code: designerCode,
+      category: { id: data.categories?.id ?? "", name: data.categories?.name ?? "" },
+      cat_code: data.categories?.id ?? "",
+      previewimg: data.previewimg ?? "",
+      otherimages: (data.designImages ?? []).map((img: any) => ({ url: img.imgurl, pid: img.public_id })),
+      variations: (data.designvariations ?? []).map((dv: any) => ({
+        color: dv.color ?? "#000000",
+        size: dv.size ?? "",
+        quantity: Number(dv.quantity) || 0,
+        price: 0,
+        bust: dv.dimension?.bust ?? "",
+        hip: dv.dimension?.hip ?? "",
+        waist: dv.dimension?.waist ?? "",
+        neck: dv.dimension?.neck ?? "",
+        sleeve: dv.dimension?.sleeve ?? "",
+        gender: dv.dimension?.gender ?? "",
+      })),
+      ...(data.collection?.id ? { collection_code: data.collection.id } : {}),
+    } as any);
+  }, [data, addToProduct, designerCode]);
+
+  const mutation = useApiMutation<{ message: string }>(`/designer/designs/${prodid}`, "PATCH", {
+    onSuccess: (res) => {
+      toast.success(res.message ?? "Product updated successfully");
+      navigate("/products");
+    },
+    onError: (error) => toast.error(error.message),
+  });
+
+  // WIZARD_HELPERS
+  const goNext = () => {
+    const errors = validateStep(currentStep, product);
+    if (errors.length) {
+      toast.error(errors[0]);
+      return;
+    }
+    setStepIndex((i) => Math.min(i + 1, STEPS.length - 1));
+  };
+
+  const goPrev = () => setStepIndex((i) => Math.max(i - 1, 0));
+
+  const goToStep = (index: number) => {
+    if (index <= stepIndex) {
+      setStepIndex(index);
+      return;
+    }
+    for (let s = stepIndex; s < index; s++) {
+      const errs = validateStep(STEPS[s].key, product);
+      if (errs.length) {
+        toast.error(errs[0]);
+        setStepIndex(s);
+        return;
+      }
+    }
+    setStepIndex(index);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const errors = validateProduct(product);
+    if (errors.length) {
+      toast.error(errors[0]);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("name", product.name);
+    formData.append("description", product.description ?? "");
+    formData.append("catcode", product.category?.id ?? product.cat_code ?? "");
+    formData.append("price", String(product.price));
+    formData.append("sell", (product as any).sell ?? "0");
+
+    const collectioncode = (product as any).collection_code ?? "";
+    if (collectioncode) formData.append("collectioncode", collectioncode);
+
+    formData.append("variations", JSON.stringify(buildVariationsPayload(product.variations)));
+
+    if (product.previewimg instanceof File) {
+      formData.append("previewimg", product.previewimg);
+    }
+
+    // Existing images are kept by their public id; new uploads are sent as files.
+    const keepPublicIds: string[] = [];
+    product.otherimages.forEach((img) => {
+      if (img.url instanceof File) {
+        formData.append("otherimages", img.url);
+      } else if (img.pid) {
+        keepPublicIds.push(img.pid);
+      }
+    });
+    formData.append("delImgs", JSON.stringify(keepPublicIds));
+
+    mutation.mutate(formData);
+  };
+
+  return (
+    <>
+      <ProductScrollNav prodname={product.name} prodamount={product.price} />
+      <div className="container kf-wizard">
+        <form className="w-100" onSubmit={handleSubmit} encType="multipart/form-data">
+          <div className="row mt-4">
+            <div>
+              <Breadcrumb
+                crumbs={[
+                  { label: "Dashboard", href: "/dashboard" },
+                  { label: "Product List", href: "/products" },
+                  { label: "Edit Product", href: "#" },
+                ]}
+              />
+            </div>
+          </div>
+
+          <div className="card kf-wizard__tabs">
+            {STEPS.map((s, i) => (
+              <button
+                type="button"
+                key={s.key}
+                className={`kf-wizard__tab ${currentStep === s.key ? "is-active" : ""} ${i < stepIndex ? "is-done" : ""}`}
+                onClick={() => goToStep(i)}
+              >
+                <span className="kf-wizard__tab-index">{i + 1}</span>
+                {TAB_ICONS[s.key]}
+                <span className="kf-wizard__tab-label">{s.label}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="card kf-wizard__body mt-4">
+            {currentStep === "categories" && <Categories />}
+            {currentStep === "productdetails" && <ProductDetails />}
+            {currentStep === "images" && <AddImages />}
+            {currentStep === "review" && <Review />}
+          </div>
+
+          <div className="kf-wizard__nav">
+            <button
+              type="button"
+              className="btn kf-wizard__btn kf-wizard__btn--ghost"
+              onClick={goPrev}
+              disabled={stepIndex === 0}
+            >
+              <ChevronLeft size={16} /> Previous
+            </button>
+
+            <span className="kf-wizard__progress">
+              Step {stepIndex + 1} of {STEPS.length}
+            </span>
+
+            {isLastStep ? (
+              <button type="submit" className="btn btn-secondary kf-wizard__btn" disabled={mutation.isPending}>
+                {mutation.isPending ? <Spinner color="secondary" size="sm" /> : <CheckCheckIcon size={16} />} Save changes
+              </button>
+            ) : (
+              <button type="button" className="btn btn-secondary kf-wizard__btn" onClick={goNext}>
+                Next <ChevronRight size={16} />
+              </button>
+            )}
+          </div>
+        </form>
+      </div>
+    </>
+  );
+};
+
+export default EditProduct;

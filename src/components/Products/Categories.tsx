@@ -1,4 +1,4 @@
-import { ArchiveX, Plus, PlusIcon, Save } from "lucide-react";
+import { ArchiveX, Save } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useApiMutation, useApiQuery } from "../../hooks/useApi";
 import Spinner from "../Spinner";
@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
 import "../../assets/css/categories.css";
 import { useProductContext } from "../../context/ProductContext";
+import { tokenService } from "../../context/tokenService";
 
 interface PostDataType {
     name: string;
@@ -22,8 +23,8 @@ interface Response {
 }
 const Categories: React.FC = () => {
     const queryClient = useQueryClient();
-    const [selected, setSelected] = useState<{ id: string } | null>(null);
     const [catname, setCatName] = useState<string>("");
+    const designerCode = tokenService.getDesignerCode() ?? "";
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setCatName(e.target.value);
@@ -31,7 +32,7 @@ const Categories: React.FC = () => {
     const queryKey = useMemo(() => ["categories"], []);
     const { data, isLoading } = useApiQuery<Response>(queryKey, "/designer/category");
 
-    const categories = data?.data || [];
+    const categories = data?.data ?? [];
     const options: { value: string, label: string }[] = categories.map((cat) => ({ value: cat.id, label: cat.name }));
 
     const { product, addToProduct } = useProductContext();
@@ -42,29 +43,10 @@ const Categories: React.FC = () => {
             console.log("selected category");
             console.log(selectedCategory);
             if (selectedCategory) {
-                setSelected({ id: selectedCategory.id });
-                addToProduct({ category: { id: selectedCategory.id, name: selectedCategory.name }, designer_code: "DES740410", cat_code: selectedCategory.id });
+                addToProduct({ category: { id: selectedCategory.id, name: selectedCategory.name }, designer_code: designerCode, cat_code: selectedCategory.id });
             }
         }
     };
-
-    //delete mutation
-    const deleteMutation = useApiMutation<{ message: string }>(
-        "/designer/category/",
-        "DELETE",
-        {
-            onSuccess: (data) => {
-                console.log("Category deleted:", data.message);
-                toast.success("Category deleted successfully");
-                setSelected(null);
-                queryClient.invalidateQueries({ queryKey });
-            },
-            onError: (error) => {
-                console.error("Error deleting category:", error);
-                toast.error(`Error deleting category: ${error.message}`);
-            }
-        }
-    );
 
     //create mutation
     const mutation = useApiMutation<{ message: string }>(
@@ -90,7 +72,7 @@ const Categories: React.FC = () => {
 
         const postData: PostDataType = {
             name: catname,
-            designercode: "DES740410"
+            designercode: designerCode
         }
 
         mutation.mutate(postData);

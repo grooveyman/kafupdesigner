@@ -41,18 +41,7 @@ const Content: React.FC<ContentProps> = ({ designs, loading }) => {
     }, [designs, search, collectionId, categoryId]);
 
     return (
-        <div className="kf-card">
-            <div className="kf-content__header">
-                <div>
-                    <h5 className="kf-content__title">Designs</h5>
-                    <p className="kf-content__subtitle">
-                        {loading
-                            ? "Loading your work…"
-                            : `${filtered.length} of ${designs.length} design${designs.length === 1 ? "" : "s"}`}
-                    </p>
-                </div>
-            </div>
-
+        <>
             {!loading && designs.length > 0 && (
                 <div className="kf-filters">
                     <div className="kf-search">
@@ -90,54 +79,67 @@ const Content: React.FC<ContentProps> = ({ designs, loading }) => {
                 </div>
             )}
 
-            {loading ? (
-                <div className="kf-grid">
-                    {Array.from({ length: 6 }).map((_, i) => (
-                        <div key={i} className="kf-design">
-                            <div className="kf-skeleton" style={{ aspectRatio: "1 / 1", borderRadius: 0 }} />
-                            <div className="kf-design__body">
-                                <div className="kf-skeleton" style={{ height: 14, width: "80%" }} />
-                                <div className="kf-skeleton" style={{ height: 10, width: "50%", marginTop: 8 }} />
-                            </div>
-                        </div>
-                    ))}
+            <div className="kf-card">
+                <div className="kf-content__header">
+                    <div>
+                        <h5 className="kf-content__title">Designs</h5>
+                        <p className="kf-content__subtitle">
+                            {loading
+                                ? "Loading your work…"
+                                : `${filtered.length} of ${designs.length} design${designs.length === 1 ? "" : "s"}`}
+                        </p>
+                    </div>
                 </div>
-            ) : designs.length === 0 ? (
-                <div className="kf-empty">
-                    <ImageOff size={34} />
-                    <p className="mb-0">No designs yet. Your published work will appear here.</p>
-                </div>
-            ) : filtered.length === 0 ? (
-                <div className="kf-empty">
-                    <ImageOff size={34} />
-                    <p className="mb-0">No designs match your filters.</p>
-                </div>
-            ) : (
-                <div className="kf-grid">
-                    {filtered.map((design) => (
-                        <div key={design.id} className="kf-design">
-                            <div className="kf-design__media">
-                                {design.isSell === "1" && <span className="kf-badge">For sale</span>}
-                                {design.previewimg ? (
-                                    <img src={design.previewimg} alt={design.name} loading="lazy" />
-                                ) : (
-                                    <div className="kf-empty" style={{ border: 0, height: "100%" }}>
-                                        <ImageOff size={28} />
-                                    </div>
-                                )}
-                            </div>
-                            <div className="kf-design__body">
-                                <p className="kf-design__name" title={design.name}>{design.name}</p>
-                                <div className="kf-design__meta">
-                                    <span className="kf-design__cat">{design.categories?.name || "Uncategorised"}</span>
-                                    <span className="kf-design__price">{formatPrice(design.price)}</span>
+
+                {loading ? (
+                    <div className="kf-grid">
+                        {Array.from({ length: 6 }).map((_, i) => (
+                            <div key={i} className="kf-design">
+                                <div className="kf-skeleton" style={{ aspectRatio: "1 / 1", borderRadius: 0 }} />
+                                <div className="kf-design__body">
+                                    <div className="kf-skeleton" style={{ height: 14, width: "80%" }} />
+                                    <div className="kf-skeleton" style={{ height: 10, width: "50%", marginTop: 8 }} />
                                 </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
-            )}
-        </div>
+                        ))}
+                    </div>
+                ) : designs.length === 0 ? (
+                    <div className="kf-empty">
+                        <ImageOff size={34} />
+                        <p className="mb-0">No designs yet. Your published work will appear here.</p>
+                    </div>
+                ) : filtered.length === 0 ? (
+                    <div className="kf-empty">
+                        <ImageOff size={34} />
+                        <p className="mb-0">No designs match your filters.</p>
+                    </div>
+                ) : (
+                    <div className="kf-grid">
+                        {filtered.map((design) => (
+                            <div key={design.id} className="kf-design">
+                                <div className="kf-design__media">
+                                    {design.isSell === "1" && <span className="kf-badge">For sale</span>}
+                                    {design.previewimg ? (
+                                        <img src={design.previewimg} alt={design.name} loading="lazy" />
+                                    ) : (
+                                        <div className="kf-empty" style={{ border: 0, height: "100%" }}>
+                                            <ImageOff size={28} />
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="kf-design__body">
+                                    <p className="kf-design__name" title={design.name}>{design.name}</p>
+                                    <div className="kf-design__meta">
+                                        <span className="kf-design__cat">{design.categories?.name || "Uncategorised"}</span>
+                                        <span className="kf-design__price">{formatPrice(design.price)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+        </>
     );
 };
 
