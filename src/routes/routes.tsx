@@ -22,6 +22,7 @@ import { AuthProvider } from "../context/AuthContext";
 import { DesignProvider } from "../context/ProductContext";
 import CategoryWrapper from "../pages/profile/Categories/CategoryWrapper";
 import CollectionWrapper from "../pages/profile/Collections/CollectionWrapper";
+import CollectionDetails from "../pages/profile/Collections/CollectionDetails";
 import ShopWrapper from "../pages/profile/Shop/ShopWrapper";
 import Register from "../pages/register/Register";
 import VerifyEmail from "../pages/register/VerifyEmail";
@@ -83,6 +84,7 @@ export const router = createBrowserRouter(
                 { path: "/profile", element: <Profile /> },
                 { path: "/categories", element: <CategoryWrapper /> },
                 { path: "/collections", element: <CollectionWrapper /> },
+                { path: "/collections/:id", element: <CollectionDetails /> },
                 { path: "/profile-shop", element: <ShopWrapper /> },
                 { path: "/accountsetup/", element: <AccountSetup /> },
                 { path: "*", element: <div>404 Not Found</div> }
