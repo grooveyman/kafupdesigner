@@ -20,7 +20,7 @@ const MainNavBar: React.FC = () => {
   const [mobileDesignsOpen, setMobileDesignsOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState(false); // mobile menu
 
-  // ✅ Close profile dropdown on outside click
+  // Close profile dropdown on outside click
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -34,7 +34,7 @@ const MainNavBar: React.FC = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // ✅ Close mobile menu when route changes
+  // Close mobile menu when route changes
   useEffect(() => {
     setOpenMenu(false);
     setMobileDesignsOpen(false);
@@ -61,7 +61,7 @@ const MainNavBar: React.FC = () => {
             Kaf<span style={{ color: "var(--kf-accent, #f5c400)" }}>up</span>
           </span>
 
-          {/* ✅ Desktop Menu */}
+          {/* Desktop Menu */}
           <ul className="hidden md:flex space-x-6 items-center m-0 p-0 list-none">
             <NavLink
               to="/"
@@ -98,13 +98,7 @@ const MainNavBar: React.FC = () => {
                   >
                     Collections
                   </NavLink>
-                  <NavLink
-                    to="/categories"
-                    className="nv-link block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    role="menuitem"
-                  >
-                    Categories
-                  </NavLink>
+                  
                 </div>
               )}
             </li>

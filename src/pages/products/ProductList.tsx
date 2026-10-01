@@ -14,6 +14,7 @@ const DesignList: React.FC = () => {
   const [_isDelete, setIsDelete] = useState(false);
   const [search, setSearch] = useState("");
   const { data, isLoading } = useApiQuery<Product[]>(["products"], "/designer/designs");
+  console.log(!isLoading?data:"");
   const navigate = useNavigate();
 
   const designs = Array.isArray(data) ? data : [];
@@ -184,9 +185,9 @@ const DesignList: React.FC = () => {
                           </td>
                           <td>
                             <p className="prod-category">
-                              {design.category && (
+                              {design.categories && (
                                 <span className="table-card text-black">
-                                  {design.category.name}
+                                  {design.categories.name}
                                 </span>
                               )}
 

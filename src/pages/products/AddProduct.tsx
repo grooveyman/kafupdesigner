@@ -101,13 +101,13 @@ const AddDesigns: React.FC = () => {
     formData.append("description", design.description ?? "");
     formData.append("catcode", design.category?.id ?? design.cat_code ?? "");
     formData.append("price", String(design.price));
-    formData.append("sell", (design as any).sell ?? "0");
+    formData.append("sell", design.sell);
 
     const collectioncode = (design as any).collection_code ?? "";
     if (collectioncode) formData.append("collectioncode", collectioncode);
 
     // variations must reach the backend as a JSON array of objects (parsed server-side).
-    formData.append("variations", JSON.stringify(buildVariationsPayload(design.variations)));
+    formData.append("variations", JSON.stringify(design.variations));
 
     if (design.previewimg instanceof File) {
       formData.append("previewimg", design.previewimg);
@@ -176,11 +176,11 @@ const AddDesigns: React.FC = () => {
             </span>
 
             {isLastStep ? (
-              <button type="submit" className="btn btn-secondary kf-wizard__btn" disabled={mutation.isPending}>
+              <button key="submit" type="submit" className="btn btn-secondary kf-wizard__btn" disabled={mutation.isPending}>
                 {mutation.isPending ? <Spinner color="secondary" size="sm" /> : <CheckCheckIcon size={16} />} Submit
               </button>
             ) : (
-              <button type="button" className="btn btn-secondary kf-wizard__btn" onClick={goNext}>
+              <button key="next" type="button" className="btn btn-secondary kf-wizard__btn" onClick={goNext}>
                 Next <ChevronRight size={16} />
               </button>
             )}

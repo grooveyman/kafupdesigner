@@ -11,7 +11,6 @@ import {
 export interface Variation {
   size: string;
   color: string;
-  price: number;
   quantity: number;
   bust: string;
   hip: string;
@@ -19,6 +18,7 @@ export interface Variation {
   sleeve: string;
   waist: string;
   gender: string;
+  sizetype: string;
 }
 
 export interface OtherImage {
@@ -40,6 +40,7 @@ export interface DesignType {
   category: CategoryType;
   designer_code: string;
   cat_code: string;
+  sell: "0" | "1";
 }
 
 interface DesignContextType {
@@ -65,6 +66,7 @@ export function DesignProvider({ children }: DesignProviderProps) {
     category: {id:"", name:""},
     designer_code: "",
     cat_code:"",
+    sell: "0",
     code:""
 
   });

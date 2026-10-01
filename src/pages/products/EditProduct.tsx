@@ -43,6 +43,7 @@ const EditDesign: React.FC = () => {
       description: data.description ?? "",
       price: Number(data.price) || 0,
       designer_code: designerCode,
+      sell: data.isSell === "1" || data.sell === "1" ? "1" : "0",
       category: { id: data.categories?.id ?? "", name: data.categories?.name ?? "" },
       cat_code: data.categories?.id ?? "",
       previewimg: data.previewimg ?? "",
@@ -113,7 +114,7 @@ const EditDesign: React.FC = () => {
     formData.append("description", design.description ?? "");
     formData.append("catcode", design.category?.id ?? design.cat_code ?? "");
     formData.append("price", String(design.price));
-    formData.append("sell", (design as any).sell ?? "0");
+    formData.append("sell", design.sell);
 
     const collectioncode = (design as any).collection_code ?? "";
     if (collectioncode) formData.append("collectioncode", collectioncode);

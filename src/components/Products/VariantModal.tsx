@@ -82,14 +82,34 @@ const VariantModal: React.FC<VariantModalProps> = ({
             {/* --- Basics --- */}
             <div className="row g-3">
               <div className="col-md-4">
-                <label className="form-label">Size</label>
-                <input
-                  className="form-control"
-                  placeholder="e.g. M or 12"
-                  name="size"
-                  value={variantForm.size}
-                  onChange={handleChange}
-                />
+                <div className="row">
+                  <div className="d-flex justify-content-between">
+                    <div>
+                      <label className="form-label">Size</label>
+                      <input
+                        className="form-control"
+                        placeholder="e.g. M or 12"
+                        name="size"
+                        value={variantForm.size}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div>
+                      <label className="form-label">Type</label>
+                      <select
+                        name="sizetype"
+                        className="form-select"
+                        value={variantForm.sizetype}
+                        onChange={handleChange}
+                      >
+                        <option value="">Select…</option>
+                        <option value="Male">US</option>
+                        <option value="Female">EU</option>
+                        <option value="Unisex">UK</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="col-md-4">
@@ -118,6 +138,8 @@ const VariantModal: React.FC<VariantModalProps> = ({
                   <option value="Unisex">Unisex</option>
                 </select>
               </div>
+
+
             </div>
 
             {/* --- Color --- */}

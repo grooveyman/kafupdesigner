@@ -20,14 +20,14 @@ const DesignDetails: React.FC = () => {
   const [variantForm, setVariantForm] = useState<Variation>({
     size: "",
     quantity: 1,
-    price: 0,
     gender: "",
     color: "#000000",
-    bust:"",
-      hip:"",
-      waist:"",
-      neck:"",
-      sleeve:""
+    bust: "",
+    hip: "",
+    waist: "",
+    neck: "",
+    sleeve: "",
+    sizetype: ""
   });
 
   // 🔹 update name / description
@@ -53,14 +53,14 @@ const DesignDetails: React.FC = () => {
     setVariantForm({
       size: "",
       quantity: 1,
-      price: 0,
       color: "#000000",
-      bust:"",
-      hip:"",
-      waist:"",
-      neck:"",
-      sleeve:"",
-      gender:""
+      bust: "",
+      hip: "",
+      waist: "",
+      neck: "",
+      sleeve: "",
+      gender: "",
+      sizetype: ""
     });
   };
 
@@ -139,6 +139,29 @@ const DesignDetails: React.FC = () => {
                 Double-click a variant to remove it.
               </small>
             )}
+
+            <label className="kf-sales-toggle mt-4">
+              <input
+                className="kf-sales-toggle__input"
+                type="checkbox"
+                role="switch"
+                checked={design.sell === "1"}
+                onChange={(event) =>
+                  addToDesign({ sell: event.target.checked ? "1" : "0" })
+                }
+              />
+              <span className="kf-sales-toggle__track" aria-hidden="true">
+                <span className="kf-sales-toggle__thumb" />
+              </span>
+              <span className="kf-sales-toggle__copy">
+                <span className="kf-sales-toggle__title">Sell this design?</span>
+                <span className="kf-sales-toggle__description">
+                  {design.sell === "1"
+                    ? "Available for sale on Kafup"
+                    : "Keep this design off your shop"}
+                </span>
+              </span>
+            </label>
           </div>
         </div>
 

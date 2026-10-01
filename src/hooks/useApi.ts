@@ -42,11 +42,16 @@ const redirectToLogin = () => {
 // Auth travels via httpOnly cookies, so every request just needs credentials.
 // On a 401 we refresh once and retry; if that fails the session is over.
 async function fetcher<T>(url: string, options?: RequestInit, retry = true): Promise<T> {
+  const fullUrl = `${BASE_URL}${url}`;
+  console.log("BASE_URL:", BASE_URL);
+  console.log("Request URL:", fullUrl);
+  console.log("Request options:", options);
+  
   const res = await fetch(`${BASE_URL}${url}`, {
     ...options,
     credentials: "include",
   });
-
+  
   if (res.status === 401 && retry) {
     const ok = await refreshSession();
     if (ok) return fetcher<T>(url, options, false);
@@ -57,7 +62,6 @@ async function fetcher<T>(url: string, options?: RequestInit, retry = true): Pro
   if (!res.ok) {
     throw new Error((await res.text()) || "API request failed");
   }
-
   return res.json();
 }
 
@@ -75,27 +79,20 @@ export function useApiQuery<T>(
 
 export function useApiMutation<T>(
   baseUrl: string,
-  method: "POST" | "PUT" | "PATCH" | "DELETE",
+  method: "POST" | "PATCH" | "DELETE",
   options?: UseMutationOptions<T, Error, any>
 ) {
   return useMutation<T, Error, any>({
     mutationFn: async (body: any) => {
       let url = baseUrl;
 
+      if (body?.id) {
+        url = `${baseUrl}/${body.id}`;
+      }
       let fetchOptions: RequestInit;
       if (body instanceof FormData) {
-        // Allow dynamic `/:id` targets (e.g. PATCH) by passing an `id` field
-        // in the FormData; it is stripped from the payload before sending.
-        const formId = body.get("id");
-        if (formId != null && formId !== "") {
-          url = `${baseUrl}/${formId}`;
-          body.delete("id");
-        }
         fetchOptions = { method, body };
       } else {
-        if (body?.id) {
-          url = `${baseUrl}/${body.id}`;
-        }
         fetchOptions = {
           method,
           headers: { "Content-Type": "application/json" },
