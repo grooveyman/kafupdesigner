@@ -84,7 +84,7 @@ export function buildVariationsPayload(variations: any[]): Record<string, unknow
       neck: v?.neck ?? dim.neck ?? "",
       gender: v?.gender ?? dim.gender ?? "",
       waist: v?.waist ?? dim.waist ?? "",
-      sizeType: v?.sizeType ?? dim.type ?? "custom",
+      sizetype: v?.sizetype ?? dim.type ?? "custom",
     };
   });
 }

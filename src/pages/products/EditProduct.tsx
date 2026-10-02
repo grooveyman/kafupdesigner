@@ -15,6 +15,7 @@ import DesignScrollNav from "../../components/Products/ProductScrollNav";
 import Spinner from "../../components/Spinner";
 import { tokenService } from "../../context/tokenService";
 import { STEPS, StepKey, buildVariationsPayload, validateStep, validateDesign } from "./productValidation";
+import { useQueryClient } from "@tanstack/react-query";
 
 const TAB_ICONS: Record<StepKey, React.ReactNode> = {
   categories: <ListChecks className="mr-2 inline-block" size={18} />,
@@ -28,7 +29,7 @@ const EditDesign: React.FC = () => {
   const designerCode = tokenService.getDesignerCode() ?? "";
   const navigate = useNavigate();
 
-  const { data } = useApiQuery<any>(["editproduct_" + prodid], `/designer/designs/${prodid}`);
+  const { data } = useApiQuery<any>(["editdesigns"], `/designer/designs/${prodid}`);
   const { design, addToDesign } = useDesignContext();
 
   const [stepIndex, setStepIndex] = useState(0);
@@ -64,9 +65,11 @@ const EditDesign: React.FC = () => {
     } as any);
   }, [data, addToDesign, designerCode]);
 
+  const queryClient = useQueryClient();
   const mutation = useApiMutation<{ message: string }>(`/designer/designs/${prodid}`, "PATCH", {
     onSuccess: (res) => {
       toast.success(res.message ?? "Design updated successfully");
+      queryClient.invalidateQueries({ queryKey: ['editdesigns'] })
       navigate("/designs");
     },
     onError: (error) => toast.error(error.message),
@@ -136,6 +139,7 @@ const EditDesign: React.FC = () => {
     });
     formData.append("delImgs", JSON.stringify(keepPublicIds));
 
+    console.log("mutation payload", Object.fromEntries(formData.entries()));
     mutation.mutate(formData);
   };
 
@@ -193,11 +197,11 @@ const EditDesign: React.FC = () => {
             </span>
 
             {isLastStep ? (
-              <button type="submit" className="btn btn-secondary kf-wizard__btn" disabled={mutation.isPending}>
+              <button key="submit" type="submit" className="btn btn-secondary kf-wizard__btn" disabled={mutation.isPending}>
                 {mutation.isPending ? <Spinner color="secondary" size="sm" /> : <CheckCheckIcon size={16} />} Save changes
               </button>
             ) : (
-              <button type="button" className="btn btn-secondary kf-wizard__btn" onClick={goNext}>
+              <button key="next" type="button" className="btn btn-secondary kf-wizard__btn" onClick={goNext}>
                 Next <ChevronRight size={16} />
               </button>
             )}

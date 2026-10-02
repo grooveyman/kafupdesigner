@@ -13,7 +13,7 @@ import "./admin.css";
 const DesignList: React.FC = () => {
   const [_isDelete, setIsDelete] = useState(false);
   const [search, setSearch] = useState("");
-  const { data, isLoading } = useApiQuery<Product[]>(["products"], "/designer/designs");
+  const { data, isLoading } = useApiQuery<Product[]>(["designs"], "/designer/designs");
   console.log(!isLoading?data:"");
   const navigate = useNavigate();
 

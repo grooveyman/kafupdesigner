@@ -36,7 +36,7 @@ export const router = createBrowserRouter(
       element: (
         <AuthProvider>
           <QueryClientProvider client={queryClient}>
-              <Outlet />
+            <Outlet />
           </QueryClientProvider>
         </AuthProvider>
       ),
@@ -77,7 +77,14 @@ export const router = createBrowserRouter(
                     </DesignProvider>
                   )
                 },
-                { path: "/editdesigns/:prodid", element: <EditDesign /> },
+                {
+                  path: "/editdesigns/:prodid", element: (
+                    <DesignProvider>
+                      <EditDesign />
+                    </DesignProvider>
+
+                  )
+                },
                 { path: "/orders", element: <OrdersList /> },
                 { path: "/orders/:orderid", element: <OrderDetails /> },
                 { path: "/customers", element: <CustomerList /> },

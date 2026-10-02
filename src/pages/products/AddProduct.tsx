@@ -14,6 +14,7 @@ import { useDesignContext } from "../../context/ProductContext";
 import DesignScrollNav from "../../components/Products/ProductScrollNav";
 import Spinner from "../../components/Spinner";
 import { STEPS, StepKey, buildVariationsPayload, validateStep, validateDesign } from "./productValidation";
+import { useQueryClient } from "@tanstack/react-query";
 
 export interface Variation {
   size: string;
@@ -51,9 +52,11 @@ const AddDesigns: React.FC = () => {
   const currentStep = STEPS[stepIndex].key;
   const isLastStep = stepIndex === STEPS.length - 1;
 
+  const queryClient = useQueryClient();
   const mutation = useApiMutation<{ message: string }>("/designer/designs", "POST", {
     onSuccess: (data) => {
       toast.success(data.message ?? "Design created successfully");
+      queryClient.invalidateQueries({queryKey:['designs']})
       navigate("/designs");
     },
     onError: (error) => toast.error(error.message),

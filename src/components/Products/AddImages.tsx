@@ -6,6 +6,8 @@ const EXTRA_IMAGE_SLOTS = 3;
 const AddImages: React.FC = () => {
   const { design, addToDesign } = useDesignContext();
 
+  console.log(design);
+
   /* Main image */
   const handleMainImageChange = (
     e: React.ChangeEvent<HTMLInputElement>
