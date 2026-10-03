@@ -60,7 +60,7 @@ const CollectionDetails: React.FC = () => {
                         </div>
                     ) : (
                         <>
-                            <div className="kf-content__header">
+                            <div className="kf-content__header d-flex justify-content-between align-items-center mb-3">
                                 <div>
                                     <h5 className="kf-content__title mb-1">{data.name}</h5>
                                     {data.description ? (
@@ -69,6 +69,16 @@ const CollectionDetails: React.FC = () => {
                                     <span className="kf-review-label">
                                         {designs.length} design{designs.length === 1 ? "" : "s"}
                                     </span>
+                                </div>
+                                <div>
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary"
+                                        onClick={() => navigate(`/add-to-collection/${data.id}`)}
+                                    >
+                                        Add Designs to Collection
+                                    </button>
+
                                 </div>
                             </div>
 

@@ -1,4 +1,4 @@
-import { ArchiveX, EditIcon, Trash2Icon } from "lucide-react";
+import { ArchiveX, EditIcon, Plus, Trash2Icon } from "lucide-react";
 import Breadcrumb from "../../components/Breadcrumb";
 import { useApiMutation, useApiQuery } from "../../hooks/useApi";
 import { useNavigate } from "react-router-dom";
@@ -9,12 +9,13 @@ import { toast } from "react-toastify";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import "./admin.css";
+import SearchInput from "../../components/SearchInput";
 
 const DesignList: React.FC = () => {
   const [_isDelete, setIsDelete] = useState(false);
   const [search, setSearch] = useState("");
   const { data, isLoading } = useApiQuery<Product[]>(["designs"], "/designer/designs");
-  console.log(!isLoading?data:"");
+  console.log(!isLoading ? data : "");
   const navigate = useNavigate();
 
   const designs = Array.isArray(data) ? data : [];
@@ -89,66 +90,38 @@ const DesignList: React.FC = () => {
           </div>
         </div>
 
-        <div className="row filter-bar">
-          <div className="mt-3 mb-3">
-            <div className="row g-2 align-items-center">
-              <div className="d-flex justify-content-between align-items-center">
-                <div className="">
-                  <button
-                    className="btn btn-secondary"
-                    onClick={() => navigate("/adddesigns")}
-                  >
-                    Add Design
-                  </button>
-                </div>
-                <div className="d-flex justify-content-end gap-2">
-                  {/* Search */}
-                  <div className="">
-                    <div className="input-group">
-                      <input
-                        type="text"
-                        placeholder="Search designs by name, description or category…"
-                        className="form-control"
-                        style={{ minWidth: "260px" }}
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="">
-                    <button
-                      className="btn btn-outline-danger"
-                      onClick={() => setSearch("")}
-                      disabled={!search}
-                    >
-                      Reset
-                    </button>
-                  </div>
-                </div>
+        
+        <div className="row kf-profile mt-5">
+          <div className="kf-card">
+            <div className="kf-content__header">
+              <div>
+                <h5 className="kf-content__title mb-1">Designs</h5>
+                <p className="kf-variant-help mb-0">
+                  Create designs and manage your product catalog. You can add, edit or delete designs from this list.
+                </p>
               </div>
-
+              <button
+                className="btn btn-secondary"
+                onClick={() => navigate("/adddesigns")}
+              >
+                Add Design
+              </button>
+            </div>
+            <div className="kf-filters">
+              
+                <SearchInput
+                  value={search}
+                  onChange={setSearch}
+                  placeholder="Search designs by name, description or category…"
+                />
+            
             </div>
 
-            {/* Results count */}
-            <div className="mt-2">
-              <small className="text-muted">
-                {isLoading
-                  ? "Loading…"
-                  : `${filtered.length} of ${designs.length} design${designs.length === 1 ? "" : "s"}`}
-              </small>
-            </div>
-          </div>
-        </div>
-
-        <div className="row">
-          <div className="card">
             <div className="table-responsive">
               <table
                 className="table table-borderless table-hover"
                 style={{ background: "none" }}
               >
-
                 <thead className="">
                   <tr>
                     <th>Design Details</th>
@@ -159,13 +132,13 @@ const DesignList: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                {isLoading ? (
-                  <tr>
-                    <td colSpan={5} className="skeleton-cell">
-                      <ListSkeletonLoader count={5} />
-                    </td>
-                  </tr>
-                ) : filtered.length ? (
+                  {isLoading ? (
+                    <tr>
+                      <td colSpan={5} className="skeleton-cell">
+                        <ListSkeletonLoader count={5} />
+                      </td>
+                    </tr>
+                  ) : filtered.length ? (
                     filtered.map((design: any) => {
                       return (
                         <tr className="" key={design.id}>
@@ -246,7 +219,16 @@ const DesignList: React.FC = () => {
               </table>
             </div>
           </div>
+          {/* Results count */}
+            <div className="mt-2">
+              <small className="text-muted">
+                {isLoading
+                  ? "Loading…"
+                  : `${filtered.length} of ${designs.length} design${designs.length === 1 ? "" : "s"}`}
+              </small>
+            </div>
         </div>
+        
       </div>
     </>
   );

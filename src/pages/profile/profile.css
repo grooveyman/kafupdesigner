@@ -2,7 +2,7 @@
    Profile design tokens (aligned with the app's dark theme)
    ============================================================ */
 .kf-profile {
-    --kf-accent: #f5c400;
+    --kf-accent: var(--text-color);
     --kf-surface: #1d1c1c;
     --kf-surface-2: #242323;
     --kf-border: rgba(255, 255, 255, 0.08);

@@ -140,7 +140,7 @@ const AddDesigns: React.FC = () => {
           </div>
 
           {/* Step tabs */}
-          <div className="card kf-wizard__tabs">
+          <div className="card kf-wizard__tabs mt-2">
             {STEPS.map((s, i) => (
               <button
                 type="button"

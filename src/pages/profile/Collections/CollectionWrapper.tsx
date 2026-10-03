@@ -1,10 +1,11 @@
 import { useMemo, useRef, useState } from "react";
-import { Plus, Search, Trash2, FolderOpen, Pencil, X } from "lucide-react";
+import { Plus, Trash2, FolderOpen, Pencil, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
 import Spinner from "../../../components/Spinner";
+import SearchInput from "../../../components/SearchInput";
 import { useApiMutation, useApiQuery } from "../../../hooks/useApi";
 import "../profile.css";
 import "../../../assets/css/addproduct.css";
@@ -20,7 +21,7 @@ interface CollectionType {
 const CollectionWrapper: React.FC = () => {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
-    const queryKey = useMemo(() => ["collections"], []);
+    const queryKey = ["collections"];
     const closeRef = useRef<HTMLButtonElement>(null);
 
     const [search, setSearch] = useState("");
@@ -77,7 +78,7 @@ const CollectionWrapper: React.FC = () => {
         onError: (err) => toast.error(err.message),
     });
 
-    const updateMutation = useApiMutation<{ message: string }>("/designer/collection", "PATCH", {
+    const updateMutation = useApiMutation<{ message: string }>("/designer/collection/single", "PATCH", {
         onSuccess: (res) => {
             toast.success(res?.message || "Collection updated");
             invalidate();
@@ -135,118 +136,115 @@ const CollectionWrapper: React.FC = () => {
         <div className="kf-profile">
             <div className="container" style={{ marginTop: "1.5rem" }}>
                 <div className="kf-card">
-            <div className="kf-content__header">
-                <div>
-                    <h5 className="kf-content__title mb-1">Collections</h5>
-                    <p className="kf-variant-help mb-0">
-                        Group your designs into themed collections with a cover image.
-                    </p>
-                </div>
-                <button
-                    type="button"
-                    className="btn btn-secondary d-inline-flex align-items-center gap-2"
-                    data-bs-toggle="modal"
-                    data-bs-target="#collectionModal"
-                    onClick={openCreate}
-                >
-                    <Plus size={18} /> Add Collection
-                </button>
-            </div>
-
-            <div className="kf-filters">
-                <div className="kf-search">
-                    <Search size={16} />
-                    <input
-                        type="text"
-                        placeholder="Search collections by name…"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
-                </div>
-            </div>
-
-            {isLoading ? (
-                <div className="d-flex justify-content-center py-5">
-                    <Spinner />
-                </div>
-            ) : filtered.length ? (
-                <div className="kf-grid">
-                    {filtered.map((c) => (
-                        <div
-                            className="kf-design kf-design--clickable"
-                            key={c.id}
-                            role="button"
-                            tabIndex={0}
-                            onClick={() => navigate(`/collections/${c.id}`)}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter" || e.key === " ") {
-                                    e.preventDefault();
-                                    navigate(`/collections/${c.id}`);
-                                }
-                            }}
-                        >
-                            <div className="kf-design__media">
-                                {c.image ? (
-                                    <img src={c.image} alt={c.name} />
-                                ) : (
-                                    <div className="kf-design__placeholder">
-                                        <FolderOpen size={28} />
-                                    </div>
-                                )}
-                                <div className="kf-media-actions">
-                                    <button
-                                        type="button"
-                                        className="kf-cat-del kf-edit"
-                                        aria-label={`Edit ${c.name}`}
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#collectionModal"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            openEdit(c);
-                                        }}
-                                    >
-                                        <Pencil size={16} />
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="kf-cat-del"
-                                        aria-label={`Delete ${c.name}`}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleDelete(c);
-                                        }}
-                                    >
-                                        <Trash2 size={16} />
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="kf-design__body">
-                                <p className="kf-design__name mb-1">{c.name}</p>
-                                {c.description ? (
-                                    <p className="kf-variant-help mb-2">
-                                        {c.description.length > 60
-                                            ? c.description.slice(0, 60) + "…"
-                                            : c.description}
-                                    </p>
-                                ) : null}
-                                <span className="kf-review-label">
-                                    {c.noOfProducts ?? 0} design
-                                    {(c.noOfProducts ?? 0) === 1 ? "" : "s"}
-                                </span>
-                            </div>
+                    <div className="kf-content__header">
+                        <div>
+                            <h5 className="kf-content__title mb-1">Collections</h5>
+                            <p className="kf-variant-help mb-0">
+                                Group your designs into themed collections with a cover image.
+                            </p>
                         </div>
-                    ))}
-                </div>
-            ) : (
-                <div className="kf-empty">
-                    <FolderOpen size={32} className="mb-2" />
-                    <p className="mb-0">
-                        {collections.length === 0
-                            ? "No collections yet. Create your first one."
-                            : "No collections match your search."}
-                    </p>
-                </div>
-            )}
+                        <button
+                            type="button"
+                            className="btn btn-secondary d-inline-flex align-items-center gap-2"
+                            data-bs-toggle="modal"
+                            data-bs-target="#collectionModal"
+                            onClick={openCreate}
+                        >
+                            <Plus size={18} /> Add Collection
+                        </button>
+                    </div>
+
+                    <div className="kf-filters">
+                        <SearchInput
+                            value={search}
+                            onChange={setSearch}
+                            placeholder="Search collections by name…"
+                            ariaLabel="Search collections"
+                        />
+                    </div>
+
+                    {isLoading ? (
+                        <div className="d-flex justify-content-center py-5">
+                            <Spinner />
+                        </div>
+                    ) : filtered.length ? (
+                        <div className="kf-grid">
+                            {filtered.map((c) => (
+                                <div
+                                    className="kf-design kf-design--clickable"
+                                    key={c.id}
+                                    role="button"
+                                    tabIndex={0}
+                                    onClick={() => navigate(`/collections/${c.id}`)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter" || e.key === " ") {
+                                            e.preventDefault();
+                                            navigate(`/collections/${c.id}`);
+                                        }
+                                    }}
+                                >
+                                    <div className="kf-design__media">
+                                        {c.image ? (
+                                            <img src={c.image} alt={c.name} />
+                                        ) : (
+                                            <div className="kf-design__placeholder">
+                                                <FolderOpen size={28} />
+                                            </div>
+                                        )}
+                                        <div className="kf-media-actions">
+                                            <button
+                                                type="button"
+                                                className="kf-cat-del kf-edit"
+                                                aria-label={`Edit ${c.name}`}
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#collectionModal"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    openEdit(c);
+                                                }}
+                                            >
+                                                <Pencil size={16} />
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="kf-cat-del"
+                                                aria-label={`Delete ${c.name}`}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleDelete(c);
+                                                }}
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div className="kf-design__body">
+                                        <p className="kf-design__name mb-1">{c.name}</p>
+                                        {c.description ? (
+                                            <p className="kf-variant-help mb-2">
+                                                {c.description.length > 60
+                                                    ? c.description.slice(0, 60) + "…"
+                                                    : c.description}
+                                            </p>
+                                        ) : null}
+                                        <span className="kf-review-label">
+                                            {c.noOfProducts ?? 0} design
+                                            {(c.noOfProducts ?? 0) === 1 ? "" : "s"}
+                                        </span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="kf-empty">
+                            <FolderOpen size={32} className="mb-2" />
+                            <p className="mb-0">
+                                {collections.length === 0
+                                    ? "No collections yet. Create your first one."
+                                    : "No collections match your search."}
+                            </p>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -317,7 +315,7 @@ const CollectionWrapper: React.FC = () => {
                                         <div>
                                             <label className="form-label">Description</label>
                                             <textarea
-                                                className="form-control"
+                                                className="form-control collection-description"
                                                 rows={5}
                                                 placeholder="What is this collection about?"
                                                 value={description}
@@ -346,8 +344,8 @@ const CollectionWrapper: React.FC = () => {
                                         {saving
                                             ? "Saving…"
                                             : editing
-                                            ? "Update Collection"
-                                            : "Create Collection"}
+                                                ? "Update Collection"
+                                                : "Create Collection"}
                                     </button>
                                 </div>
                             </form>
