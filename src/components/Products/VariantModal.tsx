@@ -103,9 +103,9 @@ const VariantModal: React.FC<VariantModalProps> = ({
                         onChange={handleChange}
                       >
                         <option value="">Select…</option>
-                        <option value="Male">US</option>
-                        <option value="Female">EU</option>
-                        <option value="Unisex">UK</option>
+                        <option value="US">US</option>
+                        <option value="EU">EU</option>
+                        <option value="UK">UK</option>
                       </select>
                     </div>
                   </div>

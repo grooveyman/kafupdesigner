@@ -50,10 +50,11 @@ const Categories: React.FC = () => {
 
     // Create a new category; on success it is refetched and appears in the list.
     const mutation = useApiMutation<{ message: string }>("/designer/category/", "POST", {
-        onSuccess: () => {
+        onSuccess: async () => {
+            await queryClient.cancelQueries({ queryKey });
+            await queryClient.invalidateQueries({ queryKey });
             toast.success("Category added successfully");
             setCatName("");
-            queryClient.invalidateQueries({ queryKey });
         },
         onError: (error) => toast.error(`Error adding category: ${error.message}`),
     });

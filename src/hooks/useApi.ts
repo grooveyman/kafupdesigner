@@ -45,7 +45,6 @@ async function fetcher<T>(url: string, options?: RequestInit, retry = true): Pro
   const fullUrl = `${BASE_URL}${url}`;
   console.log("BASE_URL:", BASE_URL);
   console.log("Request URL:", fullUrl);
-  console.log("Request options:", options);
   
   const res = await fetch(`${BASE_URL}${url}`, {
     ...options,
@@ -72,7 +71,7 @@ export function useApiQuery<T>(
 ) {
   return useQuery<T>({
     queryKey: key,
-    queryFn: () => fetcher<T>(url),
+    queryFn: ({ signal }) => fetcher<T>(url, { signal }),
     ...options,
   });
 }
