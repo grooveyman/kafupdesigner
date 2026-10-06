@@ -1,41 +1,53 @@
-import { ArchiveX, EditIcon, Plus, Trash2Icon } from "lucide-react";
+import { EditIcon, Trash2Icon } from "lucide-react";
 import Breadcrumb from "../../components/Breadcrumb";
 import { useApiMutation, useApiQuery } from "../../hooks/useApi";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { Product } from "../Home";
-import ListSkeletonLoader from "../../components/ListSkeletonLoader";
 import { toast } from "react-toastify";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import "./admin.css";
 import SearchInput from "../../components/SearchInput";
+import { DataTable } from "../../components/DataTable";
+
+interface DesignProduct {
+  id: string | number;
+  name: string;
+  description?: string;
+  price?: number | string;
+  quantity?: number;
+  previewimg?: string;
+  category?: { name?: string };
+  categories?: { name?: string };
+}
 
 const DesignList: React.FC = () => {
-  const [_isDelete, setIsDelete] = useState(false);
   const [search, setSearch] = useState("");
-  const { data, isLoading } = useApiQuery<Product[]>(["designs"], "/designer/designs");
-  console.log(!isLoading ? data : "");
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const { data, isLoading } = useApiQuery<DesignProduct[]>(["designs"], "/designer/designs");
 
   const designs = Array.isArray(data) ? data : [];
-  const filtered = designs.filter((d: any) => {
+  const filtered = designs.filter((d) => {
     const q = search.trim().toLowerCase();
     if (!q) return true;
+
     return (
       d.name?.toLowerCase().includes(q) ||
       d.description?.toLowerCase().includes(q) ||
-      d.category?.name?.toLowerCase().includes(q)
+      d.category?.name?.toLowerCase().includes(q) ||
+      d.categories?.name?.toLowerCase().includes(q)
     );
   });
 
-  const queryClient = useQueryClient();
   const mutation = useApiMutation<{ message: string }>(
-    `/designer/designs`,
+    "/designer/designs",
     "DELETE",
     {
-      onSuccess: (data) => {
-        toast.success(data.message);
+      onSuccess: (response) => {
+        toast.success(response.message);
+        queryClient.invalidateQueries({ queryKey: ["designs"] });
         queryClient.invalidateQueries({ queryKey: ["products"] });
       },
       onError: (error) => {
@@ -44,8 +56,7 @@ const DesignList: React.FC = () => {
     }
   );
 
-  const handleDelete = (name: string, id: string) => {
-    console.log("Delete clicked");
+  const handleDelete = (name: string, id: string | number) => {
     Swal.fire({
       title: "Are you sure?",
       text: `You are deleting ${name} from designs. Note: This action cannot be undone!`,
@@ -57,16 +68,14 @@ const DesignList: React.FC = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         mutation.mutate({ id });
-        setIsDelete(true);
-        console.log("Item deleted");
         Swal.fire("Deleted!", "Design has been removed.", "success");
       }
     });
   };
 
-  const handleEdit = (prodid: string) => {
-    if (prodid) {
-      navigate(`/editdesigns/${prodid}`);
+  const handleEdit = (prodid: string | number) => {
+    if (prodid !== undefined && prodid !== null) {
+      navigate(`/editdesigns/${String(prodid)}`);
     }
   };
 
@@ -90,7 +99,7 @@ const DesignList: React.FC = () => {
           </div>
         </div>
 
-        
+
         <div className="row kf-profile mt-5">
           <div className="kf-card">
             <div className="kf-content__header">
@@ -108,128 +117,98 @@ const DesignList: React.FC = () => {
               </button>
             </div>
             <div className="kf-filters">
-              
-                <SearchInput
-                  value={search}
-                  onChange={setSearch}
-                  placeholder="Search designs by name, description or category…"
-                />
-            
+
+              <SearchInput
+                value={search}
+                onChange={setSearch}
+                placeholder="Search designs by name, description or category…"
+              />
+
             </div>
 
-            <div className="table-responsive">
-              <table
-                className="table table-borderless table-hover"
-                style={{ background: "none" }}
-              >
-                <thead className="">
-                  <tr>
-                    <th>Design Details</th>
-                    <th>Category</th>
-                    <th>Quantity</th>
-                    <th>Unit Price</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {isLoading ? (
-                    <tr>
-                      <td colSpan={5} className="skeleton-cell">
-                        <ListSkeletonLoader count={5} />
-                      </td>
-                    </tr>
-                  ) : filtered.length ? (
-                    filtered.map((design: any) => {
-                      return (
-                        <tr className="" key={design.id}>
-                          <td className="">
-                            <div className="d-flex gap-3">
-                              <img
-                                src={design.previewimg}
-                                height={50}
-                                width={90}
-                                style={{ objectFit: "cover" }}
-                              />
-                              <div className="prod-det">
-                                <p className="prodname">{design.name}</p>
-                                <p className="prod-var text-wrap">{design.description.length > 30 ? design.description.slice(0, 30) + "..." : design.description}</p>
-                              </div>
-                            </div>
-                          </td>
-                          <td>
-                            <p className="prod-category">
-                              {design.categories && (
-                                <span className="table-card text-black">
-                                  {design.categories.name}
-                                </span>
-                              )}
+            {/* <div className="table-responsive"> */}
 
-                            </p>
-                          </td>
-                          <td className="">
-                            <p>{design.quantity}</p>
-                          </td>
+            <DataTable
+              isLoading={isLoading}
+              headings={["Design Details", "Category", "Quantity", "Unit Price", "Action"]}
+              data={filtered}
+              renderRow={(item) => {
+                const description = item.description ?? "";
+                const categoryName = item.category?.name ?? item.categories?.name ?? "Uncategorized";
 
-                          <td>
-                            <div className="d-flex">
-                              <p>{design.price}</p>
-                            </div>
-                          </td>
-
-                          <td>
-                            <div className="d-flex justify-content-start">
-                              {/* <p className="prod-action-btn"> */}
-                              <EditIcon
-                                className="prod-action-edit"
-                                style={{ cursor: "pointer" }}
-                                size={25}
-                                strokeWidth={1.3}
-                                onClick={() => handleEdit(design.id)}
-                              />
-                              <Trash2Icon
-                                className="prod-action-del"
-                                size={25}
-                                style={{ cursor: "pointer" }}
-                                strokeWidth={1.3}
-                                onClick={() =>
-                                  handleDelete(design.name, design.id)
-                                }
-                              />
-                              {/* </p> */}
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  ) : (
-                    <tr>
-                      <td colSpan={5}>
-                        <div className="d-flex flex-column align-items-center text-gray-400 py-4">
-                          <ArchiveX className="mb-2" size={32} />
-                          <p className="mb-0">
-                            {designs.length === 0
-                              ? "No designs available."
-                              : "No designs match your search."}
+                return (
+                  <tr key={String(item.id)}>
+                    <td>
+                      <div className="d-flex gap-3">
+                        <img
+                          src={item.previewimg || ""}
+                          alt={item.name}
+                          height={50}
+                          width={90}
+                          style={{ objectFit: "cover" }}
+                        />
+                        <div className="prod-det">
+                          <p className="prodname">{item.name}</p>
+                          <p className="prod-var text-wrap">
+                            {description.length > 30
+                              ? `${description.slice(0, 30)}...`
+                              : description || "No description"}
                           </p>
                         </div>
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+                      </div>
+                    </td>
+
+                    <td>
+                      <p className="prod-category">
+                        <span className="table-card text-black">{categoryName}</span>
+                      </p>
+                    </td>
+
+                    <td>
+                      <p>{item.quantity ?? 0}</p>
+                    </td>
+
+                    <td>
+                      <div className="d-flex">
+                        <p>{item.price ?? "N/A"}</p>
+                      </div>
+                    </td>
+
+                    <td>
+                      <div className="d-flex justify-content-start">
+                        <EditIcon
+                          className="prod-action-edit"
+                          style={{ cursor: "pointer" }}
+                          size={25}
+                          strokeWidth={1.3}
+                          onClick={() => handleEdit(item.id)}
+                        />
+                        <Trash2Icon
+                          className="prod-action-del"
+                          size={25}
+                          style={{ cursor: "pointer" }}
+                          strokeWidth={1.3}
+                          onClick={() => handleDelete(item.name, item.id)}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                );
+              }}
+            />
+            {/* </div> */}
           </div>
           {/* Results count */}
-            <div className="mt-2">
-              <small className="text-muted">
-                {isLoading
-                  ? "Loading…"
-                  : `${filtered.length} of ${designs.length} design${designs.length === 1 ? "" : "s"}`}
-              </small>
-            </div>
+          <div className="mt-2">
+            <small className="text-muted">
+              {isLoading
+                ? "Loading…"
+                : `${filtered.length} of ${designs.length} design${designs.length === 1 ? "" : "s"}`}
+            </small>
+          </div>
         </div>
-        
-      </div>
+
+      </div >
     </>
   );
 };

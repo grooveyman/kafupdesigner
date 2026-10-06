@@ -10,7 +10,7 @@ import Dashboard from "../pages/Dashboard";
 import DesignList from "../pages/products/ProductList";
 import AdminLayout from "../layouts/AdminLayout";
 import EditDesign from "../pages/products/EditProduct";
-import OrdersList from "../pages/orders/OrdersList";
+import OrdersList from "../pages/orders/List";
 import OrderDetails from "../pages/orders/OrderDetails";
 import CustomerList from "../pages/customers/CustomerList";
 import Profile from "../pages/profile/Profile";

@@ -1,7 +1,7 @@
 
 export interface CustomerType{
     code: string;
-    name: string;
+    fullname: string;
     email: string;
     delivery_address: string;
     contact: string;
