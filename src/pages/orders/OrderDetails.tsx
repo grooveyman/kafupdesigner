@@ -9,6 +9,7 @@ import OrderDetailSkeleton from "./Skeletons/OrderDetails";
 import { hexToColorName } from "../../components/Products/Review";
 import { toast } from "react-toastify";
 import { queryClient } from "../../queryClient";
+import { DataTable } from "../../components/DataTable";
 
 const DropdownMoreVertical = () => {
     const [open, setOpen] = useState(false);
@@ -33,14 +34,14 @@ const DropdownMoreVertical = () => {
     }, [open]);
 
     const mutation = useApiMutation<{ message: string }>(
-        `/orders/order/${orderid}`,
-        "PUT",
+        `/designer/orders/order/${orderid}`,
+        "PATCH",
         {
             onSuccess: async (data) => {
                 toast.success(data.message);
-                await queryClient.refetchQueries({ queryKey: ["orders"] });
+                await queryClient.refetchQueries({ queryKey: ["orders_"+orderid] });
                 navigate("/orders");
-                
+
             },
             onError: (error) => {
                 toast.error(error.message);
@@ -151,8 +152,8 @@ const OrderDetails = () => {
     //get data from backend
     const { orderid } = useParams();
 
-    const { data, isLoading, error } = useApiQuery<OrderType>(["orders_" + orderid], `/orders/order/${orderid}`);
-    
+    const { data, isLoading, error } = useApiQuery<OrderType>(["orders_" + orderid], `/designer/orders/order/${orderid}`);
+
     //calculate summary
     const subtotal = data?.orderItems.reduce((acc, item) => acc + Number(item.total || 0), 0) || 0;
     const total = subtotal + 10 || 0; // Assuming a flat shipping rate of $10
@@ -174,11 +175,11 @@ const OrderDetails = () => {
                                     </button>
 
                                 </div>
-                                <h5>Order Number: {data.tck_no}</h5>
+                                <h5>Order Number: {data.trck_no}</h5>
                                 {/* status */}
-                                
-                                <span className="" style={{ color: "white" }}>{formatDate(data.created_at)}</span>
-                                <span className="" style={{ color: "white" }}>{formatTime(data.created_at)}</span>
+
+                                <span className="" style={{ color: "white" }}>{formatDate(data.createdAt)}</span>
+                                <span className="" style={{ color: "white" }}>{formatTime(data.createdAt)}</span>
                             </div>
                         </div>
                     </div>
@@ -210,7 +211,7 @@ const OrderDetails = () => {
                                     <div className="details mt-3">
                                         <div className="d-flex justify-content-between">
                                             <p className="card-text"><strong>Name:</strong> </p>
-                                            <p>{data.customer.name}</p>
+                                            <p>{data.customer.fullname}</p>
                                         </div>
 
                                         <div className="d-flex justify-content-between">
@@ -316,7 +317,7 @@ const OrderDetails = () => {
                                                 {data.status === "-1" ? uncheckedStatusCancel() : uncheckedStatus()}
                                                 <div>
                                                     <p style={{ fontWeight: 500, margin: "0" }}>Cancelled</p>
-                                                    <span style={{ fontSize: 12, color: '#888' }}>{formatDate(data.created_at)}</span>
+                                                    <span style={{ fontSize: 12, color: '#888' }}>{formatDate(data.createdAt)}</span>
                                                 </div>
                                             </div>
 
@@ -333,55 +334,36 @@ const OrderDetails = () => {
                             <div className="card">
                                 <div className="card-body">
                                     <h6 className="card-title mb-4">Order Items</h6>
-                                    <div className="table-responsive">
-                                        <table className="table table-striped text-gray text-nowrap">
-                                            <thead>
-                                                <tr>
-                                                    <th>Design</th>
-                                                    <th>Qty</th>
-                                                    <th>Price (GHS)</th>
-                                                    <th>Total (GHS)</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {/* Example item */}
-                                                {data.orderItems.map((item) => {
-                                                    return (
-                                                        <tr>
-                                                            <td>
-                                                                <div className="d-flex gap-3">
-                                                                    <img
-                                                                        src={item.design.previewimg}
-                                                                        height={50}
-                                                                        width={90}
-                                                                        style={{ objectFit: "cover" }}
-                                                                    />
-                                                                    <div className="prod-det">
-                                                                        <p className="prodname">{item.design.name}</p>
-                                                                        <p className="prod-var">{hexToColorName(item.orderItemVariation.color)} - {item.orderItemVariation.size}</p>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <p className="prod-category">
-                                                                    <p className="prodname">{item.quantity}</p>
-                                                                </p>
-                                                            </td>
-                                                            <td>
-                                                                <p>{item.amount}</p>
-                                                            </td>
-                                                            <td>
-                                                                <p>{item.total}</p>
-                                                            </td>
-                                                        </tr>
-                                                    );
-
-                                                })}
-
-
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                    <DataTable headings={["Design", "Qty", "Price (GHS)", "Total (GHS)"]} data={data.orderItems} isLoading={isLoading} renderRow={(item) => (
+                                        <tr key={item.id}>
+                                            <td>
+                                                <div className="d-flex gap-3">
+                                                    <img
+                                                        src={item.design.previewimg}
+                                                        height={50}
+                                                        width={50}
+                                                        style={{ objectFit: "cover" }}
+                                                    />
+                                                    <div className="prod-det">
+                                                        <p className="prodname">{item.design.name}</p>
+                                                        <p className="prod-var">{hexToColorName(item.color)} - {item.size}</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <p className="prod-category">
+                                                    <p className="prodname">{item.quantity}</p>
+                                                </p>
+                                            </td>
+                                            <td>
+                                                <p>{item.amount}</p>
+                                            </td>
+                                            <td>
+                                                <p>{item.total}</p>
+                                            </td>
+                                        </tr>
+                                    )} />
+                                    
                                 </div>
                             </div>
                         </div>
@@ -399,8 +381,8 @@ const OrderDetails = () => {
                                     </div>
                                     <hr />
                                     <div className="d-flex justify-content-between">
-                                        <p style={{ fontWeight: 500 }}>Total</p>
-                                        <p style={{ fontWeight: 500 }}>{total.toFixed(2)}</p>
+                                        <p style={{ fontWeight: "bold" }}>Total</p>
+                                        <p style={{ fontWeight: "bold" }}>{total.toFixed(2)}</p>
                                     </div>
                                 </div>
                             </div>

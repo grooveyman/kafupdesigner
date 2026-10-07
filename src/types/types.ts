@@ -7,8 +7,8 @@ export interface CustomerType{
     contact: string;
     region: string;
     city: string;
-    created_at: string;
-    updated_at: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface CustomerResponseType{
@@ -21,8 +21,8 @@ interface DesignType{
     name: string;
     description: string;
     previewimg: string;
-    created_at: string;
-    updated_at: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
 interface OrderItemVariationType{
@@ -31,6 +31,7 @@ interface OrderItemVariationType{
     quantity: number;
 }
 interface OrderItemsType{
+    id: string;
     amount: number;
     product_name: string;
     product_description: string;
@@ -38,11 +39,13 @@ interface OrderItemsType{
     product_previmg: string;
     total: number;
     design: DesignType;
+    color: string;
+    size: string;
     orderItemVariation: OrderItemVariationType;
 
 }
 export interface OrderType{
-    tck_no: string;
+    trck_no: string;
     id: string;
     customer: CustomerType;
     customer_email: string;
@@ -52,8 +55,8 @@ export interface OrderType{
     status: string;
     orderItems: OrderItemsType[];
     delivery_date: string;
-    created_at: string;
-    updated_at: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface DesignerType {

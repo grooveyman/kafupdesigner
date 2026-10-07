@@ -7,10 +7,11 @@ import { DataTable } from "../../components/DataTable";
 import { User, EyeIcon, MoreVertical, Motorbike, Ban } from "lucide-react";
 import { useSwal } from "../../hooks/swal";
 import { useNavigate } from "react-router-dom";
+import { handleOrderStatus } from "../../hooks/helper";
 
 interface Response {
     data?: OrderType[];
-    orders?: OrderType[];
+    // orders?: OrderType[];
     results?: OrderType[];
     meta?: { page: number, limit: number, total: number, totalPage: number };
 }
@@ -29,7 +30,7 @@ const OrderList: React.FC = () => {
     const orders = useMemo(() => {
         if (Array.isArray(data)) return data;
         if (Array.isArray(data?.data)) return data.data;
-        if (Array.isArray(data?.orders)) return data.orders;
+        // if (Array.isArray(data?.orders)) return data.orders;
         if (Array.isArray(data?.results)) return data.results;
         return [];
     }, [data]);
@@ -42,7 +43,7 @@ const OrderList: React.FC = () => {
 
         return orders.filter((order) => {
             
-            const orderNo = order.tck_no?.toLowerCase() ?? "";
+            const orderNo = order.trck_no?.toLowerCase() ?? "";
             const customerName = (order.customer?.fullname ?? order.customer_email ?? "").toLowerCase();
             return orderNo.includes(query) || customerName.includes(query);
         });
@@ -64,14 +65,14 @@ const OrderList: React.FC = () => {
             return;
         }
 
-        const status = action === "ship" ? "shipped" : action === "cancel" ? "cancelled" : "";
-        const orderName = product?.tck_no ?? "this order";
-
+        const status = action === "ship" ? "ship" : action === "cancel" ? "cancelled" : "";
+        const orderName = product?.trck_no ?? "this order";
+        console.log("Action",action);
         if (status) {
             confirmThenRun({
                 confirm: {
                     title: "Confirm action",
-                    text: `Are you sure you want to ${action === "ship" ? "mark" : "cancel"} ${orderName}?`,
+                    text: `Are you sure you want to ${action === "ship" ? "ship" : "cancel"} ${orderName}?`,
                     confirmButtonText: "Yes, continue",
                 },
                 action: async () => ({ name: orderName, status }),
@@ -79,32 +80,6 @@ const OrderList: React.FC = () => {
         }
     };
 
-    const handleOrderAction = (name: string, status: string) => {
-        switch (status) {
-            case "shipped":
-                confirmThenRun({
-                    confirm: {
-                        title: "Confirm action",
-                        text: `Are you sure you want to mark ${name} as shipped?`,
-                        confirmButtonText: "Yes, continue",
-                    },
-                    action: async () => ({ name, status }),
-                });
-                break;
-            case "cancelled":
-                confirmThenRun({
-                    confirm: {
-                        title: "Confirm action",
-                        text: `Are you sure you want to cancel ${name}?`,
-                        confirmButtonText: "Yes, continue",
-                    },
-                    action: async () => ({ name, status }),
-                });
-                break;
-            default:
-                break;
-        }
-    };
 
     return (
         <div className="container">
@@ -154,14 +129,14 @@ const OrderList: React.FC = () => {
                             <tr key={item.id}>
                                 <td>
                                     <div className="d-flex gap-3 align-items-center">
-                                        <User size={18} />
-                                        <div className="prod-det">{item.tck_no}</div>
+                                        {/* <User size={18} /> */}
+                                        <div className="prod-det">{item.trck_no}</div>
                                     </div>
                                 </td>
 
                                 <td>{getCustomerName(item)}</td>
                                 <td>{item.quantity ?? 0}</td>
-                                <td>{item.status}</td>
+                                <td>{handleOrderStatus(item.status)}</td>
                                 <td>{item.total_price ?? 0}</td>
                                 <td>
                                     <div className="d-flex justify-content-start align-items-center">
