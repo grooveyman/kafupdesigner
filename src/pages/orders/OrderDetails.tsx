@@ -157,7 +157,7 @@ const OrderDetails = () => {
     //calculate summary
     const subtotal = data?.orderItems.reduce((acc, item) => acc + Number(item.total || 0), 0) || 0;
     const total = subtotal + 10 || 0; // Assuming a flat shipping rate of $10
-    console.log("Order details data:", data, "Loading:", isLoading, "Error:", error);
+    
     return (
         <>
             {isLoading && (
