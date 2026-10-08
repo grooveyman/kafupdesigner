@@ -13,12 +13,12 @@ interface DataTableProps<T> {
 export const DataTable = <T,>({ isLoading, headings, data, renderRow }: DataTableProps<T>) => {
     return (
         <>
-            <div className="">
+            <div className="table-responsive">
                 <table className="table align-middle modern-table">
                     <thead>
                         {/* <tr> */}
                         {headings.map((h, i) => (
-                            <th key={i}>{h}</th>
+                            <th scope="col" key={i}>{h}</th>
                         ))}
                         {/* </tr> */}
                     </thead>

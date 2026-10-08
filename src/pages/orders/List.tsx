@@ -137,7 +137,7 @@ const OrderList: React.FC = () => {
                                 <td>{getCustomerName(item)}</td>
                                 <td>{item.quantity ?? 0}</td>
                                 <td>{handleOrderStatus(item.status)}</td>
-                                <td>{item.total_price ?? 0}</td>
+                                <td>{item.total ?? 0}</td>
                                 <td>
                                     <div className="d-flex justify-content-start align-items-center">
                                         <div className="d-block d-md-none" style={{ position: "relative" }}>
@@ -169,6 +169,7 @@ const OrderList: React.FC = () => {
                                         </div>
 
                                         <div className="d-none d-md-flex gap-2">
+                                           
                                             <EyeIcon
                                                 className="prod-action-edit"
                                                 style={{ cursor: "pointer" }}
@@ -176,7 +177,26 @@ const OrderList: React.FC = () => {
                                                 strokeWidth={1.3}
                                                 onClick={() => handleDropdownAction(item, "view")}
                                             />
-                                            <Motorbike
+                                            {item.status !== "-1" && item.status !== "3" && item.status !== "1" && (
+                                                <Motorbike
+                                                    className="prod-action-edit"
+                                                    style={{ cursor: "pointer" }}
+                                                    size={22}
+                                                    strokeWidth={1.3}
+                                                    onClick={() => handleDropdownAction(item, "ship")}
+                                                />
+                                            )}
+                                            {item.status !== "-1" && item.status !== "1" && (
+                                                <Ban
+                                                    className="prod-action-del"
+                                                    style={{ cursor: "pointer", color: "red" }}
+                                                    size={22}
+                                                    strokeWidth={1.3}
+                                                    onClick={() => handleDropdownAction(item, "cancel")}
+                                                />
+                                            )}
+                                       
+                                            {/* <Motorbike
                                                 className="prod-action-edit"
                                                 style={{ cursor: "pointer" }}
                                                 size={22}
@@ -189,7 +209,7 @@ const OrderList: React.FC = () => {
                                                 size={22}
                                                 strokeWidth={1.3}
                                                 onClick={() => handleDropdownAction(item, "cancel")}
-                                            />
+                                            /> */}
                                         </div>
                                     </div>
                                 </td>

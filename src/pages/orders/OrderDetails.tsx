@@ -10,8 +10,9 @@ import { hexToColorName } from "../../components/Products/Review";
 import { toast } from "react-toastify";
 import { queryClient } from "../../queryClient";
 import { DataTable } from "../../components/DataTable";
+import { formatDate, formatTime } from "../../hooks/helper";
 
-const DropdownMoreVertical = () => {
+const DropdownMoreVertical = ({ status }: { status: string }) => {
     const [open, setOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const handleToggle = () => setOpen((prev) => !prev);
@@ -91,16 +92,36 @@ const DropdownMoreVertical = () => {
                             background: #918e8e;
                         }
                     `}</style>
+                   
+                    {status !== "-1" && status !== "3" && status !== "1" && (
+                        <button className="material-dropdown-btn" style={{ color: "white" }} onClick={() => handleMarkAsAction('shipped')}>
+                            <Truck size={20} color="#e2e4e6" style={{ marginRight: 12 }} /> Mark as Shipped
+                        </button>
+                    )}
 
-                    <button className="material-dropdown-btn" style={{ color: "white" }} onClick={() => handleMarkAsAction('shipped')}>
-                        <Truck size={20} color="#e2e4e6" style={{ marginRight: 12 }} /> Mark as Shipped
-                    </button>
-                    <button className="material-dropdown-btn" style={{ color: "white" }} onClick={() => handleMarkAsAction('delivered')}>
-                        <Package size={20} color="#e2e4e6" style={{ marginRight: 12 }} /> Mark as Delivered
+                    {status !== "-1" && status !== "1" && status !== "2" && (
+                        <button className="material-dropdown-btn" style={{ color: "white" }} onClick={() => handleMarkAsAction('processing')}>
+                            <CheckCircle size={20} color="#e2e4e6" style={{ marginRight: 12 }} /> Mark as Processing
+                        </button>
+                    )}
+
+                    {status !== "-1" && status !== "1" && status !== "3" && (
+                        <button className="material-dropdown-btn" style={{ color: "white" }} onClick={() => handleMarkAsAction('delivered')}>
+                            <Package size={20} color="#e2e4e6" style={{ marginRight: 12 }} /> Mark as Delivered
+                        </button>
+                    )}
+
+                    {status !== "-1" && status !== "3" && status !== "1" && (
+                        <button className="material-dropdown-btn" style={{ color: "#d32f2f" }} onClick={() => handleMarkAsAction('cancelled')}>
+                            <XCircle size={20} color="#d32f2f" style={{ marginRight: 12 }} /> Cancel Order
+                        </button>
+                    )}
+                    {/* <button className="material-dropdown-btn" style={{ color: "white" }} onClick={() => handleMarkAsAction('delivered')}>
+                        <Package size={20} color="#7f8387" style={{ marginRight: 12 }} /> Mark as Delivered
                     </button>
                     <button className="material-dropdown-btn" style={{ color: "#d32f2f" }} onClick={() => handleMarkAsAction('cancelled')}>
                         <XCircle size={20} color="#d32f2f" style={{ marginRight: 12 }} /> Cancel Order
-                    </button>
+                    </button> */}
                 </div>
             )}
         </div>
@@ -137,23 +158,12 @@ const uncheckedStatusCancel = () => {
 const OrderDetails = () => {
     const navigate = useNavigate();
 
-    const formatDate = (dateString: string) => {
-        const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
-        return new Date(dateString).toLocaleDateString(undefined, options);
-    }
-
-    const formatTime = (dateString: string) => {
-        //format in PM or AM
-
-        const options: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', hour12: true };
-        return new Date(dateString).toLocaleTimeString(undefined, options);
-    }
+  
 
     //get data from backend
     const { orderid } = useParams();
 
     const { data, isLoading, error } = useApiQuery<OrderType>(["orders_" + orderid], `/designer/orders/order/${orderid}`);
-
     //calculate summary
     const subtotal = data?.orderItems.reduce((acc, item) => acc + Number(item.total || 0), 0) || 0;
     const total = subtotal + 10 || 0; // Assuming a flat shipping rate of $10
@@ -168,14 +178,14 @@ const OrderDetails = () => {
                 <div className="container mt-3">
                     <div className="row">
                         <div className="col-md-12">
-                            <div className="d-flex justify-content-start gap-3">
+                            <div className="d-flex justify-content-start flex-row flex-wrap gap-3">
                                 <div className="" style={{ backgroundColor: "black", borderRadius: "10px" }}>
                                     <button className="btn btn-sm" onClick={() => navigate("/orders")}>
                                         <ArrowLeftIcon style={{ color: "white" }} />
                                     </button>
 
                                 </div>
-                                <h5>Order Number: {data.trck_no}</h5>
+                                <h5>Order Number: {data.trck_no??data.tck_no}</h5>
                                 {/* status */}
 
                                 <span className="" style={{ color: "white" }}>{formatDate(data.createdAt)}</span>
@@ -188,7 +198,7 @@ const OrderDetails = () => {
                     <div className="row mt-2">
                         <div className="col-md-12">
                             <div className="d-flex justify-content-end gap-3" style={{ position: 'relative' }}>
-                                <DropdownMoreVertical />
+                                <DropdownMoreVertical status={data.status} />
                             </div>
                         </div>
                     </div>
@@ -196,8 +206,8 @@ const OrderDetails = () => {
                     {/* information on order */}
                     <div className="row mt-4">
                         {/* customer information */}
-                        <div className="col-md-4">
-                            <div className="card">
+                        <div className="col-md-6 col-lg-4 col-xl-4">
+                            <div className="card mb-2">
                                 <div className="card-body">
                                     <div className="d-flex justify-content-between">
                                         <h6 className="card-title">Customer Information</h6>
@@ -214,7 +224,7 @@ const OrderDetails = () => {
                                             <p>{data.customer.fullname}</p>
                                         </div>
 
-                                        <div className="d-flex justify-content-between">
+                                        <div className="d-flex justify-content-between flex-wrap flex-row">
                                             <p className="card-text"><strong>Email:</strong> </p>
                                             <p>{data.customer.email}</p>
                                         </div>
@@ -229,8 +239,8 @@ const OrderDetails = () => {
                             </div>
                         </div>
 
-                        <div className="col-md-4">
-                            <div className="card">
+                        <div className="col-md-6 col-lg-4 col-xl-4">
+                            <div className="card mb-2">
                                 <div className="card-body">
                                     <div className="d-flex justify-content-between">
                                         <h6 className="card-title">Delivery Address</h6>
@@ -262,7 +272,7 @@ const OrderDetails = () => {
                             </div>
                         </div>
 
-                        <div className="col-md-4">
+                        <div className="col-md-6 col-lg-4 col-xl-4">
                             <div className="card">
                                 <div className="card-body">
                                     <div className="d-flex justify-content-between">
@@ -282,7 +292,18 @@ const OrderDetails = () => {
                                                 {data.status === "0" ? checkedStatus() : uncheckedStatus()}
                                                 <div>
                                                     <p style={{ fontWeight: 500, margin: "0" }}>Order Placed</p>
-                                                    <span style={{ fontSize: 12, color: '#888' }}>2026-02-18</span>
+                                                    <span style={{ fontSize: 12, color: '#888' }}>{data.status === "0" ? formatDate(data.updatedAt) : ''}</span>
+                                                </div>
+                                            </div>
+
+                                        </li>
+
+                                        <li style={{ display: 'flex', alignItems: 'center' }}>
+                                            <div className="d-flex justify-content-start">
+                                                {data.status === "2" ? checkedStatus() : uncheckedStatus()}
+                                                <div>
+                                                    <p style={{ fontWeight: 500, margin: "0" }}>Processing</p>
+                                                    <span style={{ fontSize: 12, color: '#888' }}>{data.status === "2" ? formatDate(data.updatedAt) : ''}</span>
                                                 </div>
                                             </div>
 
@@ -293,7 +314,7 @@ const OrderDetails = () => {
                                                 {data.status === "3" ? checkedStatus() : uncheckedStatus()}
                                                 <div>
                                                     <p style={{ fontWeight: 500, margin: "0" }}>Shipped</p>
-                                                    <span style={{ fontSize: 12, color: '#888' }}>Pending</span>
+                                                    <span style={{ fontSize: 12, color: '#888' }}>{data.status === "3" ? formatDate(data.updatedAt) : ''}</span>
                                                 </div>
                                             </div>
 
@@ -305,7 +326,7 @@ const OrderDetails = () => {
                                                 {data.status === "1" ? checkedStatus() : uncheckedStatus()}
                                                 <div>
                                                     <p style={{ fontWeight: 500, margin: "0" }}>Delivered</p>
-                                                    <span style={{ fontSize: 12, color: '#888' }}>{data.status === '1' ? formatDate(data.delivery_date) : 'Not Delivered'}</span>
+                                                    <span style={{ fontSize: 12, color: '#888' }}>{data.status === '1' ? formatDate(data.delivery_date) : ''}</span>
                                                 </div>
                                             </div>
 
@@ -317,7 +338,7 @@ const OrderDetails = () => {
                                                 {data.status === "-1" ? uncheckedStatusCancel() : uncheckedStatus()}
                                                 <div>
                                                     <p style={{ fontWeight: 500, margin: "0" }}>Cancelled</p>
-                                                    <span style={{ fontSize: 12, color: '#888' }}>{formatDate(data.createdAt)}</span>
+                                                    <span style={{ fontSize: 12, color: '#888' }}>{data.status === "-1" ? formatDate(data.updatedAt) : ''}</span>
                                                 </div>
                                             </div>
 
@@ -330,30 +351,40 @@ const OrderDetails = () => {
 
                     <div className="row mt-4">
                         {/* item summary */}
-                        <div className="col-md-8">
-                            <div className="card">
+                        <div className="col-md-12 col-lg-8">
+                            <div className="card mb-2">
                                 <div className="card-body">
                                     <h6 className="card-title mb-4">Order Items</h6>
+                                    <div className="order-items-table" style={{ overflowX: "auto" }}>
+                                    <style>{`
+                                        .order-items-table .modern-table {
+                                            border-spacing: 0 4px;
+                                        }
+                                        .order-items-table .modern-table > :not(caption) > * > * {
+                                            padding: 8px 5px !important;
+                                        }
+                                    `}</style>
+                                    <div style={{ minWidth: "480px" }}>
                                     <DataTable headings={["Design", "Qty", "Price (GHS)", "Total (GHS)"]} data={data.orderItems} isLoading={isLoading} renderRow={(item) => (
                                         <tr key={item.id}>
                                             <td>
-                                                <div className="d-flex gap-3">
+                                                <div className="d-flex gap-3 flex-nowrap">
                                                     <img
                                                         src={item.design.previewimg}
                                                         height={50}
                                                         width={50}
-                                                        style={{ objectFit: "cover" }}
+                                                        style={{ objectFit: "cover", flexShrink: 0 }}
                                                     />
-                                                    <div className="prod-det">
+                                                    <div className="prod-det" style={{ minWidth: 0 }}>
                                                         <p className="prodname">{item.design.name}</p>
                                                         <p className="prod-var">{hexToColorName(item.color)} - {item.size}</p>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td>
-                                                <p className="prod-category">
-                                                    <p className="prodname">{item.quantity}</p>
-                                                </p>
+                                            <td className="text-nowrap">
+                                                <div className="">
+                                                    <p className="mb-0">{item.quantity}</p>
+                                                </div>
                                             </td>
                                             <td>
                                                 <p>{item.amount}</p>
@@ -363,11 +394,13 @@ const OrderDetails = () => {
                                             </td>
                                         </tr>
                                     )} />
+                                    </div>
+                                    </div>
                                     
                                 </div>
                             </div>
                         </div>
-                        <div className="col-md-4">
+                        <div className="col-md-6 col-lg-4 col-xl-4">
                             <div className="card">
                                 <div className="card-body">
                                     <h6 className="card-title mb-4">Order Summary</h6>

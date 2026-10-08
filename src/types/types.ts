@@ -46,12 +46,13 @@ interface OrderItemsType{
 }
 export interface OrderType{
     trck_no: string;
+    tck_no?: string;
     id: string;
     customer: CustomerType;
     customer_email: string;
     product_name: string;
     quantity: number;
-    total_price: number;
+    total: number;
     status: string;
     orderItems: OrderItemsType[];
     delivery_date: string;
