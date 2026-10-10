@@ -13,13 +13,12 @@ const AccountSetup: React.FC = () => {
         branch: "",
         account_number: ""
     })
+    const { isAccountSetup, isAccountSetupPromptDismissed, dismissAccountSetupPrompt, completeAccountSetup } = useAuth();
+
 
     //get bank list
-    const { data: bankList, isLoading: isBankListLoading } = useApiQuery<{ id: string; code: string; name: string, provider_id: number }[]>(["banks"], "/designer/banks");
-    console.log(!isBankListLoading ? bankList : null);
-
-    const { isAccountSetup } = useAuth();
-    console.log(isAccountSetup);
+    const { data: bankList, isLoading } = useApiQuery<{ id: string; code: string; name: string, provider_id: number }[]>(["banks"], "/designer/banks");
+    console.log(!isLoading?bankList:"");
 
     const navigate = useNavigate();
 
@@ -29,9 +28,8 @@ const AccountSetup: React.FC = () => {
         {
             onSuccess: (data) => {
                 toast.success(data.message);
-                //update account setup
-                localStorage.setItem("is_account_setup", "true");
-                navigate("/");
+                completeAccountSetup();
+                navigate("/", { replace: true });
             },
             onError: (data) => {
                 toast.error(data.message);
@@ -45,8 +43,9 @@ const AccountSetup: React.FC = () => {
     };
 
     const handleNo = () => {
+        dismissAccountSetupPrompt();
         setShowModal(false);
-        navigate("/");
+        navigate("/", { replace: true });
     };
 
     const handleAccount = (e: React.FormEvent) => {
@@ -60,8 +59,8 @@ const AccountSetup: React.FC = () => {
         setAccountData((prev) => ({ ...prev, [name]: value }));
     }
 
-    return isAccountSetup ? (
-         <Navigate to="/" />
+        return isAccountSetup || isAccountSetupPromptDismissed ? (
+            <Navigate to="/" replace />
     ) : (
 
         <>
@@ -84,7 +83,7 @@ const AccountSetup: React.FC = () => {
                                         >
                                             <option value="">Select Bank</option>
                                             {bankList?.map((bank) => (
-                                                <option key={bank.id} value={bank.provider_id}>
+                                                <option key={bank.id} value={bank.code}>
                                                     {bank.name}
                                                 </option>
                                             ))}

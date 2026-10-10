@@ -123,9 +123,9 @@ const OrdersList: React.FC = () => {
     if (action === "view") {
       handleEdit(product.id);
     } else if (action === "ship") {
-      handleOrderAction(product.tck_no, product.id, "shipped");
+      handleOrderAction(product.trck_no, product.id, "shipped");
     } else if (action === "delete") {
-      handleOrderAction(product.tck_no, product.id, "cancelled");
+      handleOrderAction(product.trck_no, product.id, "cancelled");
     }
   };
 
@@ -152,11 +152,11 @@ const OrdersList: React.FC = () => {
 
     return orders.filter((order) => {
       const matchesSearch =
-        order.tck_no?.toLowerCase().includes(search.toLowerCase()) ||
-        order.customer?.name?.toLowerCase().includes(search.toLowerCase());
+        order.trck_no?.toLowerCase().includes(search.toLowerCase()) ||
+        order.customer?.fullname?.toLowerCase().includes(search.toLowerCase());
 
       const matchesStatus = statusFilter === "all" || order.status === statusFilter;
-      const amount = Number(order.total_price ?? 0);
+      const amount = Number(order.total ?? 0);
       const matchesPrice = amount >= min && amount < max;
 
       return matchesSearch && matchesStatus && matchesPrice;
@@ -411,10 +411,10 @@ const OrdersList: React.FC = () => {
                     </div>
                   </td>
 
-                  <td>{item.customer?.name || "Unknown customer"}</td>
+                  <td>{item.customer?.fullname || "Unknown customer"}</td>
                   <td>{item.quantity ?? 0}</td>
                   <td>{handleOrderStatus(String(item.status))}</td>
-                  <td>{item.total_price ?? 0}</td>
+                  <td>{item.total ?? 0}</td>
 
                   <td>
                     <div className="d-flex justify-content-start align-items-center">

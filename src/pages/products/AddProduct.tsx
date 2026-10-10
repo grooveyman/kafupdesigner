@@ -13,7 +13,7 @@ import Review from "../../components/Products/Review";
 import { useDesignContext } from "../../context/ProductContext";
 import DesignScrollNav from "../../components/Products/ProductScrollNav";
 import Spinner from "../../components/Spinner";
-import { STEPS, StepKey, buildVariationsPayload, validateStep, validateDesign } from "./productValidation";
+import { STEPS, StepKey, validateStep, validateDesign } from "./productValidation";
 import { useQueryClient } from "@tanstack/react-query";
 
 export interface Variation {

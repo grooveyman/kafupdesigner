@@ -95,7 +95,7 @@ export const router = createBrowserRouter(
                 { path: "/collections/:id", element: <CollectionDetails /> },
                 { path: "/add-to-collection/:id", element: <AddToCollection /> },
                 { path: "/profile-shop", element: <ShopWrapper /> },
-                { path: "/accountsetup/", element: <AccountSetup /> },
+                { path: "/accountsetup", element: <AccountSetup /> },
                 { path: "*", element: <div>404 Not Found</div> }
               ],
             },

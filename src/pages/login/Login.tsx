@@ -4,7 +4,6 @@ import { useApiMutation } from "../../hooks/useApi";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import { useAuth } from "../../context/AuthContext";
-import AuthLayout from "../../components/auth/AuthLayout";
 import PasswordInput from "../../components/auth/PasswordInput";
 import { loginSchema, getFieldErrors } from "../../schemas/auth";
 
@@ -37,8 +36,9 @@ const Login: React.FC = () => {
         {
             onSuccess: async (res) => {
                 login(res.data.designer_code);
+                
                 toast.success(res.message);
-                navigate("/");
+                navigate("/accountsetup", { replace: true });
             },
             onError: (error) => {
                 toast.error(error.message);

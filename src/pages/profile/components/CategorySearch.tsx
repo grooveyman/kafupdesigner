@@ -5,7 +5,7 @@ interface SearchProps{
     setQuery: (value: string) => void;
 }
 const CategorySearch: React.FC<SearchProps> = ({query, setQuery}) => {
-      const [localValue, setLocalValue] = useState(query);
+      const [localValue] = useState(query);
     useEffect(() => {
     const timeout = setTimeout(() => {
       setQuery(localValue);
@@ -20,7 +20,6 @@ const CategorySearch: React.FC<SearchProps> = ({query, setQuery}) => {
                     <input className="form-control" placeholder="Search" value={query} onChange={(e) => setQuery(e.target.value)} />
                 </div>
             </div>
-
         </>
     );
 }

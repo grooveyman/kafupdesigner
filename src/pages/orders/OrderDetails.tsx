@@ -163,7 +163,7 @@ const OrderDetails = () => {
     //get data from backend
     const { orderid } = useParams();
 
-    const { data, isLoading, error } = useApiQuery<OrderType>(["orders_" + orderid], `/designer/orders/order/${orderid}`);
+    const { data, isLoading } = useApiQuery<OrderType>(["orders_" + orderid], `/designer/orders/order/${orderid}`);
     //calculate summary
     const subtotal = data?.orderItems.reduce((acc, item) => acc + Number(item.total || 0), 0) || 0;
     const total = subtotal + 10 || 0; // Assuming a flat shipping rate of $10

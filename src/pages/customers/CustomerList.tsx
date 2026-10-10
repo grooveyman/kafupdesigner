@@ -1,4 +1,4 @@
-import { ArchiveX, EyeIcon, User, MoreVertical, Motorbike, Ban, ChevronLeft, ChevronRight, Truck, X, Mail } from "lucide-react";
+import { ArchiveX, EyeIcon, User, MoreVertical, Ban, ChevronLeft, ChevronRight, Truck, X, Mail } from "lucide-react";
 import Breadcrumb from "../../components/Breadcrumb";
 import { useApiMutation, useApiQuery } from "../../hooks/useApi";
 import { useNavigate } from "react-router-dom";
@@ -10,14 +10,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import "../products/admin.css";
 import { CustomerResponseType } from "../../types/types";
 
-// Status label map
-const STATUS_MAP: Record<string, string> = {
-    "0": "Pending",
-    "1": "Delivered",
-    "2": "Processing",
-    "3": "Shipped",
-    "4": "Cancelled",
-};
 
 const PRICE_RANGES = [
     { label: "Price Range", min: 0, max: Infinity },
@@ -50,7 +42,7 @@ const CustomerList: React.FC = () => {
 
     const updateMutation = useApiMutation<{ message: string }>(
         `/orders/order`,
-        "PUT",
+        "PATCH",
         {
             onSuccess: async (data) => {
                 toast.success(data.message);
@@ -108,21 +100,6 @@ const CustomerList: React.FC = () => {
         } else if (action === "delete") {
             handleOrderAction(product.tck_no, product.id, "cancelled");
         }
-    };
-
-    const handleOrderStatus = (status: string) => {
-        const badges: Record<string, string> = {
-            "0": "bg-warning",
-            "1": "bg-success",
-            "2": "bg-danger",
-            "3": "bg-secondary",
-            "4": "bg-danger",
-        };
-        return (
-            <span className={`badge ${badges[status] ?? "bg-danger"}`}>
-                {STATUS_MAP[status] ?? "Cancelled"}
-            </span>
-        );
     };
 
     // --- Filtered + searched data ---

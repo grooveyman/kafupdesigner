@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useApiMutation } from "../../hooks/useApi";
 import { toast } from "react-toastify";
@@ -28,10 +28,10 @@ interface FormData {
 }
 
 const AddDesign: React.FC = () => {
-const [variations, setVariations] = useState<Variation[]>([]);
+const [variations] = useState<Variation[]>([]);
 
     const navigate = useNavigate();
-    const [data, setData] = useState<FormData>({
+    const [data] = useState<FormData>({
         name: "",
         description: "",
         variation: [],

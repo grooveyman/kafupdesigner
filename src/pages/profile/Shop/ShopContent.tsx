@@ -1,6 +1,6 @@
-import { MoreVertical, Pencil, Trash2, Share2, Copy, ShoppingBagIcon, PencilIcon } from "lucide-react";
+import { MoreVertical, Trash2, Share2, PencilIcon } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import { FaClosedCaptioning, FaCross, FaGifts, FaTimes, FaWatchmanMonitoring } from "react-icons/fa";
+import { FaGifts, FaTimes } from "react-icons/fa";
 
 interface Item {
   id: number;

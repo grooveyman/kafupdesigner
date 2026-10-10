@@ -4,7 +4,7 @@ import { useApiQuery } from "../../hooks/useApi";
 import { OrderType } from "../../types/types";
 import SearchInput from "../../components/SearchInput";
 import { DataTable } from "../../components/DataTable";
-import { User, EyeIcon, MoreVertical, Motorbike, Ban } from "lucide-react";
+import { EyeIcon, MoreVertical, Motorbike, Ban } from "lucide-react";
 import { useSwal } from "../../hooks/swal";
 import { useNavigate } from "react-router-dom";
 import { handleOrderStatus } from "../../hooks/helper";
@@ -19,6 +19,7 @@ interface Response {
 const OrderList: React.FC = () => {
     const [search, setSearch] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
+    console.log(currentPage);
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
     const navigate = useNavigate();
 
